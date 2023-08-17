@@ -30,6 +30,9 @@ public class Property {
 
     private String imageUrl;
 
+    @OneToOne(mappedBy = "property")
+    private Address address;
+
     public Property() {
     }
 
