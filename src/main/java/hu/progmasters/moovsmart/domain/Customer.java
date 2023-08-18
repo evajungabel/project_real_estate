@@ -3,8 +3,10 @@ package hu.progmasters.moovsmart.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 import javax.persistence.*;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +26,7 @@ public class Customer {
     @Column(name = "last_name")
     private String lastName;
 
-    @OneToOne(mappedBy = "customer")
-    private Property property;
+    @OneToMany(mappedBy = "customer")
+    private List<Property> propertyList;
 
 }

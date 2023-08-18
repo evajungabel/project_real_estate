@@ -50,7 +50,7 @@ public class Property {
     @OneToOne(mappedBy = "property")
     private Address address;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
