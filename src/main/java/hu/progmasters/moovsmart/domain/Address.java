@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Table(name = "address")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Address {
 
     @Id

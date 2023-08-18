@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,20 +20,20 @@ public class EstateAgent {
     @Column(name = "property_id")
     private Long id;
 
-    @Column(name = "rank")
-    private String rank;
+    @Enumerated(value = EnumType.STRING)
+    private AgentRank rank;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "sell_point")
-    private  Integer sell_point;
+    private Integer sellPoint;
 
     @Column(name = "email")
     private String email;
 
-    @OneToOne(mappedBy = "estateAgent")
-    private EstateAgent estateAgent;
+    @OneToMany(mappedBy = "estateAgent")
+    private List<Property> propertyList;
 
 
 }

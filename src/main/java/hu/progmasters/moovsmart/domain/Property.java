@@ -1,6 +1,5 @@
 package hu.progmasters.moovsmart.domain;
 
-import hu.progmasters.moovsmart.dto.PropertyForm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,20 +23,17 @@ public class Property {
     @Column(name = "property_id")
     private Long id;
 
-    @NotNull
-    @Size(min = 1, max = 200)
     @Column(name = "name")
     private String name;
 
-    @Column(name = "type")
-    private String type;
+    @Enumerated(value = EnumType.STRING)
+    private PropertyType type;
 
     @Column(name = "space")
     private String space;
-    @Min(value = 1)
-    @Max(value = 12)
+
     @Column(name = "number_of_rooms")
-    private  Integer numberOfRooms;
+    private Integer numberOfRooms;
 
     @Column(name = "price")
     private Integer price;
@@ -54,20 +50,12 @@ public class Property {
     @OneToOne(mappedBy = "property")
     private Address address;
 
-    @OneToOne(mappedBy = "property")
+    @OneToOne
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
-
-    @OneToOne
-    @JoinColumn(name = "estateAgent")
+    @ManyToOne
+    @JoinColumn(name = "estate_agent_id")
     private EstateAgent estateAgent;
 
-
-    public Property(PropertyForm propertyForm) {
-        this.name = propertyForm.getName();
-        this.numberOfRooms = propertyForm.getNumberOfRooms();
-        this.price = propertyForm.getPrice();
-        this.description = propertyForm.getDescription();
-        this.imageUrl = propertyForm.getImageUrl();
-    }
 }

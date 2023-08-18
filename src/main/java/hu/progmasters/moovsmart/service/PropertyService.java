@@ -2,7 +2,6 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.PropertyDetails;
-import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyListItem;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,4 @@ public class PropertyService {
         return new PropertyDetails(property);
     }
 
-    public void createProperty(PropertyForm propertyForm) {
-        propertyRepository.save(new Property(propertyForm));
-    }
 }
