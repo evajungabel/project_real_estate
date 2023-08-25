@@ -29,8 +29,6 @@ public class PropertyService {
         this.modelMapper = modelMapper;
     }
 
-
-
     public List<PropertyListItem> getProperties() {
         List<Property> properties = propertyRepository.findAll();
         return Collections.singletonList(modelMapper.map(properties, PropertyListItem.class));
@@ -42,7 +40,8 @@ public class PropertyService {
     }
 
     public void createProperty(PropertyForm propertyForm) {
-        propertyRepository.save(new Property(propertyForm));
+       Property toSave = modelMapper.map(propertyForm,Property.class);
+       propertyRepository.save(toSave);
     }
 
     public void delete(Long id) {
@@ -58,6 +57,4 @@ public class PropertyService {
         return propertyOptional.get();
 
     }
-
-
 }

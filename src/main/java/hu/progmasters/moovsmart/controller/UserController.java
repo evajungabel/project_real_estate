@@ -22,12 +22,11 @@ public class UserController {
     private UserService userService;
     private UserFormValidator userFormValidator;
 
+    @Autowired
     public UserController(UserService userService, UserFormValidator userFormValidator) {
         this.userService = userService;
         this.userFormValidator = userFormValidator;
     }
-
-    @Autowired
 
 
     @PostMapping

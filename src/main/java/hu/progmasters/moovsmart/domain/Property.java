@@ -54,12 +54,4 @@ public class Property {
     @ManyToOne
     @JoinColumn(name = "estate_agent_id")
     private EstateAgent estateAgent;
-
-    public Property(PropertyForm propertyForm) {
-        this.name = propertyForm.getName();
-        this.numberOfRooms = propertyForm.getNumberOfRooms();
-        this.price = propertyForm.getPrice();
-        this.description = propertyForm.getDescription();
-        this.imageUrl = propertyForm.getImageUrl();
-    }
 }

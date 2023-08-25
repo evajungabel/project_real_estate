@@ -23,7 +23,6 @@ public class UserService {
         this.modelMapper = modelMapper;
     }
 
-
     public void save(UserForm command) {
         User toSave = modelMapper.map(command, User.class);
         userRepository.save(toSave);
