@@ -5,6 +5,7 @@ import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyListItem;
 import hu.progmasters.moovsmart.service.PropertyService;
 import hu.progmasters.moovsmart.validation.PropertyFormValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/properties")
+@Slf4j
 public class PropertyController {
 
     private PropertyService propertyService;
@@ -47,5 +49,15 @@ public class PropertyController {
         propertyService.createProperty(propertyForm);
         return new ResponseEntity(HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/{propertyId}")
+    public ResponseEntity<Void> delete(@PathVariable("propertyId") Long id) {
+        log.info("Http request, DELETE /api/property/{propertyId} with variable: " + id);
+        propertyService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+
 
 }

@@ -1,14 +1,11 @@
 package hu.progmasters.moovsmart.domain;
 
+import hu.progmasters.moovsmart.dto.PropertyForm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 
 @NoArgsConstructor
@@ -51,11 +48,18 @@ public class Property {
     private Address address;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "estate_agent_id")
     private EstateAgent estateAgent;
 
+    public Property(PropertyForm propertyForm) {
+        this.name = propertyForm.getName();
+        this.numberOfRooms = propertyForm.getNumberOfRooms();
+        this.price = propertyForm.getPrice();
+        this.description = propertyForm.getDescription();
+        this.imageUrl = propertyForm.getImageUrl();
+    }
 }

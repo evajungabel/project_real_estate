@@ -58,32 +58,38 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JsonParseException.class)
     public ResponseEntity<ApiError> handleJsonParseException(JsonParseException ex) {
         logger.error("Request JSON could no be parsed: ", ex);
-        HttpStatus status = HttpStatus.BAD_REQUEST;
 
         ApiError body = new ApiError("JSON_PARSE_ERROR", "The request could not be parsed as a valid JSON.", ex.getLocalizedMessage());
 
-        return new ResponseEntity<>(body, status);
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
 
+    }
+
+    @ExceptionHandler(PropertyNotFoundException.class)
+    public ResponseEntity<ApiError> handlePropertyNotFound(PropertyNotFoundException ex) {
+        logger.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "An not found argument has been passed to the method.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException ex) {
         logger.error("Illegal argument error: ", ex);
-        HttpStatus status = HttpStatus.BAD_REQUEST;
 
         ApiError body = new ApiError("ILLEGAL_ARGUMENT_ERROR", "An illegal argument has been passed to the method.", ex.getLocalizedMessage());
 
-        return new ResponseEntity<>(body, status);
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ApiError> defaultErrorHandler(Throwable t) {
         logger.error("An unexpected error occurred: ", t);
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         ApiError body = new ApiError("UNCLASSIFIED_ERROR", "Oh, snap! Something really unexpected occurred.", t.getLocalizedMessage());
 
-        return new ResponseEntity<>(body, status);
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
