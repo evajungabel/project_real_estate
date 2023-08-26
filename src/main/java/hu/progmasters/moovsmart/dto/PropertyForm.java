@@ -4,14 +4,13 @@ import hu.progmasters.moovsmart.domain.PropertyType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 import javax.validation.constraints.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class PropertyForm {
+
 
     @NotBlank(message = "Property name cannot be empty!")
     @Size(min = 1, max = 200, message = "Property name must be between 1 and 200 characters!")

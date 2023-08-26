@@ -9,12 +9,16 @@ import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,22 +36,36 @@ public class PropertyService {
 
     public List<PropertyListItem> getProperties() {
         List<Property> properties = propertyRepository.findAll();
-        return Collections.singletonList(modelMapper.map(properties, PropertyListItem.class));
+        List<PropertyListItem> propertyListItems = properties.stream()
+                .map(property -> modelMapper.map(properties, PropertyListItem.class))
+                .collect(Collectors.toList());
+        return propertyListItems;
     }
+
+    public List<PropertyListItem> findPaginated(int pageNo, int pageSize) {
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        Page<Property> pagedResult = propertyRepository.findAll(paging);
+        List<PropertyListItem> propertyListItems = pagedResult.stream()
+                .map(property -> modelMapper.map(property, PropertyListItem.class))
+                .collect(Collectors.toList());
+        return propertyListItems;
+    }
+
 
     public PropertyDetails getPropertyDetails(Long id) {
-        Property property = propertyRepository.getOne(id);
-        return new PropertyDetails(property);
+        Property property = findPropertyById(id);
+        return modelMapper.map(property, PropertyDetails.class);
     }
 
-    public void createProperty(PropertyForm propertyForm) {
+    public PropertyListItem createProperty(PropertyForm propertyForm) {
        Property toSave = modelMapper.map(propertyForm,Property.class);
-       propertyRepository.save(toSave);
+       Property property = propertyRepository.save(toSave);
+       return modelMapper.map(property, PropertyListItem.class);
     }
 
-    public void delete(Long id) {
+    public void makeInactive(Long id) {
         Property toUpdate = findPropertyById(id);
-        propertyRepository.delete(toUpdate);
+        toUpdate.setActive(false);
     }
 
     private Property findPropertyById(Long propertyId) {
@@ -59,5 +77,9 @@ public class PropertyService {
 
     }
 
-
+    public PropertyListItem update(Long id, PropertyForm propertyForm) {
+        Property property = findPropertyById(id);
+        modelMapper.map(propertyForm, property);
+        return modelMapper.map(property, PropertyListItem.class);
+    }
 }
