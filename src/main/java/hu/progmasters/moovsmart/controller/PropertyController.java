@@ -49,9 +49,9 @@ public class PropertyController {
 
     @PostMapping
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity createProperty(@RequestBody @Valid PropertyForm propertyForm) {
+    public ResponseEntity<Void> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
         propertyService.createProperty(propertyForm);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{propertyId}")

@@ -19,14 +19,12 @@ public class CustomUserService {
 
     private CustomUserRepository customUserRepository;
 
-    private PropertyService propertyService;
     private ModelMapper modelMapper;
 
 
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, PropertyService propertyService, ModelMapper modelMapper) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper) {
         this.customUserRepository = customUserRepository;
-        this.propertyService = propertyService;
         this.modelMapper = modelMapper;
     }
 
