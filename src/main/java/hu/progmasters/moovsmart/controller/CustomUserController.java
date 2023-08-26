@@ -1,8 +1,7 @@
 package hu.progmasters.moovsmart.controller;
 
-import hu.progmasters.moovsmart.dto.UserForm;
-import hu.progmasters.moovsmart.service.UserService;
-import hu.progmasters.moovsmart.validation.UserFormValidator;
+import hu.progmasters.moovsmart.dto.CustomUserForm;
+import hu.progmasters.moovsmart.service.CustomUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,22 +16,23 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/user")
 @Slf4j
-public class UserController {
+public class CustomUserController {
 
-    private UserService userService;
-    private UserFormValidator userFormValidator;
+    private CustomUserService customUserService;
+
 
     @Autowired
-    public UserController(UserService userService, UserFormValidator userFormValidator) {
-        this.userService = userService;
-        this.userFormValidator = userFormValidator;
+    public CustomUserController(CustomUserService customUserService) {
+        this.customUserService = customUserService;
     }
 
 
+
+
     @PostMapping
-    public ResponseEntity<Void> save(@Valid @RequestBody UserForm command) {
+    public ResponseEntity<Void> save(@Valid @RequestBody CustomUserForm command) {
         log.info("Http request, POST /api/user, body: " + command.toString());
-        userService.save(command);
+        customUserService.save(command);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

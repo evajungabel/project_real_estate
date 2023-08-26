@@ -1,6 +1,5 @@
 package hu.progmasters.moovsmart.domain;
 
-import hu.progmasters.moovsmart.dto.PropertyForm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,8 +47,8 @@ public class Property {
     private Address address;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "custom_user_id")
+    private CustomUser customUser;
 
     @ManyToOne
     @JoinColumn(name = "estate_agent_id")

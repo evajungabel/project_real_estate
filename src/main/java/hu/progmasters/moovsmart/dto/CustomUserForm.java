@@ -13,11 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserForm {
+public class CustomUserForm {
 
-    @NotNull(message = "User name cannot be empty!")
+    @NotNull(message = "Username cannot be empty!")
     @Size(min = 1, max = 200, message = "Name must be between 3 and 200 characters!")
-    private String name;
+    private String userName;
 
     @NotNull(message = "Password cannot be empty!")
     @Size(min = 1, max = 200, message = "Password must be between 3 and 200 characters!")

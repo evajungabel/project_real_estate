@@ -1,35 +1,33 @@
 package hu.progmasters.moovsmart.validation;
 
-import hu.progmasters.moovsmart.dto.UserForm;
-import hu.progmasters.moovsmart.repository.UserRepository;
+import hu.progmasters.moovsmart.dto.CustomUserForm;
+import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 @Component
-public class UserFormValidator implements Validator {
+public class CustomUserFormValidator implements Validator {
 
-    private UserRepository userRepository;
+    private CustomUserRepository userRepository;
 
     @Autowired
-    public UserFormValidator(UserRepository userRepository) {
+    public CustomUserFormValidator(CustomUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return UserForm.class.equals(aClass);
+        return CustomUserForm.class.equals(aClass);
     }
 
     @Override
     public void validate(Object o, Errors errors) {
-        UserForm user = (UserForm) o;
-        if (user.getName() == null || user.getName().equals("")) {
+        CustomUserForm user = (CustomUserForm) o;
+        if (user.getUserName() == null || user.getUserName().equals("")) {
             errors.rejectValue("name", "user.name.empty");
         }
     }
-
-
 
 }

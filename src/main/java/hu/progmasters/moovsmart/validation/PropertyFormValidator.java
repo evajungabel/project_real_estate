@@ -28,5 +28,5 @@ public class PropertyFormValidator implements Validator {
         if (property.getName() == null || property.getName().equals("")) {
             errors.rejectValue("name", "property.name.empty");
         }
-    }
+     }
 }

@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserLogIn {
+public class CustomUserLogIn {
 
     @NotNull(message = "Password cannot be empty!")
     @Size(min = 1, max = 200, message = "Password must be between 3 and 200 characters!")

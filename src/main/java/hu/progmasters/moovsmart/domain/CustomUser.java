@@ -11,12 +11,12 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "custom_user")
+public class CustomUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "custom_user_id")
     private Long id;
 
     @Column(name = "name")
@@ -32,7 +32,7 @@ public class User {
     @Column(name = "e-mail")
     private String eMail;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "custom_user")
     private List<Property> propertyList;
 
 }
