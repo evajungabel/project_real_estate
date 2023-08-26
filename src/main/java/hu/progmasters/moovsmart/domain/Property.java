@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @NoArgsConstructor
@@ -18,6 +20,19 @@ public class Property {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "property_id")
     private Long id;
+
+
+    @Column(name = "date_of_creation")
+    private LocalDateTime dateOfCreation = LocalDateTime.now();
+
+    @Column(name = "date_of_sale")
+    private LocalDateTime dateOfSale;
+
+    @Column(name = "date_of_inactivation")
+    private LocalDateTime dateOfInactivation;
+
+    @Column(name = "date_of_activation")
+    private LocalDateTime dateOfActivation;
 
     @Column(name = "name")
     private String name;
@@ -39,6 +54,9 @@ public class Property {
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    @Column(name = "active")
+    private boolean active = true;
 
     @OneToOne(mappedBy = "property")
     private PropertyData propertyData;

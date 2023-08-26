@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart.service;
 
+import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.dto.PropertyForm;
@@ -57,4 +58,6 @@ public class PropertyService {
         return propertyOptional.get();
 
     }
+
+
 }

@@ -69,7 +69,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handlePropertyNotFound(PropertyNotFoundException ex) {
         logger.error("Not found error: ", ex);
 
-        ApiError body = new ApiError("NOT_FOUND_ERROR", "An not found argument has been passed to the method.", ex.getLocalizedMessage());
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "Property not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CustomUserNotFoundException.class)
+    public ResponseEntity<ApiError> handleCustomUserNotFound(CustomUserNotFoundException ex) {
+        logger.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "User not found error.", ex.getLocalizedMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }

@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart.domain;
 
+import hu.progmasters.moovsmart.config.CustomUserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,11 @@ public class CustomUser {
 
     @Column(name = "e-mail")
     private String eMail;
+
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JoinTable(name = "custom_user_role")
+    private List<CustomUserRole> roles;
 
     @OneToMany(mappedBy = "custom_user")
     private List<Property> propertyList;
