@@ -18,13 +18,5 @@ public class PropertyDetails {
     private String imageUrl;
 
 
-    public PropertyDetails(Property property) {
-        this.id = property.getId();
-        this.name = property.getName();
-        this.numberOfRooms = property.getNumberOfRooms();
-        this.price = property.getPrice();
-        this.description = property.getDescription();
-        this.imageUrl = property.getImageUrl();
-    }
 
 }

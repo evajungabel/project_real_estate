@@ -17,6 +17,7 @@ public class PropertyFormValidator implements Validator {
         this.propertyRepository = propertyRepository;
     }
 
+    
     @Override
     public boolean supports(Class<?> aClass) {
         return PropertyForm.class.equals(aClass);
