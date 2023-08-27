@@ -24,13 +24,13 @@ public class CustomUser {
     private String name;
 
 
-    @Column(name = "userName")
+    @Column(name = "user_name")
     private String userName;
 
     @Column(name = "password")
     private String password;
 
-    @Column(name = "e-mail")
+    @Column(name = "e_mail")
     private String eMail;
 
     @Enumerated(EnumType.STRING)
@@ -38,7 +38,7 @@ public class CustomUser {
     @JoinTable(name = "custom_user_role")
     private List<CustomUserRole> roles;
 
-    @OneToMany(mappedBy = "custom_user")
+    @OneToMany(mappedBy = "customUser")
     private List<Property> propertyList;
 
 }

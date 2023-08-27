@@ -1,30 +1,15 @@
-server:
-  port: 8080
-  servlet:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/moovsmart?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/moovsmart?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&autoReconnect=true
+
     username: root
     password: test1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
-    generate-ddl: true
+    show-sql: on
 
-logging:
-  level:
-    com.progmasters: debug
-    org.springframework.web: info
-    org.hibernate: error
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+

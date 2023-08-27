@@ -17,10 +17,11 @@ public class EstateAgent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "property_id")
+    @Column(name = "estate_agent_id")
     private Long id;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "agent_rank")
     private AgentRank rank;
 
     @Column(name = "name")
