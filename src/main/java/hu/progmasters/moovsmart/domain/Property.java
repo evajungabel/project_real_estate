@@ -61,7 +61,7 @@ public class Property {
     @OneToOne(mappedBy = "property")
     private PropertyData propertyData;
 
-    @OneToOne(mappedBy = "property")
+    @OneToOne(mappedBy = "property", cascade = CascadeType.REMOVE)
     private Address address;
 
     @ManyToOne

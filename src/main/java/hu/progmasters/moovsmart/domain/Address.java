@@ -30,10 +30,10 @@ public class Address {
     @Column(name = "street")
     private String street;
 
-    @Column(name = "number_of_building")
+    @Column(name = "house_number")
     private Integer numberOfBuilding;
 
-    @Column(name = "number_of_door")
+    @Column(name = "door_number")
     private Integer numberOfDoor;
 
     @OneToOne
