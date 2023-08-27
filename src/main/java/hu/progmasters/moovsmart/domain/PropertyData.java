@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Entity
 @Table(name = "property_data")
 public class PropertyData {
 
@@ -18,14 +18,16 @@ public class PropertyData {
     @Column(name = "property_data_id")
     private Long id;
 
-    @Enumerated(value = EnumType.STRING)
-    private PropertyCondition condition;
+//    @Enumerated(value = EnumType.STRING)
+//    @Column(name = "condition")
+//    private PropertyCondition propertyCondition;
 
     @Column(name = "parking")
     private boolean parking;
 
     @Enumerated(value = EnumType.STRING)
-    private PropertyOrientation orientation;
+    @Column(name = "property_orientation")
+    private PropertyOrientation propertyOrientation;
 
     @Column(name = "heating")
     private String heating;

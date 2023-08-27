@@ -1,5 +1,7 @@
 package hu.progmasters.moovsmart;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.SpringApplication;
@@ -19,6 +21,15 @@ public class MoovsmartApplication {
 		modelMapper.getConfiguration()
 				.setMatchingStrategy(MatchingStrategies.STRICT);
 		return modelMapper;
+	}
+
+	@Bean
+	public OpenAPI customOpenAPI() {
+		return new OpenAPI()
+				.info(new Info()
+						.title("BeeHive API")
+						.version("1.0.1")
+						.description("This is a Bee application."));
 	}
 
 }
