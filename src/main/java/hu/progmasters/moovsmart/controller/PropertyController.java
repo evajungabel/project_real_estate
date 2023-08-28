@@ -78,12 +78,13 @@ public class PropertyController {
     }
 
     @PutMapping("/{propertyId}")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<PropertyListItem> update(@PathVariable("propertyId") Long id,
                                           @Valid @RequestBody PropertyForm propertyForm) {
         log.info("Http request, PUT /api/property/{propertyId} body: " + propertyForm.toString() +
                 " with variable: " + id);
         PropertyListItem updated = propertyService.update(id, propertyForm);
-        log.info("PUT data from repository/api/property/{propertyId} body: " + propertyForm.toString() +
+        log.info("PUT data from repository/api/property/{propertyId} body: " + propertyForm +
                 " with variable: " + id);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
