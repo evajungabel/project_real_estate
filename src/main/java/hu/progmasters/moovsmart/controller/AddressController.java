@@ -1,16 +1,17 @@
 package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.dto.AddressForm;
-import hu.progmasters.moovsmart.dto.AddressInfo;
 import hu.progmasters.moovsmart.service.AddressService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/addresses")
@@ -23,7 +24,6 @@ public class AddressController {
         this.addressService = addressService;
     }
 
-    //TODO createAddress
     @PostMapping
     public ResponseEntity<Void> createAddress(@Valid @RequestBody AddressForm form) {
         log.info("Http request, GET /api/addresses" + form.toString());
@@ -38,6 +38,7 @@ public class AddressController {
 
 
     //TODO update
+
 
 
     //TODO delete

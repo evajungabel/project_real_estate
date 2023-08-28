@@ -31,10 +31,10 @@ public class Address {
     private String street;
 
     @Column(name = "house_number")
-    private Integer numberOfBuilding;
+    private Integer houseNumber;
 
     @Column(name = "door_number")
-    private Integer numberOfDoor;
+    private Integer doorNumber;
 
     @OneToOne
     @JoinColumn(name = "property_id")
