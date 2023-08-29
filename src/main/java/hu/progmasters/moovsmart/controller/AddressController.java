@@ -1,7 +1,6 @@
 package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.dto.AddressForm;
-import hu.progmasters.moovsmart.dto.AddressInfo;
 import hu.progmasters.moovsmart.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -9,7 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -30,6 +32,7 @@ public class AddressController {
     public ResponseEntity<Void> createAddress(@Valid @RequestBody AddressForm form) {
         log.info("Http request, GET /api/addresses" + form.toString());
         addressService.saveAddress(form);
+        log.info("POST data from repository/api/addresses, body: " + form);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
