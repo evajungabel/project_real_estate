@@ -2,6 +2,8 @@ package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.service.CustomUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,9 +27,9 @@ public class CustomUserController {
     }
 
 
-
     @PostMapping
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Operation(summary = "Save customer")
+    @ApiResponse(responseCode = "201", description = "Customer saved")
     public ResponseEntity<Void> save(@Valid @RequestBody CustomUserForm command) {
         log.info("Http request, POST /api/user, body: " + command.toString());
         customUserService.save(command);
@@ -36,6 +38,8 @@ public class CustomUserController {
 
     @DeleteMapping("/{customUserId}/{propertyId}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Operation(summary = "Delete customer")
+    @ApiResponse(responseCode = "200", description = "Account deleted")
     public ResponseEntity<Void> delete(@PathVariable("customUserId") Long cId, @PathVariable("propertyId") Long pId) {
         log.info("Http request, DELETE /api/property/{customUserId}" + cId + "{propertyId} with variable: " + pId);
         customUserService.userDelete(cId, pId);
@@ -44,6 +48,8 @@ public class CustomUserController {
 
     @DeleteMapping("/sale/{customUserId}/{propertyId}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Operation(summary = "Delete a customer property")
+    @ApiResponse(responseCode = "200", description = "Property deleted")
     public ResponseEntity<Void> deleteSale(@PathVariable("customUserId") Long cId, @PathVariable("propertyId") Long pId) {
         log.info("Http request, DELETE /api/property/{customUserId}" + cId + "{propertyId} with variable: " + pId);
         customUserService.userSale(cId, pId);

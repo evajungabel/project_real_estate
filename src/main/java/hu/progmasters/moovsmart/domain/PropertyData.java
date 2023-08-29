@@ -18,10 +18,6 @@ public class PropertyData {
     @Column(name = "property_data_id")
     private Long id;
 
-//    @Enumerated(value = EnumType.STRING)
-//    @Column(name = "condition")
-//    private PropertyCondition propertyCondition;
-
     @Column(name = "parking")
     private boolean parking;
 

@@ -1,6 +1,5 @@
 package hu.progmasters.moovsmart.controller;
 
-import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyListItem;
@@ -45,17 +44,15 @@ public class PropertyController {
         return new ResponseEntity<>(propertyList, HttpStatus.OK);
     }
 
-
     @GetMapping("/{pageNo}/{pageSize}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public List<PropertyListItem> getPaginatedProperties(@PathVariable int pageNo,
-                                                @PathVariable int pageSize) {
+                                                         @PathVariable int pageSize) {
         log.info("Http request, GET /api/list of properties with " + pageSize + " number on " + pageNo + " pages");
         List<PropertyListItem> propertyListItems = propertyService.findPaginated(pageNo, pageSize);
         log.info("GET data from repository/api/list of properties with " + pageSize + " number on " + pageNo + " pages");
         return propertyListItems;
     }
-
 
     @GetMapping("/{propertyId}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
@@ -66,10 +63,8 @@ public class PropertyController {
         return new ResponseEntity<>(propertyDetails, HttpStatus.OK);
     }
 
-
-
     @PostMapping
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<PropertyListItem> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
         log.info("Http request, POST /api/property, body: " + propertyForm.toString());
         PropertyListItem propertyListItem = propertyService.createProperty(propertyForm);
@@ -79,7 +74,7 @@ public class PropertyController {
 
     @PutMapping("/{propertyId}")
     public ResponseEntity<PropertyListItem> update(@PathVariable("propertyId") Long id,
-                                          @Valid @RequestBody PropertyForm propertyForm) {
+                                                   @Valid @RequestBody PropertyForm propertyForm) {
         log.info("Http request, PUT /api/property/{propertyId} body: " + propertyForm.toString() +
                 " with variable: " + id);
         PropertyListItem updated = propertyService.update(id, propertyForm);
@@ -87,7 +82,6 @@ public class PropertyController {
                 " with variable: " + id);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
-
 
     @DeleteMapping("/{propertyId}")
     @Secured({"ROLE_ADMIN"})
@@ -97,6 +91,5 @@ public class PropertyController {
         log.info("POST data from repository/api/property/{propertyId} with variable: " + id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 }

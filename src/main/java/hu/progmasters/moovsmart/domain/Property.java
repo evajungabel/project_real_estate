@@ -40,8 +40,8 @@ public class Property {
     @Enumerated(value = EnumType.STRING)
     private PropertyType type;
 
-    @Column(name = "space")
-    private String space;
+    @Column(name = "area")
+    private Integer area;
 
     @Column(name = "number_of_rooms")
     private Integer numberOfRooms;

@@ -2,6 +2,8 @@ package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.dto.AddressForm;
 import hu.progmasters.moovsmart.service.AddressService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,8 @@ public class AddressController {
     }
 
     @PostMapping
+    @Operation(summary = "Save address")
+    @ApiResponse(responseCode = "201", description = "address saved")
     public ResponseEntity<Void> createAddress(@Valid @RequestBody AddressForm form) {
         log.info("Http request, GET /api/addresses" + form.toString());
         addressService.saveAddress(form);
@@ -38,7 +42,6 @@ public class AddressController {
 
 
     //TODO update
-
 
 
     //TODO delete

@@ -23,7 +23,6 @@ public class CustomUser {
     @Column(name = "name")
     private String name;
 
-
     @Column(name = "user_name")
     private String userName;
 

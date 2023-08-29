@@ -31,7 +31,7 @@ public class Address {
     private String street;
 
     @Column(name = "house_number")
-    private Integer houseNumber;
+    private String houseNumber;
 
     @Column(name = "door_number")
     private Integer doorNumber;

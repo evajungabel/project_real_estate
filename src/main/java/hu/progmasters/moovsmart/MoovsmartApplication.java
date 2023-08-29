@@ -27,9 +27,9 @@ public class MoovsmartApplication {
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
 				.info(new Info()
-						.title("BeeHive API")
+						.title("Estate trade API")
 						.version("1.0.1")
-						.description("This is a Bee application."));
+						.description("This is a Estate trade application."));
 	}
 
 }
