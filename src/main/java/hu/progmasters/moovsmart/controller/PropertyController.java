@@ -55,7 +55,6 @@ public class PropertyController {
         return propertyListItems;
     }
 
-
     @GetMapping("/{propertyId}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<PropertyDetails> getPropertyDetails(@PathVariable("propertyId") Long id) {
@@ -65,19 +64,8 @@ public class PropertyController {
         return new ResponseEntity<>(propertyDetails, HttpStatus.OK);
     }
 
-
-
     @PostMapping
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<PropertyDetails> getPropertyDetails(@PathVariable("propertyId") Long id) {
-        log.info("Http request, GET /api/property/{propertyId} with variable: " + id);
-        PropertyDetails propertyDetails = propertyService.getPropertyDetails(id);
-        log.info("GET data from repository/property/{propertyId} with variable: " + id);
-        return new ResponseEntity<>(propertyDetails, HttpStatus.OK);
-    }
-
-    @PostMapping
-//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<PropertyListItem> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
         log.info("Http request, POST /api/property, body: " + propertyForm.toString());
         PropertyListItem propertyListItem = propertyService.createProperty(propertyForm);
@@ -94,24 +82,7 @@ public class PropertyController {
         log.info("PUT data from repository/api/property/{propertyId} body: " + propertyForm.toString() +
                 " with variable: " + id);
         return new ResponseEntity<>(updated, HttpStatus.OK);
-    public ResponseEntity<PropertyListItem> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
-        log.info("Http request, POST /api/property, body: " + propertyForm.toString());
-        PropertyListItem propertyListItem = propertyService.createProperty(propertyForm);
-        log.info("POST data from repository/api/property, body: " + propertyForm);
-        return new ResponseEntity<>(propertyListItem, HttpStatus.CREATED);
     }
-
-    @PutMapping("/{propertyId}")
-    public ResponseEntity<PropertyListItem> update(@PathVariable("propertyId") Long id,
-                                          @Valid @RequestBody PropertyForm propertyForm) {
-        log.info("Http request, PUT /api/property/{propertyId} body: " + propertyForm.toString() +
-                " with variable: " + id);
-        PropertyListItem updated = propertyService.update(id, propertyForm);
-        log.info("PUT data from repository/api/property/{propertyId} body: " + propertyForm.toString() +
-                " with variable: " + id);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
-    }
-
 
     @DeleteMapping("/{propertyId}")
     @Secured({"ROLE_ADMIN"})
@@ -121,8 +92,5 @@ public class PropertyController {
         log.info("POST data from repository/api/property/{propertyId} with variable: " + id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
-
 
 }
