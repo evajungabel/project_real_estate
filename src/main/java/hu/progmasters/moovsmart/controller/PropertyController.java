@@ -65,7 +65,7 @@ public class PropertyController {
     }
 
     @PostMapping
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<PropertyListItem> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
         log.info("Http request, POST /api/property, body: " + propertyForm.toString());
         PropertyListItem propertyListItem = propertyService.createProperty(propertyForm);
