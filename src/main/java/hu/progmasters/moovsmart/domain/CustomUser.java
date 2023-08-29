@@ -37,7 +37,7 @@ public class CustomUser {
     @JoinTable(name = "custom_user_role")
     private List<CustomUserRole> roles;
 
-    @OneToMany(mappedBy = "customUser")
+    @OneToMany(mappedBy = "custom_user")
     private List<Property> propertyList;
 
 }

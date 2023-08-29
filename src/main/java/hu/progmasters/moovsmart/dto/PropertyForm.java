@@ -12,7 +12,6 @@ import javax.validation.constraints.*;
 @Data
 public class PropertyForm {
 
-
     @NotBlank(message = "Property name cannot be empty!")
     @Size(min = 1, max = 200, message = "Property name must be between 1 and 200 characters!")
     private String name;
