@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart.service;
 
+import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.dto.PropertyForm;
@@ -24,18 +25,20 @@ public class PropertyService {
 
     private PropertyRepository propertyRepository;
 
+    private CustomUserService customUserService;
     private ModelMapper modelMapper;
 
     @Autowired
-    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper) {
+    public PropertyService(PropertyRepository propertyRepository, CustomUserService customUserService, ModelMapper modelMapper) {
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
+        this.customUserService = customUserService;
     }
 
     public List<PropertyInfo> getProperties() {
         List<Property> properties = propertyRepository.findAll();
         List<PropertyInfo> propertyInfos = properties.stream()
-                .map(property -> modelMapper.map(properties, PropertyInfo.class))
+                .map(property -> modelMapper.map(property, PropertyInfo.class))
                 .collect(Collectors.toList());
         return propertyInfos;
     }
@@ -56,9 +59,11 @@ public class PropertyService {
     }
 
     public PropertyInfo createProperty(PropertyForm propertyForm) {
-       Property toSave = modelMapper.map(propertyForm,Property.class);
-       Property property = propertyRepository.save(toSave);
-       return modelMapper.map(property, PropertyInfo.class);
+        Property toSave = modelMapper.map(propertyForm, Property.class);
+        CustomUser customUser = customUserService.findCustomUserById(propertyForm.getCustomUserId());
+        toSave.setCustomUser(customUser);
+        Property property = propertyRepository.save(toSave);
+        return modelMapper.map(property, PropertyInfo.class);
     }
 
     public void makeInactive(Long id) {

@@ -2,6 +2,7 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.CustomUser;
+import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,8 +81,28 @@ public class CustomUserService implements UserDetailsService {
                 .map(customUser -> modelMapper.map(customUser, CustomUserInfo.class))
                 .collect(Collectors.toList());
         return customUserInfos;
-
     }
+
+    public void userSale(String username, Long pId) {
+        CustomUser customUser = findCustomUserById(username);
+        for (Property property : customUser.getPropertyList()) {
+            if (property.getId().equals(pId)) {
+                property.setActive(false);
+                property.setDateOfSale(LocalDateTime.now());
+            }
+        }
+    }
+
+    public CustomUser findCustomUserById(String username) {
+        Optional<CustomUser> customUserOptional = customUserRepository.findById(username);
+        if (customUserOptional.isEmpty()) {
+            throw new UsernameNotFoundException(username);
+        }
+        return customUserOptional.get();
+    }
+
+
+
 
 
 }

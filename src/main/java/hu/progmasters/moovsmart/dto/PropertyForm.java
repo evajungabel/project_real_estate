@@ -36,7 +36,6 @@ public class PropertyForm {
     private String imageUrl;
 
     @NotNull(message = "customUserId cannot be empty!")
-    @Positive
-    private Long customUserId;
+    private String customUserId;
 
 }

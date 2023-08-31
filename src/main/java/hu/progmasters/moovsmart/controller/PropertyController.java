@@ -72,7 +72,7 @@ public class PropertyController {
     @PostMapping
     @Operation(summary = "Save property")
     @ApiResponse(responseCode = "201", description = "Property saved")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<PropertyInfo> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
         log.info("Http request, POST /api/property, body: " + propertyForm.toString());
         PropertyInfo propertyInfo = propertyService.createProperty(propertyForm);
@@ -83,7 +83,7 @@ public class PropertyController {
     @PutMapping("/{propertyId}")
     @Operation(summary = "Update property")
     @ApiResponse(responseCode = "200", description = "Property updated")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<PropertyInfo> update(@PathVariable("propertyId") Long id,
                                                @Valid @RequestBody PropertyForm propertyForm) {
         log.info("Http request, PUT /api/property/{propertyId} body: " + propertyForm.toString() +
@@ -97,7 +97,7 @@ public class PropertyController {
     @DeleteMapping("/{propertyId}")
     @Operation(summary = "Delete property")
     @ApiResponse(responseCode = "200", description = "Property is deleted")
-    @Secured({"ROLE_ADMIN"})
+//    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Void> delete(@PathVariable("propertyId") Long id) {
         log.info("Http request, DELETE /api/property/{propertyId} with variable: " + id);
         propertyService.makeInactive(id);

@@ -71,7 +71,17 @@ public class CustomUserController {
         List<CustomUserInfo> customerInfoList = customUserService.getCustomUsers();
         log.info("GET data from repository/api/list of all customers");
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
+    }
 
+    @DeleteMapping("/sale/{username}/{propertyId}")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Operation(summary = "Customer sales a property and it is deleted")
+    @ApiResponse(responseCode = "200", description = "Property is sold and deleted by costumer")
+    public ResponseEntity<Void> deleteSale(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
+        log.info("Http request, DELETE /api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
+        customUserService.userSale(username, pId);
+        log.info("DELETE data from repository/api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
