@@ -73,4 +73,14 @@ public class CustomUserService implements UserDetailsService {
                 .build();
     }
 
+    public List<CustomUserInfo> getCustomUsers() {
+        List<CustomUser> customUsers = customUserRepository.findAll();
+        List<CustomUserInfo> customUserInfos = customUsers.stream()
+                .map(customUser -> modelMapper.map(customUser, CustomUserInfo.class))
+                .collect(Collectors.toList());
+        return customUserInfos;
+
+    }
+
+
 }

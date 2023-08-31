@@ -62,6 +62,19 @@ public class CustomUserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping
+    @Secured({"ROLE_ADMIN"})
+    @Operation(summary = "Get all customers")
+    @ApiResponse(responseCode = "200", description = "List of customers")
+    public ResponseEntity<List<CustomUserInfo>> getAllCustomers() {
+        log.info("Http request, GET /api/list of all customers");
+        List<CustomUserInfo> customerInfoList = customUserService.getCustomUsers();
+        log.info("GET data from repository/api/list of all customers");
+        return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
+
+    }
+
+
 
 
 }
