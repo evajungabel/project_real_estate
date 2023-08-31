@@ -32,14 +32,19 @@ public class AddressController {
     public ResponseEntity<Void> createAddress(@Valid @RequestBody AddressForm form) {
         log.info("Http request, GET /api/addresses" + form.toString());
         addressService.saveAddress(form);
+        log.info("POST data from repository/api/addresses, body: " + form);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     //TODO ListAll
 
-
-    //TODO FindById
-
+//    @GetMapping("/id/{id}")
+//    @Operation(summary = "Find addres by id.")
+//    public ResponseEntity<AddressInfo> findById(@PathVariable("id") Long id) {
+//        log.info("Http request, GET /api/addresses/{id} with variable" + id);
+//        AddressInfo addressInfo = addressService.findById(id);
+//        return new ResponseEntity<>(addressInfo, HttpStatus.OK);
+//    }
 
     //TODO update
 
