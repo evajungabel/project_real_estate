@@ -38,6 +38,20 @@ public class CustomUserController {
     }
 
 
+
+    @GetMapping("/login/me")
+    @Operation(summary = "Login customer")
+    @ApiResponse(responseCode = "201", description = "Customer is logged in")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<UserDetails> getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("Http request, GET /api/customusers, logged in");
+        UserDetails loggedInUser = (User) authentication.getPrincipal();
+        log.info("GET data from repository/api/customusers, logged in");
+        return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
+    }
+
+
     @PostMapping("/registration")
     @Operation(summary = "Save customer")
     @ApiResponse(responseCode = "201", description = "Customer is saved")

@@ -56,8 +56,21 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
+
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return null;
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        CustomUser customUser = customUserRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException("username not found"));
+
+        String[] roles = customUser.getRoles().stream()
+                .map(Enum::toString)
+                .toArray(String[]::new);
+
+        return User
+                .withUsername(customUser.getUsername())
+                .authorities(AuthorityUtils.createAuthorityList(roles))
+                .password(customUser.getPassword())
+                .build();
     }
+
 }
