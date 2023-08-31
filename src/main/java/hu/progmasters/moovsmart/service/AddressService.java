@@ -2,7 +2,6 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.Address;
 import hu.progmasters.moovsmart.dto.AddressForm;
-import hu.progmasters.moovsmart.dto.AddressInfo;
 import hu.progmasters.moovsmart.repository.AddressRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,15 +7,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PropertyDetails {
+public class PropertyInfo {
 
     private long id;
     private String name;
     private int numberOfRooms;
     private int price;
-    private String description;
     private String imageUrl;
-
-
 
 }

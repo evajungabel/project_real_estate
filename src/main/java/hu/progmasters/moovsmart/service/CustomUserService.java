@@ -1,65 +1,63 @@
 package hu.progmasters.moovsmart.service;
 
+import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.CustomUser;
-import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
-import hu.progmasters.moovsmart.exception.CustomUserNotFoundException;
+import hu.progmasters.moovsmart.dto.CustomUserInfo;
+import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
+import hu.progmasters.moovsmart.exception.UsernameExistsException;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class CustomUserService {
+public class CustomUserService implements UserDetailsService {
 
-    private CustomUserRepository customUserRepository;
+    private final CustomUserRepository customUserRepository;
 
     private ModelMapper modelMapper;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
-    public void userDelete(Long cId, Long pId) {
-        CustomUser customUser = findCustomUserById(cId);
-        for (Property property : customUser.getPropertyList()) {
-            if (property.getId().equals(pId)) {
-                property.setActive(false);
-                property.setDateOfInactivation(LocalDateTime.now());
-            }
+
+    public void register(CustomUserForm command) {
+        if (customUserRepository.findByEmail(command.getEmail()) != null) {
+            throw new EmailAddressExistsException(command.getEmail());
+        } else if (customUserRepository.findById(command.getUsername()).isPresent()) {
+            throw new UsernameExistsException(command.getUsername());
+        } else {
+            CustomUser customUser = new CustomUser()
+                    .setUsername(command.getUsername())
+                    .setName(command.getName())
+                    .setEmail(command.getEmail())
+                    .setPassword(passwordEncoder.encode(command.getPassword()))
+                    .setRoles(List.of(CustomUserRole.ROLE_USER));
+            customUserRepository.save(customUser);
         }
     }
 
-    private CustomUser findCustomUserById(Long cId) {
-        Optional<CustomUser> customUserOptional = customUserRepository.findById(cId);
-        if (customUserOptional.isEmpty()) {
-            throw new CustomUserNotFoundException(cId);
-        }
-        return customUserOptional.get();
-    }
-
-
-    public void save(CustomUserForm command) {
-        CustomUser toSave = modelMapper.map(command, CustomUser.class);
-        customUserRepository.save(toSave);
-    }
-
-    public void userSale(Long cId, Long pId) {
-        CustomUser customUser = findCustomUserById(cId);
-        for (Property property : customUser.getPropertyList()) {
-            if (property.getId().equals(pId)) {
-                property.setActive(false);
-                property.setDateOfSale(LocalDateTime.now());
-            }
-        }
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return null;
     }
 }

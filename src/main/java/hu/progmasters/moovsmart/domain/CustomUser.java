@@ -15,22 +15,19 @@ import java.util.List;
 @Table(name = "custom_user")
 public class CustomUser {
 
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "custom_user_id")
-    private Long id;
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "user_name")
-    private String userName;
-
     @Column(name = "password")
     private String password;
 
-    @Column(name = "e_mail")
-    private String eMail;
+    @Column(name = "e_mail", unique = true)
+    private String email;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
@@ -39,5 +36,30 @@ public class CustomUser {
 
     @OneToMany(mappedBy = "customUser")
     private List<Property> propertyList;
+
+    public CustomUser setUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public CustomUser setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public CustomUser setEmail(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public CustomUser setPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public CustomUser setRoles(List<CustomUserRole> role) {
+        this.roles = role;
+        return this;
+    }
 
 }

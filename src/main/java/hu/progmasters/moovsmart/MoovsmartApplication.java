@@ -32,4 +32,5 @@ public class MoovsmartApplication {
 						.description("This is a Estate trade application."));
 	}
 
+
 }

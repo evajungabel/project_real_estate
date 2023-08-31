@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -66,7 +67,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(PropertyNotFoundException.class)
-    public ResponseEntity<ApiError> handlePropertyNotFound(PropertyNotFoundException ex) {
+    public ResponseEntity<ApiError> handlePropertyNotFoundException(PropertyNotFoundException ex) {
         logger.error("Not found error: ", ex);
 
         ApiError body = new ApiError("NOT_FOUND_ERROR", "Property not found error.", ex.getLocalizedMessage());
@@ -74,11 +75,38 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(CustomUserNotFoundException.class)
-    public ResponseEntity<ApiError> handleCustomUserNotFound(CustomUserNotFoundException ex) {
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiError> handleUserNotFoundException(UsernameNotFoundException ex) {
         logger.error("Not found error: ", ex);
 
         ApiError body = new ApiError("NOT_FOUND_ERROR", "User not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmailAddressNotFoundException.class)
+    public ResponseEntity<ApiError> handleEmailAddressNotFoundException(EmailAddressNotFoundException ex) {
+        logger.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "Email address not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmailAddressExistsException.class)
+    public ResponseEntity<ApiError> handleEmailAddressExistsException(EmailAddressExistsException ex) {
+        logger.error("Email address exists error: ", ex);
+
+        ApiError body = new ApiError("EMAIL_ADDRESS_EXISTS_ERROR", "Email address exists error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UsernameExistsException.class)
+    public ResponseEntity<ApiError> handleUsernameExistsException(UsernameExistsException ex) {
+        logger.error("Username exists error: ", ex);
+
+        ApiError body = new ApiError("USERNAME_EXISTS_ERROR", "Username exists error.", ex.getLocalizedMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
