@@ -103,6 +103,19 @@ public class CustomUserService implements UserDetailsService {
 
 
 
+    public void userDelete(String username, Long pId) {
+        CustomUser customUser = findCustomUserById(username);
+        for (Property property : customUser.getPropertyList()) {
+            if (property.getId().equals(pId)) {
+                property.setActive(false);
+                property.setDateOfInactivation(LocalDateTime.now());
+            }
+        }
+    }
+
+
+
+
 
 
 }

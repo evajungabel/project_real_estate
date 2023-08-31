@@ -85,6 +85,21 @@ public class CustomUserController {
     }
 
 
+    @DeleteMapping("/{username}/{propertyId}")
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Operation(summary = "Customer deletes a property")
+    @ApiResponse(responseCode = "200", description = "Property is deleted by costumer")
+    public ResponseEntity<Void> delete(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
+        log.info("Http request, DELETE /api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
+        customUserService.userDelete(username, pId);
+        log.info("DELETE data from repository/api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+
+
+
 
 
 }
