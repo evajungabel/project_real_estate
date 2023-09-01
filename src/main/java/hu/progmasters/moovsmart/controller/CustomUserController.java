@@ -92,10 +92,4 @@ public class CustomUserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-
-
-
-
-
 }
