@@ -2,9 +2,7 @@ package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
-import hu.progmasters.moovsmart.dto.PropertyInfo;
 import hu.progmasters.moovsmart.service.CustomUserService;
-import hu.progmasters.moovsmart.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -29,12 +27,10 @@ public class CustomUserController {
 
     private CustomUserService customUserService;
 
-    private EmailService emailService;
 
     @Autowired
-    public CustomUserController(CustomUserService customUserService, EmailService emailService) {
+    public CustomUserController(CustomUserService customUserService) {
         this.customUserService = customUserService;
-        this.emailService = emailService;
     }
 
 
