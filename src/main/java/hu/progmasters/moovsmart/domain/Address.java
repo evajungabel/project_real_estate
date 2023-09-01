@@ -36,6 +36,9 @@ public class Address {
     @Column(name = "door_number")
     private Integer doorNumber;
 
+    @Column(name = "deleted")
+    private Boolean deleted;
+
     @OneToOne
     @JoinColumn(name = "property_id")
     private Property property;
