@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/addresses")
@@ -67,10 +68,10 @@ public class AddressController {
     @GetMapping("/value/{value}")
     @Operation(summary = "Find address by value.")
     @ApiResponse(responseCode = "200", description = "Find Addresses")
-    public ResponseEntity<AddressInfo> findByValue(@PathVariable("value") String value) {
+    public ResponseEntity<List<AddressInfo>> findByValue(@PathVariable("value") String value) {
         log.info("Http request, GET /api/addresses/{value} with variable" + value);
-        AddressInfo addressInfo = addressService.findByValue(value);
+        List<AddressInfo> addressInfoList = addressService.findByValue(value);
         log.info("GET data from repository/api/list of all addresses");
-        return new ResponseEntity<>(addressInfo, HttpStatus.OK);
+        return new ResponseEntity<>(addressInfoList, HttpStatus.OK);
     }
 }

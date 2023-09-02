@@ -22,7 +22,7 @@ public class Property {
 
 
     @Column(name = "date_of_creation")
-    private LocalDateTime dateOfCreation = LocalDateTime.now();
+    private LocalDateTime dateOfCreation;
 
     @Column(name = "date_of_sale")
     private LocalDateTime dateOfSale;

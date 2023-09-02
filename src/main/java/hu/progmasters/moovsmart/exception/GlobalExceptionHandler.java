@@ -65,6 +65,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
 
     }
+    @ExceptionHandler(AddressNotFoundException.class)
+    public ResponseEntity<ApiError> handleAddressNotFoundException(AddressNotFoundException ex) {
+        logger.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "Address not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(PropertyNotFoundException.class)
     public ResponseEntity<ApiError> handlePropertyNotFoundException(PropertyNotFoundException ex) {

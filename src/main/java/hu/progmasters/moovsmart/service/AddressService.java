@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,7 +20,7 @@ public class AddressService {
 
     private AddressRepository addressRepository;
     private ModelMapper modelMapper;
-    
+
     @Autowired
     public AddressService(AddressRepository addressRepository, ModelMapper modelMapper) {
         this.addressRepository = addressRepository;
@@ -31,12 +33,12 @@ public class AddressService {
     }
 
     public AddressInfo findById(Long id) {
-        return modelMapper.map(findAddressById(id),AddressInfo.class);
+        return modelMapper.map(findAddressById(id), AddressInfo.class);
     }
 
     public Address findAddressById(Long id) {
         Optional<Address> addressOptional = addressRepository.findById(id);
-        if (addressOptional.isEmpty()){
+        if (addressOptional.isEmpty()) {
             throw new AddressNotFoundException(id);
         }
         return addressOptional.get();
@@ -50,20 +52,18 @@ public class AddressService {
 
     public AddressInfo update(Long id, AddressForm form) {
         Address toUpdate = findAddressById(id);
-        modelMapper.map(form,toUpdate);
+        modelMapper.map(form, toUpdate);
         return modelMapper.map(toUpdate, AddressInfo.class);
     }
 
-    public AddressInfo findByValue(String value) {
-        return modelMapper.map(findAddressByValue(value),AddressInfo.class);
-        return null;
-    }
-
-    private Address findAddressByValue(String value) {
-        Optional<Address> addressOptional = addressRepository.findByValue(value);
-        if (addressOptional.isEmpty()){
-            throw new AddressNotFoundException(value);
+    public List<AddressInfo> findByValue(String value) {
+        List<Address> addresses = addressRepository.findAddressByValue(value);
+        List<AddressInfo> addressInfoList = new ArrayList<>();
+        for (Address address : addresses) {
+            AddressInfo addressInfo = modelMapper.map(address, AddressInfo.class);
+            addressInfoList.add(addressInfo);
         }
-        return addressOptional.get();
+        return addressInfoList;
     }
 }
+
