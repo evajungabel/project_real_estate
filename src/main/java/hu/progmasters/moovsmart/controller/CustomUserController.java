@@ -57,14 +57,19 @@ public class CustomUserController {
         customUserService.register(command);
         emailService.sendEmail(command.getEmail(), "Felhasználói fiók aktivalása",
                 "Kedves " + command.getName() +
-                "! \n \n Köszönjük, hoy regisztrált az olalunkra! \n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját! \n \n http://localhost:8080/confirm-account?token=0a9d29cb-a967-4aec-82f2-51b855d4a3cf");
+                "! \n \n Köszönjük, hogy regisztrált az oldalunkra! \n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját! \n \n http://localhost:8080/api/customusers/activation/"
+                        + customUserService.findCustomUserByEmail(command.getEmail()).getActivation());
         log.info("POST data from repository/api/customusers, body: " + command);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/activation/{confirmationToken}")
-    public ResponseEntity<String> activation(@PathVariable("confirmationToken") String confirmationToken, HttpServletResponse response){
+    @Operation(summary = "Activation confirmation token by costumer")
+    @ApiResponse(responseCode = "200", description = "Activation confirmation token by customer")
+    public ResponseEntity<String> activation(@Valid @PathVariable("confirmationToken") String confirmationToken){
+        log.info("Http request, GET /api/customusers, activation of confirmation token: " + confirmationToken);
         String result = customUserService.userActivation(confirmationToken);
+        log.info("GET /api/customusers, successful activation of confirmation token: " + confirmationToken);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

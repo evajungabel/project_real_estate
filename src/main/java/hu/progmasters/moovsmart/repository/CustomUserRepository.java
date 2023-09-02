@@ -11,6 +11,6 @@ public interface CustomUserRepository extends JpaRepository<CustomUser, String> 
 
     CustomUser findByEmail(String email);
 
-    CustomUser findByConfirmationToken(String confirmationToken);
+    CustomUser findByActivation(String confirmationToken);
 
 }

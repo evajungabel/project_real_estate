@@ -2,10 +2,7 @@ package hu.progmasters.moovsmart.domain;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.dto.ConfirmationToken;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.br.CPF;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "custom_user")
 public class CustomUser implements UserDetails {
@@ -53,40 +51,6 @@ public class CustomUser implements UserDetails {
     @OneToOne(mappedBy = "customUser")
     private ConfirmationToken confirmationToken;
 
-    public CustomUser setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
-    public CustomUser setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public CustomUser setEmail(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public CustomUser setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public CustomUser setRoles(List<CustomUserRole> role) {
-        this.roles = role;
-        return this;
-    }
-
-    public CustomUser setEnable(boolean enable) {
-        this.enable = enable;
-        return this;
-    }
-
-    public CustomUser setActivation(String activation) {
-        this.activation = activation;
-        return this;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -9,8 +9,9 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-@NoArgsConstructor
+
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "confirmationToken")
@@ -30,9 +31,5 @@ public class ConfirmationToken {
     @JoinColumn(name = "custom_user_username")
     private CustomUser customUser;
 
-    public ConfirmationToken(CustomUserForm customUserForm) {
-        this.customUser = customUser;
-        createdDate = new Date();
-        confirmationToken = UUID.randomUUID().toString();
-    }
+
 }

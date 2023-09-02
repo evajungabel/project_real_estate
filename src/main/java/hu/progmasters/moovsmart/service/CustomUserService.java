@@ -23,8 +23,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,29 +53,33 @@ public class CustomUserService implements UserDetailsService {
         } else if (customUserRepository.findById(command.getUsername()).isPresent()) {
             throw new UsernameExistsException(command.getUsername());
         } else {
-            CustomUser customUser = new CustomUser()
-                    .setUsername(command.getUsername())
-                    .setName(command.getName())
-                    .setEmail(command.getEmail())
-                    .setPassword(passwordEncoder.encode(command.getPassword()))
-                    .setRoles(List.of(CustomUserRole.ROLE_USER))
-                    .setEnable(false)
-                    .setActivation((new ConfirmationToken()).getConfirmationToken());
+            ConfirmationToken confirmationToken = new ConfirmationToken();
+            confirmationToken.setCreatedDate(new Date());
+            confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
+            CustomUser customUser = new CustomUser().builder()
+                    .username(command.getUsername())
+                    .name(command.getName())
+                    .email(command.getEmail())
+                    .password(passwordEncoder.encode(command.getPassword()))
+                    .roles(List.of(CustomUserRole.ROLE_USER))
+                    .enable(false)
+                    .activation(confirmationToken.getConfirmationToken())
+                    .build();
             customUserRepository.save(customUser);
         }
     }
 
     public String userActivation(String confirmationToken){
-        CustomUser customUser = customUserRepository.findByConfirmationToken(confirmationToken);
+        CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
         try{
             customUser.setEnable(true);
             customUser.setActivation("");
-            customUserRepository.save(customUser); //Kell-e?
-            return "ok";
+          return "Activation is successful!";
         } catch (TokenCannotBeUsedException e){
             throw  new TokenCannotBeUsedException(confirmationToken);
         }
     }
+
 
     public void save(CustomUser customUser){
         customUserRepository.save(customUser);
