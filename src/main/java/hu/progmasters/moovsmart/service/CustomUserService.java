@@ -6,6 +6,7 @@ import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
+import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
 import hu.progmasters.moovsmart.exception.UsernameExistsException;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
@@ -56,6 +57,10 @@ public class CustomUserService implements UserDetailsService {
                     .setRoles(List.of(CustomUserRole.ROLE_USER));
             customUserRepository.save(customUser);
         }
+    }
+
+    public void save(CustomUser customUser){
+        customUserRepository.save(customUser);
     }
 
 
@@ -113,9 +118,12 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-
-
-
-
+    public CustomUser findCustomUserByEmail(String email) {
+        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByEmail(email));
+        if (customUserOptional.isEmpty()) {
+            throw new EmailAddressNotFoundException(email);
+        }
+        return customUserOptional.get();
+    }
 
 }

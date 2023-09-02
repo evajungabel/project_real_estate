@@ -119,6 +119,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(TokenCannotBeUsedException.class)
+    public ResponseEntity<ApiError> handleTokenCannotBeUsedException(TokenCannotBeUsedException ex) {
+        logger.error("The link is invalid or broken error: ", ex);
+
+        ApiError body = new ApiError("TOKEN_CANNOT_BE_USED_ERROR", "The link is invalid or broken error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException ex) {
         logger.error("Illegal argument error: ", ex);

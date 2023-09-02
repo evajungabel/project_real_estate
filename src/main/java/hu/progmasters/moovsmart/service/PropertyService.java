@@ -38,19 +38,17 @@ public class PropertyService {
 
     public List<PropertyInfo> getProperties() {
         List<Property> properties = propertyRepository.findAll();
-        List<PropertyInfo> propertyInfos = properties.stream()
+        return properties.stream()
                 .map(property -> modelMapper.map(property, PropertyInfo.class))
                 .collect(Collectors.toList());
-        return propertyInfos;
     }
 
     public List<PropertyInfo> findPaginated(int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Property> pagedResult = propertyRepository.findAll(paging);
-        List<PropertyInfo> propertyInfos = pagedResult.stream()
+        return pagedResult.stream()
                 .map(property -> modelMapper.map(property, PropertyInfo.class))
                 .collect(Collectors.toList());
-        return propertyInfos;
     }
 
 

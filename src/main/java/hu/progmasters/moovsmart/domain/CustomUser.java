@@ -1,11 +1,15 @@
 package hu.progmasters.moovsmart.domain;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
+import hu.progmasters.moovsmart.dto.ConfirmationToken;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 @NoArgsConstructor
@@ -13,8 +17,9 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "custom_user")
-public class CustomUser {
+public class CustomUser implements UserDetails {
 
+    private boolean enable;
 
     @Id
     @Column(name = "username")
@@ -36,6 +41,9 @@ public class CustomUser {
 
     @OneToMany(mappedBy = "customUser")
     private List<Property> propertyList;
+
+    @OneToOne(mappedBy = "customUser")
+    private ConfirmationToken confirmationToken;
 
     public CustomUser setUsername(String username) {
         this.username = username;
@@ -61,5 +69,31 @@ public class CustomUser {
         this.roles = role;
         return this;
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
 
 }
