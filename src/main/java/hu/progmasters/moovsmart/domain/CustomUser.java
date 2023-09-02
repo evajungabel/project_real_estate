@@ -1,7 +1,6 @@
 package hu.progmasters.moovsmart.domain;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
-import hu.progmasters.moovsmart.dto.ConfirmationToken;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,7 +47,7 @@ public class CustomUser implements UserDetails {
     @OneToMany(mappedBy = "customUser")
     private List<Property> propertyList;
 
-    @OneToOne(mappedBy = "customUser")
+    @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL)
     private ConfirmationToken confirmationToken;
 
 
