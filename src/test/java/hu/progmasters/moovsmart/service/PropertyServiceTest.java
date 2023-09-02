@@ -31,4 +31,6 @@ public class PropertyServiceTest {
         assertThat(propertyService.getProperties()).isEmpty();
     }
 
+
+
 }
