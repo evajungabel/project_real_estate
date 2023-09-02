@@ -110,6 +110,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(SendingEmailException.class)
+    public ResponseEntity<ApiError> handleSendingEmailException(SendingEmailException ex) {
+        logger.error("sending email error: ", ex);
+
+        ApiError body = new ApiError("SENDING_EMAIL_ERROR", "Sending email error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(UsernameExistsException.class)
     public ResponseEntity<ApiError> handleUsernameExistsException(UsernameExistsException ex) {
         logger.error("Username exists error: ", ex);

@@ -5,12 +5,16 @@ import hu.progmasters.moovsmart.dto.ConfirmationToken;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,8 +22,6 @@ import java.util.List;
 @Entity
 @Table(name = "custom_user")
 public class CustomUser implements UserDetails {
-
-    private boolean enable;
 
     @Id
     @Column(name = "username")
@@ -33,6 +35,12 @@ public class CustomUser implements UserDetails {
 
     @Column(name = "e_mail", unique = true)
     private String email;
+
+    @Column(name = "enable")
+    private boolean enable;
+
+    @Column(name = "activation")
+    private String activation;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
@@ -70,29 +78,44 @@ public class CustomUser implements UserDetails {
         return this;
     }
 
+    public CustomUser setEnable(boolean enable) {
+        this.enable = enable;
+        return this;
+    }
+
+    public CustomUser setActivation(String activation) {
+        this.activation = activation;
+        return this;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Collection<GrantedAuthority> authorities = new HashSet<>();
+        Set<CustomUserRole> roles1 = (Set<CustomUserRole>) getRoles();
+        for (CustomUserRole role: roles1) {
+            authorities.add(new SimpleGrantedAuthority(role.getRole()));
+        }
+        return authorities;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return enable;
     }
 
 

@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.controller;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.service.CustomUserService;
+import hu.progmasters.moovsmart.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -27,13 +29,12 @@ public class CustomUserController {
 
     private CustomUserService customUserService;
 
-
+    private EmailService emailService;
     @Autowired
-    public CustomUserController(CustomUserService customUserService) {
+    public CustomUserController(CustomUserService customUserService, EmailService emailService) {
         this.customUserService = customUserService;
+        this.emailService = emailService;
     }
-
-
 
     @GetMapping("/login/me")
     @Operation(summary = "Login customer")
@@ -54,8 +55,17 @@ public class CustomUserController {
     public ResponseEntity<Void> register(@Valid @RequestBody CustomUserForm command) {
         log.info("Http request, POST /api/customusers, body: " + command.toString());
         customUserService.register(command);
+        emailService.sendEmail(command.getEmail(), "Felhasználói fiók aktivalása",
+                "Kedves " + command.getName() +
+                "! \n \n Köszönjük, hoy regisztrált az olalunkra! \n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját! \n \n http://localhost:8080/confirm-account?token=0a9d29cb-a967-4aec-82f2-51b855d4a3cf");
         log.info("POST data from repository/api/customusers, body: " + command);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/activation/{confirmationToken}")
+    public ResponseEntity<String> activation(@PathVariable("confirmationToken") String confirmationToken, HttpServletResponse response){
+        String result = customUserService.userActivation(confirmationToken);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping
@@ -91,10 +101,6 @@ public class CustomUserController {
         log.info("DELETE data from repository/api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
-
-
 
 
 

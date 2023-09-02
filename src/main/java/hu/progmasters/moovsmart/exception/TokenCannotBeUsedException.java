@@ -2,9 +2,9 @@ package hu.progmasters.moovsmart.exception;
 
 public class TokenCannotBeUsedException extends RuntimeException {
 
-    private final Long tokenId;
+    private final String tokenId;
 
-    public TokenCannotBeUsedException(Long tokenId) {
+    public TokenCannotBeUsedException(String tokenId) {
         this.tokenId = tokenId;
     }
 }

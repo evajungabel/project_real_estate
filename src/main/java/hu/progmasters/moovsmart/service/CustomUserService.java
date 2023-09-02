@@ -3,10 +3,12 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
+import hu.progmasters.moovsmart.dto.ConfirmationToken;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
+import hu.progmasters.moovsmart.exception.TokenCannotBeUsedException;
 import hu.progmasters.moovsmart.exception.UsernameExistsException;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
@@ -54,8 +56,22 @@ public class CustomUserService implements UserDetailsService {
                     .setName(command.getName())
                     .setEmail(command.getEmail())
                     .setPassword(passwordEncoder.encode(command.getPassword()))
-                    .setRoles(List.of(CustomUserRole.ROLE_USER));
+                    .setRoles(List.of(CustomUserRole.ROLE_USER))
+                    .setEnable(false)
+                    .setActivation((new ConfirmationToken()).getConfirmationToken());
             customUserRepository.save(customUser);
+        }
+    }
+
+    public String userActivation(String confirmationToken){
+        CustomUser customUser = customUserRepository.findByConfirmationToken(confirmationToken);
+        try{
+            customUser.setEnable(true);
+            customUser.setActivation("");
+            customUserRepository.save(customUser); //Kell-e?
+            return "ok";
+        } catch (TokenCannotBeUsedException e){
+            throw  new TokenCannotBeUsedException(confirmationToken);
         }
     }
 

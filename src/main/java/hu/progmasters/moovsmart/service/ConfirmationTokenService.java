@@ -35,15 +35,15 @@ public class ConfirmationTokenService {
         confirmationTokenRepository.save(confirmationToken);
     }
 
-    public void findByConfirmationToken(ConfirmationToken confirmationToken) {
-        if (confirmationToken != null) {
-            CustomUser customUser = customUserService.findCustomUserByEmail(confirmationToken.getCustomUser().getEmail());
-            customUser.setEnable(true);
-            customUserService.save(customUser);
-        } else {
-            throw new TokenCannotBeUsedException(confirmationToken.getTokenId());
-        }
-    }
+//    public void findByConfirmationToken(ConfirmationToken confirmationToken) {
+//        if (confirmationToken != null) {
+//            CustomUser customUser = customUserService.findCustomUserByEmail(confirmationToken.getCustomUser().getEmail());
+//            customUser.setEnable(true);
+//            customUserService.save(customUser);
+//        } else {
+//            throw new TokenCannotBeUsedException(confirmationToken.getTokenId());
+//        }
+//    }
 
 //    public ConfirmationToken getToken(CustomUserForm command) {
 //        return new ConfirmationToken(modelMapper.map(command, CustomUser.class));
