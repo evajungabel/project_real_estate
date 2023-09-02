@@ -14,7 +14,7 @@ public class AddressInfo {
     private String country;
     private String city;
     private String street;
-    private Integer houseNumber;
+    private String houseNumber;
     private Integer doorNumber;
     private Long propertyId;
 }
