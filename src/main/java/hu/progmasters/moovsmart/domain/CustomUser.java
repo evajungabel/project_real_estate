@@ -25,7 +25,7 @@ public class CustomUser implements UserDetails {
     @Column(name = "custom_user_id")
     private Long customUserId;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "name")
