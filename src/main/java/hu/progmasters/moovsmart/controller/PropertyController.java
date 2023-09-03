@@ -82,7 +82,7 @@ public class PropertyController {
 
     @PutMapping("/{propertyId}")
     @Operation(summary = "Update property")
-    @ApiResponse(responseCode = "200", description = "Property updated")
+    @ApiResponse(responseCode = "200", description = "Property is updated")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<PropertyInfo> update(@PathVariable("propertyId") Long id,
                                                @Valid @RequestBody PropertyForm propertyForm) {

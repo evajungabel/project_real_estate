@@ -6,6 +6,7 @@ import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.ConfirmationToken;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
+import hu.progmasters.moovsmart.dto.PropertyInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
 import hu.progmasters.moovsmart.exception.TokenCannotBeUsedException;
@@ -46,7 +47,6 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-
     public void register(CustomUserForm command) {
         if (customUserRepository.findByEmail(command.getEmail()) != null) {
             throw new EmailAddressExistsException(command.getEmail());
@@ -69,19 +69,19 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-    public String userActivation(String confirmationToken){
+    public String userActivation(String confirmationToken) {
         CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
-        try{
+        try {
             customUser.setEnable(true);
             customUser.setActivation("");
-          return "Activation is successful!";
-        } catch (TokenCannotBeUsedException e){
-            throw  new TokenCannotBeUsedException(confirmationToken);
+            return "Activation is successful!";
+        } catch (TokenCannotBeUsedException e) {
+            throw new TokenCannotBeUsedException(confirmationToken);
         }
     }
 
 
-    public void save(CustomUser customUser){
+    public void save(CustomUser customUser) {
         customUserRepository.save(customUser);
     }
 
@@ -129,7 +129,6 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-
     public void userDelete(String username, Long pId) {
         CustomUser customUser = findCustomUserById(username);
         for (Property property : customUser.getPropertyList()) {
@@ -148,4 +147,15 @@ public class CustomUserService implements UserDetailsService {
         return customUserOptional.get();
     }
 
+    public CustomUserInfo update(String username, CustomUserForm customUserForm) {
+        CustomUser customUser = findCustomUserById(username);
+        if (customUserRepository.findByEmail(customUserForm.getEmail()) != null) {
+            throw new EmailAddressExistsException(customUserForm.getEmail());
+        } else if (customUserRepository.findById(customUserForm.getUsername()).isPresent()) {
+            throw new UsernameExistsException(customUserForm.getUsername());
+        } else {
+            modelMapper.map(customUserForm, customUser);
+            return modelMapper.map(customUser, CustomUserInfo.class);
+        }
+    }
 }

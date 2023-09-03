@@ -20,8 +20,11 @@ import java.util.Set;
 @Entity
 @Table(name = "custom_user")
 public class CustomUser implements UserDetails {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "custom_user_id")
+    private Long customUserId;
+
     @Column(name = "username")
     private String username;
 
@@ -56,7 +59,7 @@ public class CustomUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new HashSet<>();
         Set<CustomUserRole> roles1 = (Set<CustomUserRole>) getRoles();
-        for (CustomUserRole role: roles1) {
+        for (CustomUserRole role : roles1) {
             authorities.add(new SimpleGrantedAuthority(role.getRole()));
         }
         return authorities;
