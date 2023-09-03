@@ -103,6 +103,18 @@ public class CustomUserController {
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{customUsername}")
+    @Operation(summary = "Delete customer")
+    @ApiResponse(responseCode = "200", description = "Customer is deleted")
+//    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<Void> deleteUser(@PathVariable("customUsername") String customUsername) {
+        log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + customUsername);
+        customUserService.makeInactive(customUsername);
+        log.info("DELETE data from repository/api/customusers/{customUsername} with variable: " + customUsername);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
     @DeleteMapping("/sale/{username}/{propertyId}")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer sales a property and it is deleted")

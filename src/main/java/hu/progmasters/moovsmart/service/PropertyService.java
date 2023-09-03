@@ -67,8 +67,8 @@ public class PropertyService {
     }
 
     public void makeInactive(Long id) {
-        Property toUpdate = findPropertyById(id);
-        toUpdate.setActive(false);
+        Property toDelete = findPropertyById(id);
+        toDelete.setActive(false);
     }
 
     private Property findPropertyById(Long propertyId) {

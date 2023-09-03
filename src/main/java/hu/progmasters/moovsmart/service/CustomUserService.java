@@ -2,11 +2,11 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.CustomUser;
+import hu.progmasters.moovsmart.domain.CustomUserDeleted;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.ConfirmationToken;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
-import hu.progmasters.moovsmart.dto.PropertyInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
 import hu.progmasters.moovsmart.exception.TokenCannotBeUsedException;
@@ -39,12 +39,16 @@ public class CustomUserService implements UserDetailsService {
     private ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
+    private CustomUserDeletedService customUserDeletedService;
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, CustomUserDeletedService customUserDeletedService) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
+        this.customUserDeletedService = customUserDeletedService;
     }
+
+
 
 
     public void register(CustomUserForm command) {
@@ -88,7 +92,7 @@ public class CustomUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        try{
+        try {
             CustomUser customUser = customUserRepository.findByUsername(username);
             String[] roles = customUser.getRoles().stream()
                     .map(Enum::toString)
@@ -164,5 +168,13 @@ public class CustomUserService implements UserDetailsService {
             customUser.setPassword(passwordEncoder.encode(customUserForm.getPassword()));
             return modelMapper.map(customUser, CustomUserInfo.class);
         }
+    }
+
+
+    public void makeInactive(String customUsername) {
+        CustomUser toDelete = findCustomUserByUsername(customUsername);
+        toDelete.setDeleted(true);
+        customUserDeletedService.save(modelMapper.map(toDelete, CustomUserDeleted.class));
+        customUserRepository.delete(toDelete);
     }
 }

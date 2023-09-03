@@ -37,8 +37,15 @@ public class CustomUser implements UserDetails {
     @Column(name = "e_mail", unique = true)
     private String email;
 
+
     @Column(name = "enable")
     private boolean enable;
+
+    @Column(name = "account_non_locked")
+    private boolean accountNonLocked;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 
     @Column(name = "activation")
     private String activation;
@@ -72,7 +79,7 @@ public class CustomUser implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
     }
 
     @Override
