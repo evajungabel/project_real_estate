@@ -83,8 +83,8 @@ public class CustomUserController {
         log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm +
                 " with variable: " + username);
         CustomUserInfo updated = customUserService.update(username, customUserForm);
-        emailService.sendEmail(customUserForm.getEmail(), "Felhasználói fiók adatainak megváltoztatása",
-                "Kedves " + customUserForm.getName() +
+        emailService.sendEmail(customUserService.findCustomUserByUsername(username).getEmail(), "Felhasználói fiók adatainak megváltoztatása",
+                "Kedves " + customUserService.findCustomUserByUsername(username).getName() +
                         "! \n \n Felhasználói fiókjának adatai megváltoztak! Ha nem Ön tette, mielőbb lépjen kapcsolatba velünk!");
         log.info("PUT data from repository/api/customusers/{customUserId} body: " + customUserForm +
                 " with variable: " + username);

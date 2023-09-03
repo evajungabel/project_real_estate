@@ -59,7 +59,7 @@ public class PropertyService {
 
     public PropertyInfo createProperty(PropertyForm propertyForm) {
         Property toSave = modelMapper.map(propertyForm, Property.class);
-        CustomUser customUser = customUserService.findCustomUserById(propertyForm.getCustomUserId());
+        CustomUser customUser = customUserService.findCustomUserByUsername(propertyForm.getCustomUsername());
         toSave.setCustomUser(customUser);
         toSave.setDateOfCreation(LocalDateTime.now());
         Property property = propertyRepository.save(toSave);

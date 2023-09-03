@@ -115,7 +115,7 @@ public class CustomUserService implements UserDetailsService {
     }
 
     public void userSale(String username, Long pId) {
-        CustomUser customUser = findCustomUserById(username);
+        CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
                 property.setActive(false);
@@ -124,7 +124,7 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-    public CustomUser findCustomUserById(String username) {
+    public CustomUser findCustomUserByUsername(String username) {
         Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByUsername(username));
         if (customUserOptional.isEmpty()) {
             throw new UsernameNotFoundException(username);
@@ -134,7 +134,7 @@ public class CustomUserService implements UserDetailsService {
 
 
     public void userDelete(String username, Long pId) {
-        CustomUser customUser = findCustomUserById(username);
+        CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
                 property.setActive(false);
@@ -152,7 +152,7 @@ public class CustomUserService implements UserDetailsService {
     }
 
     public CustomUserInfo update(String username, CustomUserForm customUserForm) {
-        CustomUser customUser = findCustomUserById(username);
+        CustomUser customUser = findCustomUserByUsername(username);
         if (customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
                 customUserRepository.findByEmail(customUserForm.getEmail()) != customUser) {
             throw new EmailAddressExistsException(customUserForm.getEmail());
