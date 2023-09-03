@@ -50,7 +50,7 @@ public class CustomUserService implements UserDetailsService {
     public void register(CustomUserForm command) {
         if (customUserRepository.findByEmail(command.getEmail()) != null) {
             throw new EmailAddressExistsException(command.getEmail());
-        } else if (customUserRepository.findById(command.getUsername()).isPresent()) {
+        } else if (customUserRepository.findByUsername(command.getUsername()) != null) {
             throw new UsernameExistsException(command.getUsername());
         } else {
             ConfirmationToken confirmationToken = new ConfirmationToken();
@@ -88,18 +88,22 @@ public class CustomUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        CustomUser customUser = customUserRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException("username not found"));
+        try{
+            CustomUser customUser = customUserRepository.findByUsername(username);
+            String[] roles = customUser.getRoles().stream()
+                    .map(Enum::toString)
+                    .toArray(String[]::new);
 
-        String[] roles = customUser.getRoles().stream()
-                .map(Enum::toString)
-                .toArray(String[]::new);
+            return User
+                    .withUsername(customUser.getUsername())
+                    .authorities(AuthorityUtils.createAuthorityList(roles))
+                    .password(customUser.getPassword())
+                    .build();
+        } catch (UsernameNotFoundException e) {
+            throw new UsernameNotFoundException("username not found");
 
-        return User
-                .withUsername(customUser.getUsername())
-                .authorities(AuthorityUtils.createAuthorityList(roles))
-                .password(customUser.getPassword())
-                .build();
+        }
+
     }
 
     public List<CustomUserInfo> getCustomUsers() {
@@ -121,7 +125,7 @@ public class CustomUserService implements UserDetailsService {
     }
 
     public CustomUser findCustomUserById(String username) {
-        Optional<CustomUser> customUserOptional = customUserRepository.findById(username);
+        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByUsername(username));
         if (customUserOptional.isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
@@ -149,12 +153,15 @@ public class CustomUserService implements UserDetailsService {
 
     public CustomUserInfo update(String username, CustomUserForm customUserForm) {
         CustomUser customUser = findCustomUserById(username);
-        if (customUserRepository.findByEmail(customUserForm.getEmail()) != null) {
+        if (customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
+                customUserRepository.findByEmail(customUserForm.getEmail()) != customUser) {
             throw new EmailAddressExistsException(customUserForm.getEmail());
-        } else if (customUserRepository.findById(customUserForm.getUsername()).isPresent()) {
+        } else if (customUserRepository.findByUsername(customUserForm.getUsername()) != null &&
+                customUserRepository.findByUsername(customUserForm.getUsername()) != customUser) {
             throw new UsernameExistsException(customUserForm.getUsername());
         } else {
             modelMapper.map(customUserForm, customUser);
+            customUser.setPassword(passwordEncoder.encode(customUserForm.getPassword()));
             return modelMapper.map(customUser, CustomUserInfo.class);
         }
     }
