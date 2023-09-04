@@ -65,5 +65,15 @@ public class AddressService {
         }
         return addressInfoList;
     }
+
+    public List<AddressInfo> findAllAddress() {
+        List<Address> addresses = addressRepository.findAll();
+        List<AddressInfo> addressInfoList = new ArrayList<>();
+        for (Address address : addresses) {
+            AddressInfo addressInfo = modelMapper.map(address, AddressInfo.class);
+            addressInfoList.add(addressInfo);
+        }
+        return addressInfoList;
+    }
 }
 

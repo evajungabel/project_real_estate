@@ -4,6 +4,7 @@ package hu.progmasters.moovsmart.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +15,7 @@ public class AddressInfo {
     private String country;
     private String city;
     private String street;
-    private Integer houseNumber;
+    private String houseNumber;
     private Integer doorNumber;
-    private Long propertyId;
+    private String propertyName;
 }
