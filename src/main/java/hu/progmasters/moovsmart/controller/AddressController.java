@@ -48,11 +48,11 @@ public class AddressController {
     @PutMapping("id/{id}")
     @Operation(summary = "update address")
     @ApiResponse(responseCode = "200", description = "Update Addresses")
-    public ResponseEntity<AddressInfo> update(@PathVariable("id") Long id, @Valid @RequestBody AddressForm form){
+    public ResponseEntity<AddressInfo> update(@PathVariable("id") Long id, @Valid @RequestBody AddressForm form) {
         log.info("Http request, PUT /api/bee/{beeId} body: " + form.toString() + " With variable: " + id);
         AddressInfo update = addressService.update(id, form);
         log.info("PUT data from repository/api/update address");
-        return new ResponseEntity<>(update,HttpStatus.OK);
+        return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
     @DeleteMapping("/id/{id}")
@@ -71,6 +71,16 @@ public class AddressController {
     public ResponseEntity<List<AddressInfo>> findByValue(@RequestParam("value") String value) {
         log.info("Http request, GET /api/addresses/{value} with variable" + value);
         List<AddressInfo> addressInfoList = addressService.findByValue(value);
+        log.info("GET data from repository/api/list addresses by value");
+        return new ResponseEntity<>(addressInfoList, HttpStatus.OK);
+    }
+
+    @GetMapping
+    @Operation(summary = "List all address")
+    @ApiResponse(responseCode = "200", description = "List all Addresses")
+    public ResponseEntity<List<AddressInfo>> findAllAddress() {
+        log.info("Http request, GET /api/addresses/ with variable");
+        List<AddressInfo> addressInfoList = addressService.findAllAddress();
         log.info("GET data from repository/api/list of all addresses");
         return new ResponseEntity<>(addressInfoList, HttpStatus.OK);
     }

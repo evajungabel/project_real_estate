@@ -16,5 +16,5 @@ public class AddressInfo {
     private String street;
     private String houseNumber;
     private Integer doorNumber;
-    private Long propertyId;
+    private String propertyName;
 }
