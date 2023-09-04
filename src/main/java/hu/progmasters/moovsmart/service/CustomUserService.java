@@ -2,7 +2,6 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.CustomUser;
-import hu.progmasters.moovsmart.domain.CustomUserDeleted;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.ConfirmationToken;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
@@ -39,20 +38,18 @@ public class CustomUserService implements UserDetailsService {
     private ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-    private CustomUserDeletedService customUserDeletedService;
+
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, CustomUserDeletedService customUserDeletedService) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
-        this.customUserDeletedService = customUserDeletedService;
     }
 
 
-
-
     public void register(CustomUserForm command) {
-        if (customUserRepository.findByEmail(command.getEmail()) != null) {
+        if (!customUserRepository.findByEmail(command.getEmail()).isDeleted() &&
+                customUserRepository.findByEmail(command.getEmail()) != null) {
             throw new EmailAddressExistsException(command.getEmail());
         } else if (customUserRepository.findByUsername(command.getUsername()) != null) {
             throw new UsernameExistsException(command.getUsername());
@@ -157,7 +154,8 @@ public class CustomUserService implements UserDetailsService {
 
     public CustomUserInfo update(String username, CustomUserForm customUserForm) {
         CustomUser customUser = findCustomUserByUsername(username);
-        if (customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
+        if (!customUserRepository.findByEmail(customUserForm.getEmail()).isDeleted() &&
+                customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
                 customUserRepository.findByEmail(customUserForm.getEmail()) != customUser) {
             throw new EmailAddressExistsException(customUserForm.getEmail());
         } else if (customUserRepository.findByUsername(customUserForm.getUsername()) != null &&
@@ -174,7 +172,9 @@ public class CustomUserService implements UserDetailsService {
     public void makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
         toDelete.setDeleted(true);
-        customUserDeletedService.save(modelMapper.map(toDelete, CustomUserDeleted.class));
-        customUserRepository.delete(toDelete);
+        toDelete.setUsername(null);
+        toDelete.setName(null);
+        toDelete.setRoles(null);
+        toDelete.setPassword(null);
     }
 }
