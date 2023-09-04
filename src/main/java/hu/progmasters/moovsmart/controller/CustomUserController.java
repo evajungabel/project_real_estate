@@ -58,7 +58,7 @@ public class CustomUserController {
         customUserService.register(command);
         emailService.sendEmail(command.getEmail(), "Felhasználói fiók aktivalása",
                 "Kedves " + command.getName() +
-                "! \n \n Köszönjük, hogy regisztrált az oldalunkra! \n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját! \n \n http://localhost:8080/api/customusers/activation/"
+                "! \n \n Köszönjük, hogy regisztrált az oldalunkra! \n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját, amire 30 perce van! \n \n http://localhost:8080/api/customusers/activation/"
                         + customUserService.findCustomUserByEmail(command.getEmail()).getActivation());
         log.info("POST data from repository/api/customusers, body: " + command);
         return new ResponseEntity<>(HttpStatus.CREATED);
