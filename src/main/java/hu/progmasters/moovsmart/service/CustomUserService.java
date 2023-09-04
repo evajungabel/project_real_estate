@@ -1,9 +1,9 @@
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
+import hu.progmasters.moovsmart.domain.ConfirmationToken;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
-import hu.progmasters.moovsmart.dto.ConfirmationToken;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
@@ -23,11 +23,13 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
@@ -39,11 +41,15 @@ public class CustomUserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
 
+    private ConfirmationTokenService confirmationTokenService;
+
+
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
+        this.confirmationTokenService = confirmationTokenService;
     }
 
 
@@ -54,9 +60,7 @@ public class CustomUserService implements UserDetailsService {
         } else if (customUserRepository.findByUsername(command.getUsername()) != null) {
             throw new UsernameExistsException(command.getUsername());
         } else {
-            ConfirmationToken confirmationToken = new ConfirmationToken();
-            confirmationToken.setCreatedDate(new Date());
-            confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
+            ConfirmationToken confirmationToken = createConfirmationToken();
             CustomUser customUser = new CustomUser().builder()
                     .username(command.getUsername())
                     .name(command.getName())
@@ -66,18 +70,29 @@ public class CustomUserService implements UserDetailsService {
                     .enable(false)
                     .activation(confirmationToken.getConfirmationToken())
                     .build();
+            confirmationToken.setCustomUser(customUser);
             customUserRepository.save(customUser);
         }
     }
 
+    public ConfirmationToken createConfirmationToken() {
+        ConfirmationToken confirmationToken = new ConfirmationToken();
+        confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
+        confirmationToken.setCreatedDate(LocalDateTime.now());
+        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(30));
+        return confirmationTokenService.save(confirmationToken);
+
+    }
+
     public String userActivation(String confirmationToken) {
         CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
-        try {
+        if ((LocalDateTime.now()).isBefore(customUser.getConfirmationToken().getExpiredDate())) {
             customUser.setEnable(true);
             customUser.setActivation("");
             return "Activation is successful!";
-        } catch (TokenCannotBeUsedException e) {
-            throw new TokenCannotBeUsedException(confirmationToken);
+        } else {
+            customUserRepository.delete(customUser);
+            return "The token is invalid or broken";
         }
     }
 

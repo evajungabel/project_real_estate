@@ -1,4 +1,4 @@
-package hu.progmasters.moovsmart.dto;
+package hu.progmasters.moovsmart.domain;
 
 import hu.progmasters.moovsmart.domain.CustomUser;
 import lombok.AllArgsConstructor;
@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -24,10 +25,13 @@ public class ConfirmationToken {
     @Column(name = "confirmation_token")
     private String confirmationToken;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+    @Column(name = "createdDate")
+    private LocalDateTime createdDate;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @Column(name = "expiredDate")
+    private LocalDateTime expiredDate;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "custom_user_username")
     private CustomUser customUser;
 
