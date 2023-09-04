@@ -70,4 +70,5 @@ public class Property {
     @ManyToOne
     @JoinColumn(name = "estate_agent_id")
     private EstateAgent estateAgent;
+
 }

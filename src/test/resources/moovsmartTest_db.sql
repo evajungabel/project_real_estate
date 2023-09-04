@@ -1,3 +1,60 @@
+CREATE TABLE IF NOT EXISTS custom_user (
+                            username varchar(255),
+                            e_mail varchar(255),
+                            name varchar(255),
+                            password varchar(255)
+);
+
+CREATE TABLE IF NOT EXISTS property (
+                             property_id bigint,
+                             active varchar(255),
+                             area int,
+                             date_of_activation date,
+                             date_of_creation date,
+                             date_of_inactivation date,
+                             date_of_sale date,
+                             description text,
+                             image_url varchar(255),
+                             name varchar(255),
+                             number_of_rooms int(50),
+                             price int,
+                             type varchar(255),
+                             custom_user_name varchar(255),
+                             estate_agent_id int
+);
+CREATE TABLE IF NOT EXISTS address (
+                         address_id bigint,
+                         city varchar(255),
+                         country varchar(255),
+                         door_number int,
+                         house_number varchar(255),
+                         street varchar(255),
+                         zipcode int,
+                         property_id bigint
+);
+
+CREATE TABLE IF NOT EXISTS property_data (
+                               property_data_id bigint,
+                               air_conditioner tinyint,
+                               balcony tinyint,
+                               garden tinyint,
+                               heating varchar(255),
+                               insulation tinyint,
+                               parking tinyint,
+                               property_orientation varchar(255),
+                               property_id bigint
+);
+
+CREATE TABLE IF NOT EXISTS estate_agent (
+                              estate_agent_id bigint,
+                              email varchar(255),
+                              name varchar(255),
+                              agent_rank varchar(255),
+                              sell_point int
+);
+
+
+
 insert into moovsmartTest.custom_user (username, e_mail, name, password)
 values ('KovBea', 'kovacsbea1@gmail.com', 'Kovács Bea', 'B3aPass');
 insert into moovsmartTest.custom_user (username, e_mail, name, password)
