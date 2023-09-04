@@ -4,6 +4,7 @@ package hu.progmasters.moovsmart.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 @Data
 @AllArgsConstructor

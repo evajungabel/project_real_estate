@@ -71,8 +71,7 @@ public class AddressService {
         List<AddressInfo> addressInfoList = new ArrayList<>();
         for (Address address : addresses) {
             AddressInfo addressInfo = modelMapper.map(address, AddressInfo.class);
-            String propertyInfos = address.getProperty().getName();
-            addressInfo.setPropertyName(propertyInfos);
+            addressInfoList.add(addressInfo);
         }
         return addressInfoList;
     }
