@@ -33,7 +33,7 @@ public class CustomUser implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "e_mail", unique = true)
+    @Column(name = "e_mail")
     private String email;
 
 

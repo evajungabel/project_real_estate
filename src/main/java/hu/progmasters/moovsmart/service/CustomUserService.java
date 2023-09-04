@@ -8,7 +8,6 @@ import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
-import hu.progmasters.moovsmart.exception.TokenCannotBeUsedException;
 import hu.progmasters.moovsmart.exception.UsernameExistsException;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
@@ -54,8 +53,7 @@ public class CustomUserService implements UserDetailsService {
 
 
     public void register(CustomUserForm command) {
-        if (!customUserRepository.findByEmail(command.getEmail()).isDeleted() &&
-                customUserRepository.findByEmail(command.getEmail()) != null) {
+        if (customUserRepository.findByEmail(command.getEmail()) != null) {
             throw new EmailAddressExistsException(command.getEmail());
         } else if (customUserRepository.findByUsername(command.getUsername()) != null) {
             throw new UsernameExistsException(command.getUsername());
@@ -169,8 +167,7 @@ public class CustomUserService implements UserDetailsService {
 
     public CustomUserInfo update(String username, CustomUserForm customUserForm) {
         CustomUser customUser = findCustomUserByUsername(username);
-        if (!customUserRepository.findByEmail(customUserForm.getEmail()).isDeleted() &&
-                customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
+        if (customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
                 customUserRepository.findByEmail(customUserForm.getEmail()) != customUser) {
             throw new EmailAddressExistsException(customUserForm.getEmail());
         } else if (customUserRepository.findByUsername(customUserForm.getUsername()) != null &&
@@ -186,10 +183,6 @@ public class CustomUserService implements UserDetailsService {
 
     public void makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
-        toDelete.setDeleted(true);
-        toDelete.setUsername(null);
-        toDelete.setName(null);
-        toDelete.setRoles(null);
-        toDelete.setPassword(null);
+        customUserRepository.delete(toDelete);
     }
 }
