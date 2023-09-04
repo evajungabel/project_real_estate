@@ -80,7 +80,7 @@ public class CustomUserService implements UserDetailsService {
         ConfirmationToken confirmationToken = new ConfirmationToken();
         confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
         confirmationToken.setCreatedDate(LocalDateTime.now());
-        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(1));
+        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(30));
         return confirmationTokenService.save(confirmationToken);
 
     }
