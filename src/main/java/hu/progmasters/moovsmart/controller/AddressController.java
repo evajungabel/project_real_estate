@@ -65,10 +65,10 @@ public class AddressController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/value/{value}")
+    @GetMapping("/value")
     @Operation(summary = "Find address by value.")
     @ApiResponse(responseCode = "200", description = "Find Addresses")
-    public ResponseEntity<List<AddressInfo>> findByValue(@PathVariable("value") String value) {
+    public ResponseEntity<List<AddressInfo>> findByValue(@RequestParam("value") String value) {
         log.info("Http request, GET /api/addresses/{value} with variable" + value);
         List<AddressInfo> addressInfoList = addressService.findByValue(value);
         log.info("GET data from repository/api/list of all addresses");
