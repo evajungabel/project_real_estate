@@ -60,7 +60,7 @@ public class Property {
     @OneToOne(mappedBy = "property")
     private PropertyData propertyData;
 
-    @OneToOne(mappedBy = "property", cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Address address;
 
     @ManyToOne
