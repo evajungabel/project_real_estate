@@ -82,7 +82,7 @@ public class PropertyController {
 
     @PutMapping("/{propertyId}")
     @Operation(summary = "Update property")
-    @ApiResponse(responseCode = "200", description = "Property updated")
+    @ApiResponse(responseCode = "200", description = "Property is updated")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<PropertyInfo> update(@PathVariable("propertyId") Long id,
                                                @Valid @RequestBody PropertyForm propertyForm) {
@@ -101,7 +101,7 @@ public class PropertyController {
     public ResponseEntity<Void> delete(@PathVariable("propertyId") Long id) {
         log.info("Http request, DELETE /api/property/{propertyId} with variable: " + id);
         propertyService.makeInactive(id);
-        log.info("POST data from repository/api/property/{propertyId} with variable: " + id);
+        log.info("DELETE data from repository/api/property/{propertyId} with variable: " + id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

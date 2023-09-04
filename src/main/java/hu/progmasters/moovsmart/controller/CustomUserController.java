@@ -2,6 +2,8 @@ package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
+import hu.progmasters.moovsmart.dto.PropertyForm;
+import hu.progmasters.moovsmart.dto.PropertyInfo;
 import hu.progmasters.moovsmart.service.CustomUserService;
 import hu.progmasters.moovsmart.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +19,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -73,8 +74,26 @@ public class CustomUserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PutMapping("/{username}")
+    @Operation(summary = "Update customer")
+    @ApiResponse(responseCode = "200", description = "Customer is updated")
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<CustomUserInfo> update(@PathVariable("username") String username,
+                                               @Valid @RequestBody CustomUserForm customUserForm) {
+        log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm +
+                " with variable: " + username);
+        CustomUserInfo updated = customUserService.update(username, customUserForm);
+        emailService.sendEmail(customUserService.findCustomUserByUsername(username).getEmail(), "Felhasználói fiók adatainak megváltoztatása",
+                "Kedves " + customUserService.findCustomUserByUsername(username).getName() +
+                        "! \n \n Felhasználói fiókjának adatai megváltoztak! Ha nem Ön tette, mielőbb lépjen kapcsolatba velünk!");
+        log.info("PUT data from repository/api/customusers/{customUserId} body: " + customUserForm +
+                " with variable: " + username);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
+    }
+
+
     @GetMapping
-    @Secured({"ROLE_ADMIN"})
+//    @Secured({"ROLE_ADMIN"})
     @Operation(summary = "Get all customers")
     @ApiResponse(responseCode = "200", description = "List of customers")
     public ResponseEntity<List<CustomUserInfo>> getAllCustomers() {
@@ -83,6 +102,18 @@ public class CustomUserController {
         log.info("GET data from repository/api/list of all customers");
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{customUsername}")
+    @Operation(summary = "Delete customer")
+    @ApiResponse(responseCode = "200", description = "Customer is deleted")
+//    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<Void> deleteUser(@PathVariable("customUsername") String customUsername) {
+        log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + customUsername);
+        customUserService.makeInactive(customUsername);
+        log.info("DELETE data from repository/api/customusers/{customUsername} with variable: " + customUsername);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @DeleteMapping("/sale/{username}/{propertyId}")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
@@ -106,7 +137,6 @@ public class CustomUserController {
         log.info("DELETE data from repository/api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 
 }

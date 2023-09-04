@@ -19,9 +19,12 @@ import java.util.Set;
 @Entity
 @Table(name = "custom_user")
 public class CustomUser implements UserDetails {
-
     @Id
-    @Column(name = "username")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "custom_user_id")
+    private Long customUserId;
+
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "name")
@@ -33,8 +36,15 @@ public class CustomUser implements UserDetails {
     @Column(name = "e_mail", unique = true)
     private String email;
 
+
     @Column(name = "enable")
     private boolean enable;
+
+    @Column(name = "account_non_locked")
+    private boolean accountNonLocked;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 
     @Column(name = "activation")
     private String activation;
@@ -55,7 +65,7 @@ public class CustomUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new HashSet<>();
         Set<CustomUserRole> roles1 = (Set<CustomUserRole>) getRoles();
-        for (CustomUserRole role: roles1) {
+        for (CustomUserRole role : roles1) {
             authorities.add(new SimpleGrantedAuthority(role.getRole()));
         }
         return authorities;
@@ -68,7 +78,7 @@ public class CustomUser implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
     }
 
     @Override

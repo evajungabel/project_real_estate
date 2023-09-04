@@ -64,7 +64,7 @@ public class Property {
     private Address address;
 
     @ManyToOne
-    @JoinColumn(name = "custom_user_name")
+    @JoinColumn(name = "custom_user_id")
     private CustomUser customUser;
 
     @ManyToOne

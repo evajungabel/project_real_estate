@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.ConfirmationToken;
 import hu.progmasters.moovsmart.domain.CustomUser;
+import hu.progmasters.moovsmart.domain.CustomUserDeleted;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,25 +39,31 @@ public class CustomUserService implements UserDetailsService {
     private ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
+    private CustomUserDeletedService customUserDeletedService;
     private ConfirmationTokenService confirmationTokenService;
 
 
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, CustomUserDeletedService customUserDeletedService) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
+        this.customUserDeletedService = customUserDeletedService;
         this.confirmationTokenService = confirmationTokenService;
     }
+
+
 
 
     public void register(CustomUserForm command) {
         if (customUserRepository.findByEmail(command.getEmail()) != null) {
             throw new EmailAddressExistsException(command.getEmail());
-        } else if (customUserRepository.findById(command.getUsername()).isPresent()) {
+        } else if (customUserRepository.findByUsername(command.getUsername()) != null) {
             throw new UsernameExistsException(command.getUsername());
         } else {
-            ConfirmationToken confirmationToken = createConfirmationToken();
+            ConfirmationToken confirmationToken = new ConfirmationToken();
+            confirmationToken.setCreatedDate(new Date());
+            confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
             CustomUser customUser = new CustomUser().builder()
                     .username(command.getUsername())
                     .name(command.getName())
@@ -71,6 +78,7 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
+    public String userActivation(String confirmationToken) {
     public ConfirmationToken createConfirmationToken() {
         ConfirmationToken confirmationToken = new ConfirmationToken();
         confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
@@ -82,9 +90,13 @@ public class CustomUserService implements UserDetailsService {
 
     public String userActivation(String confirmationToken) {
         CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
+        try {
         if (calculateMinutesBetweenLocalDates(customUser.getConfirmationToken().getCreatedDate(), customUser.getConfirmationToken().getExpiredDate()) <= 1) {
             customUser.setEnable(true);
             customUser.setActivation("");
+            return "Activation is successful!";
+        } catch (TokenCannotBeUsedException e) {
+            throw new TokenCannotBeUsedException(confirmationToken);
             return "Activation is successful!";
         } else {
             throw new TokenCannotBeUsedException(confirmationToken);
@@ -103,18 +115,22 @@ public class CustomUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        CustomUser customUser = customUserRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException("username not found"));
+        try {
+            CustomUser customUser = customUserRepository.findByUsername(username);
+            String[] roles = customUser.getRoles().stream()
+                    .map(Enum::toString)
+                    .toArray(String[]::new);
 
-        String[] roles = customUser.getRoles().stream()
-                .map(Enum::toString)
-                .toArray(String[]::new);
+            return User
+                    .withUsername(customUser.getUsername())
+                    .authorities(AuthorityUtils.createAuthorityList(roles))
+                    .password(customUser.getPassword())
+                    .build();
+        } catch (UsernameNotFoundException e) {
+            throw new UsernameNotFoundException("username not found");
 
-        return User
-                .withUsername(customUser.getUsername())
-                .authorities(AuthorityUtils.createAuthorityList(roles))
-                .password(customUser.getPassword())
-                .build();
+        }
+
     }
 
     public List<CustomUserInfo> getCustomUsers() {
@@ -126,7 +142,7 @@ public class CustomUserService implements UserDetailsService {
     }
 
     public void userSale(String username, Long pId) {
-        CustomUser customUser = findCustomUserById(username);
+        CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
                 property.setActive(false);
@@ -135,8 +151,8 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-    public CustomUser findCustomUserById(String username) {
-        Optional<CustomUser> customUserOptional = customUserRepository.findById(username);
+    public CustomUser findCustomUserByUsername(String username) {
+        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByUsername(username));
         if (customUserOptional.isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
@@ -145,7 +161,7 @@ public class CustomUserService implements UserDetailsService {
 
 
     public void userDelete(String username, Long pId) {
-        CustomUser customUser = findCustomUserById(username);
+        CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
                 property.setActive(false);
@@ -162,4 +178,26 @@ public class CustomUserService implements UserDetailsService {
         return customUserOptional.get();
     }
 
+    public CustomUserInfo update(String username, CustomUserForm customUserForm) {
+        CustomUser customUser = findCustomUserByUsername(username);
+        if (customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
+                customUserRepository.findByEmail(customUserForm.getEmail()) != customUser) {
+            throw new EmailAddressExistsException(customUserForm.getEmail());
+        } else if (customUserRepository.findByUsername(customUserForm.getUsername()) != null &&
+                customUserRepository.findByUsername(customUserForm.getUsername()) != customUser) {
+            throw new UsernameExistsException(customUserForm.getUsername());
+        } else {
+            modelMapper.map(customUserForm, customUser);
+            customUser.setPassword(passwordEncoder.encode(customUserForm.getPassword()));
+            return modelMapper.map(customUser, CustomUserInfo.class);
+        }
+    }
+
+
+    public void makeInactive(String customUsername) {
+        CustomUser toDelete = findCustomUserByUsername(customUsername);
+        toDelete.setDeleted(true);
+        customUserDeletedService.save(modelMapper.map(toDelete, CustomUserDeleted.class));
+        customUserRepository.delete(toDelete);
+    }
 }
