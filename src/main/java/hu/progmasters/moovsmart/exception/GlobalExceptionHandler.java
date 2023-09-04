@@ -110,11 +110,29 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(SendingEmailException.class)
+    public ResponseEntity<ApiError> handleSendingEmailException(SendingEmailException ex) {
+        logger.error("sending email error: ", ex);
+
+        ApiError body = new ApiError("SENDING_EMAIL_ERROR", "Sending email error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(UsernameExistsException.class)
     public ResponseEntity<ApiError> handleUsernameExistsException(UsernameExistsException ex) {
         logger.error("Username exists error: ", ex);
 
         ApiError body = new ApiError("USERNAME_EXISTS_ERROR", "Username exists error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TokenCannotBeUsedException.class)
+    public ResponseEntity<ApiError> handleTokenCannotBeUsedException(TokenCannotBeUsedException ex) {
+        logger.error("The link is invalid or broken error: ", ex);
+
+        ApiError body = new ApiError("TOKEN_CANNOT_BE_USED_ERROR", "The link is invalid or broken error.", ex.getLocalizedMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }

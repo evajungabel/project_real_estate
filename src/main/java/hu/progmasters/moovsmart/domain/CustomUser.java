@@ -1,23 +1,31 @@
 package hu.progmasters.moovsmart.domain;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import hu.progmasters.moovsmart.dto.ConfirmationToken;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "custom_user")
-public class CustomUser {
-
-
+public class CustomUser implements UserDetails {
     @Id
-    @Column(name = "username")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "custom_user_id")
+    private Long customUserId;
+
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "name")
@@ -29,6 +37,19 @@ public class CustomUser {
     @Column(name = "e_mail", unique = true)
     private String email;
 
+
+    @Column(name = "enable")
+    private boolean enable;
+
+    @Column(name = "account_non_locked")
+    private boolean accountNonLocked;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
+    @Column(name = "activation")
+    private String activation;
+
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "custom_user_role")
@@ -37,29 +58,39 @@ public class CustomUser {
     @OneToMany(mappedBy = "customUser")
     private List<Property> propertyList;
 
-    public CustomUser setUsername(String username) {
-        this.username = username;
-        return this;
+    @OneToOne(mappedBy = "customUser")
+    private ConfirmationToken confirmationToken;
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> authorities = new HashSet<>();
+        Set<CustomUserRole> roles1 = (Set<CustomUserRole>) getRoles();
+        for (CustomUserRole role : roles1) {
+            authorities.add(new SimpleGrantedAuthority(role.getRole()));
+        }
+        return authorities;
     }
 
-    public CustomUser setName(String name) {
-        this.name = name;
-        return this;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public CustomUser setEmail(String email) {
-        this.email = email;
-        return this;
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
     }
 
-    public CustomUser setPassword(String password) {
-        this.password = password;
-        return this;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public CustomUser setRoles(List<CustomUserRole> role) {
-        this.roles = role;
-        return this;
+    @Override
+    public boolean isEnabled() {
+        return enable;
     }
+
 
 }

@@ -2,7 +2,10 @@ package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
+import hu.progmasters.moovsmart.dto.PropertyForm;
+import hu.progmasters.moovsmart.dto.PropertyInfo;
 import hu.progmasters.moovsmart.service.CustomUserService;
+import hu.progmasters.moovsmart.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +30,12 @@ public class CustomUserController {
 
     private CustomUserService customUserService;
 
-
+    private EmailService emailService;
     @Autowired
-    public CustomUserController(CustomUserService customUserService) {
+    public CustomUserController(CustomUserService customUserService, EmailService emailService) {
         this.customUserService = customUserService;
+        this.emailService = emailService;
     }
-
-
 
     @GetMapping("/login/me")
     @Operation(summary = "Login customer")
@@ -54,12 +56,44 @@ public class CustomUserController {
     public ResponseEntity<Void> register(@Valid @RequestBody CustomUserForm command) {
         log.info("Http request, POST /api/customusers, body: " + command.toString());
         customUserService.register(command);
+        emailService.sendEmail(command.getEmail(), "Felhasználói fiók aktivalása",
+                "Kedves " + command.getName() +
+                "! \n \n Köszönjük, hogy regisztrált az oldalunkra! \n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját! \n \n http://localhost:8080/api/customusers/activation/"
+                        + customUserService.findCustomUserByEmail(command.getEmail()).getActivation());
         log.info("POST data from repository/api/customusers, body: " + command);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping("/activation/{confirmationToken}")
+    @Operation(summary = "Activation confirmation token by costumer")
+    @ApiResponse(responseCode = "200", description = "Activation confirmation token by customer")
+    public ResponseEntity<String> activation(@Valid @PathVariable("confirmationToken") String confirmationToken){
+        log.info("Http request, GET /api/customusers, activation of confirmation token: " + confirmationToken);
+        String result = customUserService.userActivation(confirmationToken);
+        log.info("GET /api/customusers, successful activation of confirmation token: " + confirmationToken);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping("/{username}")
+    @Operation(summary = "Update customer")
+    @ApiResponse(responseCode = "200", description = "Customer is updated")
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<CustomUserInfo> update(@PathVariable("username") String username,
+                                               @Valid @RequestBody CustomUserForm customUserForm) {
+        log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm +
+                " with variable: " + username);
+        CustomUserInfo updated = customUserService.update(username, customUserForm);
+        emailService.sendEmail(customUserService.findCustomUserByUsername(username).getEmail(), "Felhasználói fiók adatainak megváltoztatása",
+                "Kedves " + customUserService.findCustomUserByUsername(username).getName() +
+                        "! \n \n Felhasználói fiókjának adatai megváltoztak! Ha nem Ön tette, mielőbb lépjen kapcsolatba velünk!");
+        log.info("PUT data from repository/api/customusers/{customUserId} body: " + customUserForm +
+                " with variable: " + username);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
+    }
+
+
     @GetMapping
-    @Secured({"ROLE_ADMIN"})
+//    @Secured({"ROLE_ADMIN"})
     @Operation(summary = "Get all customers")
     @ApiResponse(responseCode = "200", description = "List of customers")
     public ResponseEntity<List<CustomUserInfo>> getAllCustomers() {
@@ -68,6 +102,18 @@ public class CustomUserController {
         log.info("GET data from repository/api/list of all customers");
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{customUsername}")
+    @Operation(summary = "Delete customer")
+    @ApiResponse(responseCode = "200", description = "Customer is deleted")
+//    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<Void> deleteUser(@PathVariable("customUsername") String customUsername) {
+        log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + customUsername);
+        customUserService.makeInactive(customUsername);
+        log.info("DELETE data from repository/api/customusers/{customUsername} with variable: " + customUsername);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @DeleteMapping("/sale/{username}/{propertyId}")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
@@ -91,5 +137,6 @@ public class CustomUserController {
         log.info("DELETE data from repository/api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
 }

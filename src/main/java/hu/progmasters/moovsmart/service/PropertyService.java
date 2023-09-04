@@ -38,19 +38,17 @@ public class PropertyService {
 
     public List<PropertyInfo> getProperties() {
         List<Property> properties = propertyRepository.findAll();
-        List<PropertyInfo> propertyInfos = properties.stream()
+        return properties.stream()
                 .map(property -> modelMapper.map(property, PropertyInfo.class))
                 .collect(Collectors.toList());
-        return propertyInfos;
     }
 
     public List<PropertyInfo> findPaginated(int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Property> pagedResult = propertyRepository.findAll(paging);
-        List<PropertyInfo> propertyInfos = pagedResult.stream()
+        return pagedResult.stream()
                 .map(property -> modelMapper.map(property, PropertyInfo.class))
                 .collect(Collectors.toList());
-        return propertyInfos;
     }
 
 
@@ -61,7 +59,7 @@ public class PropertyService {
 
     public PropertyInfo createProperty(PropertyForm propertyForm) {
         Property toSave = modelMapper.map(propertyForm, Property.class);
-        CustomUser customUser = customUserService.findCustomUserById(propertyForm.getCustomUserId());
+        CustomUser customUser = customUserService.findCustomUserByUsername(propertyForm.getCustomUsername());
         toSave.setCustomUser(customUser);
         toSave.setDateOfCreation(LocalDateTime.now());
         Property property = propertyRepository.save(toSave);
@@ -69,8 +67,8 @@ public class PropertyService {
     }
 
     public void makeInactive(Long id) {
-        Property toUpdate = findPropertyById(id);
-        toUpdate.setActive(false);
+        Property toDelete = findPropertyById(id);
+        toDelete.setActive(false);
     }
 
     private Property findPropertyById(Long propertyId) {
