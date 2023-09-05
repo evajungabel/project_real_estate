@@ -43,7 +43,6 @@ public class CustomUserService implements UserDetailsService {
 
 
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
     public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
@@ -77,7 +76,7 @@ public class CustomUserService implements UserDetailsService {
         ConfirmationToken confirmationToken = new ConfirmationToken();
         confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
         confirmationToken.setCreatedDate(LocalDateTime.now());
-        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(30));
+        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(1));
         return confirmationTokenService.save(confirmationToken);
 
     }
