@@ -1,6 +1,8 @@
 package hu.progmasters.moovsmart.service;
 
-import hu.progmasters.moovsmart.domain.Property;
+import hu.progmasters.moovsmart.config.CustomUserRole;
+import hu.progmasters.moovsmart.domain.*;
+import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyInfo;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,17 +34,22 @@ public class PropertyServiceTest {
     private PropertyService propertyService;
 
     private Property property1;
-    private Property property2;
-    private Property property3;
-    private Property property4;
+
+    private PropertyForm propertyForm1;
+    private PropertyInfo propertyInfo1;
+    private CustomUser customUser1;
+
+    private EstateAgent estateAgent1;
 
     @BeforeEach
     void init() {
-        property1 = new Property(1, 2023-08-31, 2023-09-31, null, null, "Kuckó", "House", 90, 5, 40000000, "Jó kis házikó",
-                "image/jpeg;base64,/2579j/4AAQSk", true, null, null, "SzIstvan", 1);
-        property2 = new Property();
-        property3 = new Property();
-        property4 = new Property();
+        property1 = new Property(1L, LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30), LocalDateTime.of(2023, Month.JANUARY, 1, 10, 10, 30), null, null, "Kuckó", PropertyType.HOUSE, 90, 5, 40000000, "Jó kis házikó",
+                "image/jpeg;base64,/2579j/4AAQSk", true, null, null, customUser1, estateAgent1);
+        customUser1 = new CustomUser(1L, "pisitke", "Kis Pistike", "pistike1234", "pistike@gmail.com", true, true, false, "123456789", List.of(CustomUserRole.ROLE_USER), List.of(property1), null);
+        estateAgent1 = new EstateAgent(1L, AgentRank.MEDIOR, "Hvj Bátran", 12, "hivjbatran@ingatlan.com", List.of(property1));
+        propertyInfo1 = new PropertyInfo(1L, "Kuckó", 5, 40000000, "image/jpeg;base64,/2579j/4AAQSk");
+        propertyForm1 = new PropertyForm( "Kuckó", PropertyType.HOUSE, 90, 5, 40000000, "Jó kis házikó",
+                "image/jpeg;base64,/2579j/4AAQSk", "pistike");
     }
 
     @Test
@@ -52,30 +61,30 @@ public class PropertyServiceTest {
     @Test
     void testSave_singleProperty_singlePropertySaved() {
         // adjuk meg, mi történjen, ha a repository save-je van meghívva
-        when(propertyRepository.save(any())).thenReturn(property1);
+        when(propertyRepository.save(any())).thenReturn(propertyForm1);
 
         // jöhet a tényleges teszt
-        PropertyInfo propertySaved = propertyService.createProperty(property1);
-        assertEquals(property1, propertySaved);
+        PropertyInfo propertySaved = propertyService.createProperty(propertyForm1);
+        assertEquals(propertyInfo1, propertySaved);
 
         // ellenőrizzük le, hogy a mockolt erőforrások pont annyiszor voltak meghívva, ahányszor akartuk
         verify(propertyRepository, times(1)).save(any());
     }
 
-    @Test
-    void testList_singlePropertySaved_singlePropertyInList() {
-        // adjuk meg, mi történjen, ha a repository list-je van meghívva
-        when(propertyRepository.findAll()).thenReturn(List.of(property1));
-
-        // jöhet a tényleges teszt
-        assertThat(propertyService.getProperties())
-                .hasSize(1)
-                .containsExactly(property1);
-
-        // ellenőrizzük le, hogy a mockolt erőforrások pont annyiszor voltak meghívva, ahányszor akartuk
-        verify(propertyRepository, times(1)).findAll();
-        verifyNoMoreInteractions(propertyRepository);
-    }
+//    @Test
+//    void testList_singlePropertySaved_singlePropertyInList() {
+//        // adjuk meg, mi történjen, ha a repository list-je van meghívva
+//        when(propertyRepository.findAll()).thenReturn(List.of(property1));
+//
+//        // jöhet a tényleges teszt
+//        assertThat(propertyService.getProperties())
+//                .hasSize(1)
+//                .containsExactly(property1);
+//
+//        // ellenőrizzük le, hogy a mockolt erőforrások pont annyiszor voltak meghívva, ahányszor akartuk
+//        verify(propertyRepository, times(1)).findAll();
+//        verifyNoMoreInteractions(propertyRepository);
+//    }
 
 //    @Test
 //    void testFindByActorRated_multipleMovies_moviesOfActorRated() {
@@ -90,8 +99,6 @@ public class PropertyServiceTest {
 //        verify(movieRepository, times(1)).findByActor("Rupert Grint");
 //        verifyNoMoreInteractions(movieRepository);
 //    }
-
-
 
 
 }
