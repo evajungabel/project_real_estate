@@ -37,10 +37,7 @@ public class CustomUserService implements UserDetailsService {
     private final CustomUserRepository customUserRepository;
     private ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-
-
     private ConfirmationTokenService confirmationTokenService;
-
 
     @Autowired
     public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService) {
@@ -49,7 +46,6 @@ public class CustomUserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
         this.confirmationTokenService = confirmationTokenService;
     }
-
 
     public void register(CustomUserForm command) {
         if (customUserRepository.findByEmail(command.getEmail()) != null) {
@@ -176,6 +172,7 @@ public class CustomUserService implements UserDetailsService {
             return modelMapper.map(customUser, CustomUserInfo.class);
         }
     }
+
     public void makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
         userDelete(toDelete.getUsername(),toDelete.getCustomUserId());
