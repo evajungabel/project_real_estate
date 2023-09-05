@@ -161,6 +161,7 @@ public class CustomUserService implements UserDetailsService {
     }
     public void makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
+        userDelete(toDelete.getUsername(),toDelete.getCustomUserId());
         toDelete.setDeleteDate(LocalDateTime.now());
         toDelete.setDeleted(true);
         toDelete.setEmail(null);
