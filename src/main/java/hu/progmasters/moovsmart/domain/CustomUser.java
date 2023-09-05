@@ -7,10 +7,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,7 +34,6 @@ public class CustomUser implements UserDetails {
     @Column(name = "e_mail")
     private String email;
 
-
     @Column(name = "enable")
     private boolean enable;
 
@@ -45,6 +42,9 @@ public class CustomUser implements UserDetails {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
+
+    @Column(name = "delete_date")
+    private LocalDateTime deleteDate;
 
     @Column(name = "activation")
     private String activation;
@@ -90,6 +90,4 @@ public class CustomUser implements UserDetails {
     public boolean isEnabled() {
         return enable;
     }
-
-
 }

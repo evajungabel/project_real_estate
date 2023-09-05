@@ -18,18 +18,9 @@ import java.util.Properties;
 
 @SpringBootApplication
 public class MoovsmartApplication {
-
-//	@Autowired
-//	private EmailService emailService;
 	public static void main(String[] args) {
 		SpringApplication.run(MoovsmartApplication.class, args);
 	}
-
-
-//	@EventListener(ApplicationReadyEvent.class)
-//	public void sendMail(){
-//		emailService.sendEmail("eva.jungabel@gmail.com", "Subject", "Body");
-//	}
 
 	@Bean
 	public ModelMapper modelMapper() {
@@ -47,25 +38,4 @@ public class MoovsmartApplication {
 						.version("1.0.1")
 						.description("This is a Estate trade application."));
 	}
-
-
-
-//	@Bean
-//	public JavaMailSender getJavaMailSender() {
-//		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-//		mailSender.setHost("smtp.gmail.com");
-//		mailSender.setPort(587);
-//
-//		mailSender.setUsername("eva.jungabel@gmail.com");
-//		mailSender.setPassword("password");
-//
-//		Properties props = mailSender.getJavaMailProperties();
-//		props.put("mail.transport.protocol", "smtp");
-//		props.put("mail.smtp.auth", "true");
-//		props.put("mail.smtp.starttls.enable", "true");
-//		props.put("mail.debug", "true");
-//
-//		return mailSender;
-//	}
-
 }

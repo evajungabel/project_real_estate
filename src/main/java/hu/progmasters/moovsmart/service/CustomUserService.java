@@ -8,6 +8,7 @@ import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
+import hu.progmasters.moovsmart.exception.TokenCannotBeUsedException;
 import hu.progmasters.moovsmart.exception.UsernameExistsException;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
@@ -22,11 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -35,7 +32,6 @@ import java.util.stream.Collectors;
 public class CustomUserService implements UserDetailsService {
 
     private final CustomUserRepository customUserRepository;
-
     private ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -67,30 +63,50 @@ public class CustomUserService implements UserDetailsService {
                     .roles(List.of(CustomUserRole.ROLE_USER))
                     .enable(false)
                     .activation(confirmationToken.getConfirmationToken())
+                    .confirmationToken(confirmationToken)
                     .build();
             confirmationToken.setCustomUser(customUser);
             customUserRepository.save(customUser);
+            deleteIfItIsNotActivated(customUser);
         }
     }
+
+    public void deleteIfItIsNotActivated(CustomUser customUser){
+                TimerTask task = new TimerTask() {
+                public void run() {
+                    if (!customUser.isEnabled()) {
+                        customUserRepository.delete(customUser);
+                    }
+                }
+            };
+            Timer timer = new Timer("Timer");
+            long delay = 60000L;
+            timer.schedule(task, delay);
+        }
+
 
     public ConfirmationToken createConfirmationToken() {
         ConfirmationToken confirmationToken = new ConfirmationToken();
         confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
         confirmationToken.setCreatedDate(LocalDateTime.now());
-        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(30));
+        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(1));
         return confirmationTokenService.save(confirmationToken);
 
     }
 
     public String userActivation(String confirmationToken) {
-        CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
-        if ((LocalDateTime.now()).isBefore(customUser.getConfirmationToken().getExpiredDate())) {
-            customUser.setEnable(true);
-            customUser.setActivation("");
-            return "Activation is successful!";
-        } else {
-            customUserRepository.delete(customUser);
-            return "The token is invalid or broken";
+        try {
+            CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
+            if ((LocalDateTime.now()).isBefore(customUser.getConfirmationToken().getExpiredDate())) {
+                customUser.setEnable(true);
+                customUser.setActivation("");
+                return "Activation is successful!";
+            } else {
+                customUserRepository.delete(customUser);
+                return "The token is invalid or broken";
+            }
+        } catch (TokenCannotBeUsedException e){
+            throw  new TokenCannotBeUsedException(confirmationToken);
         }
     }
 
@@ -117,7 +133,6 @@ public class CustomUserService implements UserDetailsService {
             throw new UsernameNotFoundException("username not found");
 
         }
-
     }
 
     public List<CustomUserInfo> getCustomUsers() {
@@ -145,7 +160,6 @@ public class CustomUserService implements UserDetailsService {
         }
         return customUserOptional.get();
     }
-
 
     public void userDelete(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
@@ -180,9 +194,14 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-
     public void makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
-        customUserRepository.delete(toDelete);
+        userDelete(toDelete.getUsername(), toDelete.getCustomUserId());
+        toDelete.setDeleteDate(LocalDateTime.now());
+        toDelete.setDeleted(true);
+        toDelete.setEmail(null);
+        toDelete.setName(null);
+        toDelete.setPassword(null);
+        toDelete.setUsername(null);
     }
 }
