@@ -2,7 +2,6 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.CustomUser;
-import hu.progmasters.moovsmart.domain.CustomUserDeleted;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.ConfirmationToken;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
@@ -35,21 +34,15 @@ import java.util.stream.Collectors;
 public class CustomUserService implements UserDetailsService {
 
     private final CustomUserRepository customUserRepository;
-
     private ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-    private CustomUserDeletedService customUserDeletedService;
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, CustomUserDeletedService customUserDeletedService) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
-        this.customUserDeletedService = customUserDeletedService;
     }
-
-
-
 
     public void register(CustomUserForm command) {
         if (customUserRepository.findByEmail(command.getEmail()) != null) {
@@ -84,7 +77,6 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-
     public void save(CustomUser customUser) {
         customUserRepository.save(customUser);
     }
@@ -107,7 +99,6 @@ public class CustomUserService implements UserDetailsService {
             throw new UsernameNotFoundException("username not found");
 
         }
-
     }
 
     public List<CustomUserInfo> getCustomUsers() {
@@ -135,7 +126,6 @@ public class CustomUserService implements UserDetailsService {
         }
         return customUserOptional.get();
     }
-
 
     public void userDelete(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
@@ -169,12 +159,13 @@ public class CustomUserService implements UserDetailsService {
             return modelMapper.map(customUser, CustomUserInfo.class);
         }
     }
-
-
     public void makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
+        toDelete.setDeleteDate(LocalDateTime.now());
         toDelete.setDeleted(true);
-        customUserDeletedService.save(modelMapper.map(toDelete, CustomUserDeleted.class));
-        customUserRepository.delete(toDelete);
+        toDelete.setEmail(null);
+        toDelete.setName(null);
+        toDelete.setPassword(null);
+        toDelete.setUsername(null);
     }
 }
