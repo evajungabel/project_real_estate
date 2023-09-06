@@ -14,17 +14,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.dom4j.dom.DOMNodeHelper.insertData;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PropertyServiceTest {
@@ -51,14 +47,12 @@ public class PropertyServiceTest {
 
     @BeforeEach
     void init() {
-        ModelMapper modelMapper = new ModelMapper();
-
-
         property1 = new Property().builder()
                 .id(1L)
                 .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
                 .name("Kuckó")
                 .type(PropertyType.HOUSE)
+                .price(400000000)
                 .area(90)
                 .numberOfRooms(5)
                 .description("Jó kis házikó")
@@ -67,8 +61,46 @@ public class PropertyServiceTest {
                 .estateAgent(estateAgent1)
                 .build();
 
-        property2 = new Property(2L, LocalDateTime.of(2021, Month.JANUARY, 1, 10, 10, 30), LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30), null, null, "Kuckó", PropertyType.HOUSE, 90, 6, 40000000, "Jó kis családi ház",
-                "image/jpeg;base64,/op79j/4AAQSk", true, null, null, customUser1, estateAgent1);
+        property2 = new Property().builder()
+                .id(2L)
+                .dateOfCreation(LocalDateTime.of(2021, Month.JANUARY, 1, 10, 10, 30))
+                .name("Kulipintyó")
+                .type(PropertyType.HOUSE)
+                .price(35000000)
+                .area(85)
+                .numberOfRooms(4)
+                .description("Jó kis családi ház")
+                .imageUrl("image/jpeg;base64,/2555879j/4AAQSk")
+                .customUser(customUser1)
+                .estateAgent(estateAgent1)
+                .build();
+
+        propertyForm1 = new PropertyForm().builder()
+                .name("Kuckó")
+                .type(PropertyType.HOUSE)
+                .price(400000000)
+                .area(90)
+                .numberOfRooms(5)
+                .description("Jó kis házikó")
+                .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
+                .customUsername("pistike")
+                .build();
+
+        property2 = new Property().builder()
+                .id(2L)
+                .dateOfCreation(LocalDateTime.of(2021, Month.JANUARY, 1, 10, 10, 30))
+                .name("Kulipintyó")
+                .type(PropertyType.HOUSE)
+                .price(35000000)
+                .area(85)
+                .numberOfRooms(4)
+                .description("Jó kis családi ház")
+                .imageUrl("image/jpeg;base64,/2555879j/4AAQSk")
+                .customUser(customUser1)
+                .estateAgent(estateAgent1)
+                .build();
+
+
         customUser1 = new CustomUser().builder()
                 .customUserId(1L)
                 .username("pistike")
@@ -80,7 +112,15 @@ public class PropertyServiceTest {
                 .activation("123456789")
                 .build();
 
-        estateAgent1 = new EstateAgent(1L, AgentRank.MEDIOR, "Hvj Bátran", 12, "hivjbatran@ingatlan.com", List.of(property1));
+        estateAgent1 = new EstateAgent().builder()
+                .id(1L)
+                .rank(AgentRank.PROFESSIONAL)
+                .name("Ügynök Guru")
+                .email("ugynokguru@gmail.com")
+                .sellPoint(98)
+                .propertyList(List.of(property1, property2))
+                .build();
+
         propertyInfo1 = new PropertyInfo(1L, "Kuckó", 5, 40000000, "image/jpeg;base64,/2579j/4AAQSk");
         propertyInfo2 = new PropertyInfo(2L, "Kuckó", 6, 40000000, "image/jpeg;base64,/op79j/4AAQSk");
         propertyForm1 = new PropertyForm("Kuckó", PropertyType.HOUSE, 90, 5, 40000000, "Jó kis házikó",
@@ -97,7 +137,7 @@ public class PropertyServiceTest {
     void testList_AllProperties1() {
         when(modelMapper.map(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(propertyInfo1);
         when(propertyRepository.findAll()).thenReturn(List.of(property1));
-        assertEquals( List.of(propertyInfo1), propertyService.getProperties());
+        assertEquals(List.of(propertyInfo1), propertyService.getProperties());
     }
 
     @Test
@@ -107,8 +147,6 @@ public class PropertyServiceTest {
         when(modelMapper.map(property2, PropertyInfo.class)).thenReturn(propertyInfo2);
         assertEquals(List.of(propertyInfo1, propertyInfo2), propertyService.getProperties());
     }
-
-
 
 
 //    @Test
@@ -136,8 +174,6 @@ public class PropertyServiceTest {
 //        verify(propertyRepository, times(1)).findAll();
 //        verifyNoMoreInteractions(propertyRepository);
 //    }
-
-
 
 
 }
