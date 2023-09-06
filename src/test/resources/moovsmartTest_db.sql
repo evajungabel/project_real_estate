@@ -18,6 +18,8 @@ insert into moovsmartTest.custom_user (username, e_mail, name, password)
 values ('KoTu', 'kovacstunde9@hotmail.com', 'Kovács Tünde', 'Tund3J3lz0');
 insert into moovsmartTest.custom_user (username, e_mail, name, password)
 values ('SzePet', 'szentespeter10@gmail.com', 'Szentes Péter', 'P3t3rP@ss');
+insert into moovsmartTest.custom_user (username, e_mail, name, password)
+values ('SzePet', 'szentespeter10@gmail.com', 'Szentes Péter', 'P3t3rP@ss');
 
 INSERT INTO moovsmartTest.property (property_id, active, area, date_of_activation, date_of_creation,
                                     date_of_inactivation, date_of_sale, description, image_url, name, number_of_rooms,

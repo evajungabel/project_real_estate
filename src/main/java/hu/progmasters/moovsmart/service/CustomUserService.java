@@ -4,6 +4,7 @@ import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.ConfirmationToken;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
+import hu.progmasters.moovsmart.domain.PropertyStatus;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
@@ -143,7 +144,7 @@ public class CustomUserService implements UserDetailsService {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
-                property.setActive(false);
+                property.setStatus(PropertyStatus.INACTIVE);
                 property.setDateOfSale(LocalDateTime.now());
             }
         }
@@ -161,7 +162,7 @@ public class CustomUserService implements UserDetailsService {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
-                property.setActive(false);
+                property.setStatus(PropertyStatus.INACTIVE);
                 property.setDateOfInactivation(LocalDateTime.now());
             }
         }

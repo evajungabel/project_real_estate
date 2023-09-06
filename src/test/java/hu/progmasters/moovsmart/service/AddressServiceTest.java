@@ -1,47 +1,90 @@
 package hu.progmasters.moovsmart.service;
 
-import org.junit.jupiter.api.Assertions;
+import hu.progmasters.moovsmart.domain.Address;
+import hu.progmasters.moovsmart.dto.AddressInfo;
+import hu.progmasters.moovsmart.repository.AddressRepository;
+import lombok.Data;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
+import java.util.List;
+import java.util.Optional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
+@Data
+@ExtendWith(MockitoExtension.class)
+public class AddressServiceTest {
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class AddressServiceTest {
+    @InjectMocks
+    private AddressService addressService;
+    @Mock
+    private AddressRepository addressRepository;
+    @Mock
+    private ModelMapper modelMapper;
 
-    @Autowired
-    private MockMvc mockMvc;
+    private Address address1;
+    private Address address2;
+    private Address address3;
+    private Address address4;
+    private Address address5;
 
-    @Test
-    void test_saveAddress() throws Exception {
+    private AddressInfo addressInfo;
+    private AddressInfo addressInfo2;
+    private AddressInfo addressInfo3;
 
-        String inputCommand = "{\n" +
-                "    \"zipcode\": 2200,\n" +
-                "    \"country\": \"Magyarország\",\n" +
-                "    \"city\": \"Bénye\",\n" +
-                "    \"street\": \"Alkotmány utca\",\n" +
-                "    \"houseNumber\": \"4/A\",\n" +
-                "    \"doorNumber\": 1,\n" +
-                "    \"propertyId\": 1\n" +
-                "}";
-
-        mockMvc.perform(post("/api/addresses")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(inputCommand))
-                .andExpect(status().isCreated());
+    @BeforeEach
+    void init(){
+        address1 = new Address();
+        address2 = new Address();
+        address3 = new Address();
+        address4 = new Address();
+        address5 = new Address();
+        addressInfo = new AddressInfo();
+        addressInfo2 = new AddressInfo();
+        addressInfo3 = new AddressInfo();
     }
 
     @Test
-    void delete() {
+    void findAddressById_test() {
+        address1.setId(1L);
+        Long id = 1L;
+        when(addressRepository.findById(id)).thenReturn(Optional.of(address1));
+        when(modelMapper.map(address1, AddressInfo.class)).thenReturn(addressInfo);
 
+        AddressInfo result = addressService.findById(id);
+
+        assertNotNull(result);
+        assertEquals(addressInfo, result);
+    }
+
+    @Test
+    void deleteAddress_test() {
+        Long id = 2L;
+        address2.setId(id);
+        when(addressRepository.findById(id)).thenReturn(Optional.of(address2));
+        addressService.delete(id);
+        assertEquals(address2.getDeleted(), true);
+    }
+
+    @Test
+    void findAddressByValue_test() {
+        address4.setCity("Monarchia");
+        address3.setCity("Monor");
+        String value = "mon";
+
+        when(addressRepository.findAddressByValue(value)).thenReturn(List.of(address3,address4));
+        when(modelMapper.map(address3, AddressInfo.class)).thenReturn(addressInfo);
+        when(modelMapper.map(address4, AddressInfo.class)).thenReturn(addressInfo2);
+
+        List<AddressInfo> result = addressService.findByValue(value);
+
+        assertEquals(List.of(addressInfo,addressInfo2), result);
     }
 }
