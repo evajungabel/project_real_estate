@@ -4,15 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PropertyListItem {
+public class CustomUserInfo {
 
-    private long id;
     private String name;
-    private int numberOfRooms;
-    private int price;
-    private String imageUrl;
+    private String username;
+    private String password;
+
+    private String email;
 
 }

@@ -18,14 +18,12 @@ public class PropertyData {
     @Column(name = "property_data_id")
     private Long id;
 
-    @Enumerated(value = EnumType.STRING)
-    private PropertyCondition condition;
-
     @Column(name = "parking")
     private boolean parking;
 
     @Enumerated(value = EnumType.STRING)
-    private PropertyOrientation orientation;
+    @Column(name = "property_orientation")
+    private PropertyOrientation propertyOrientation;
 
     @Column(name = "heating")
     private String heating;

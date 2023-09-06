@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 @NoArgsConstructor
@@ -23,7 +22,7 @@ public class Property {
 
 
     @Column(name = "date_of_creation")
-    private LocalDateTime dateOfCreation = LocalDateTime.now();
+    private LocalDateTime dateOfCreation;
 
     @Column(name = "date_of_sale")
     private LocalDateTime dateOfSale;
@@ -40,8 +39,8 @@ public class Property {
     @Enumerated(value = EnumType.STRING)
     private PropertyType type;
 
-    @Column(name = "space")
-    private String space;
+    @Column(name = "area")
+    private Integer area;
 
     @Column(name = "number_of_rooms")
     private Integer numberOfRooms;
@@ -61,7 +60,7 @@ public class Property {
     @OneToOne(mappedBy = "property")
     private PropertyData propertyData;
 
-    @OneToOne(mappedBy = "property")
+    @OneToOne(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Address address;
 
     @ManyToOne
