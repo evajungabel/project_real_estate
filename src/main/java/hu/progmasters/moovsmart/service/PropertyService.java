@@ -2,6 +2,7 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
+import hu.progmasters.moovsmart.domain.PropertyStatus;
 import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyInfo;
@@ -68,7 +69,7 @@ public class PropertyService {
 
     public void makeInactive(Long id) {
         Property toDelete = findPropertyById(id);
-        toDelete.setActive(false);
+        toDelete.setStatus(PropertyStatus.INACTIVE);
     }
 
     private Property findPropertyById(Long propertyId) {
