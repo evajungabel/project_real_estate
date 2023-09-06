@@ -53,11 +53,33 @@ public class PropertyServiceTest {
     void init() {
         ModelMapper modelMapper = new ModelMapper();
 
-        property1 = new Property(1L, LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30), LocalDateTime.of(2023, Month.JANUARY, 1, 10, 10, 30), null, null, "Kuckó", PropertyType.HOUSE, 90, 5, 40000000, "Jó kis házikó",
-                "image/jpeg;base64,/2579j/4AAQSk", true, null, null, customUser1, estateAgent1);
+
+        property1 = new Property().builder()
+                .id(1L)
+                .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
+                .name("Kuckó")
+                .type(PropertyType.HOUSE)
+                .area(90)
+                .numberOfRooms(5)
+                .description("Jó kis házikó")
+                .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
+                .customUser(customUser1)
+                .estateAgent(estateAgent1)
+                .build();
+
         property2 = new Property(2L, LocalDateTime.of(2021, Month.JANUARY, 1, 10, 10, 30), LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30), null, null, "Kuckó", PropertyType.HOUSE, 90, 6, 40000000, "Jó kis családi ház",
                 "image/jpeg;base64,/op79j/4AAQSk", true, null, null, customUser1, estateAgent1);
-        customUser1 = new CustomUser(1L, "pisitke", "Kis Pistike", "pistike1234", "pistike@gmail.com", true, true, false, LocalDateTime.of(2023, Month.JULY, 1, 10, 10, 30), "123456789", List.of(CustomUserRole.ROLE_USER), List.of(property1), null);
+        customUser1 = new CustomUser().builder()
+                .customUserId(1L)
+                .username("pistike")
+                .name("Kis Pistike")
+                .email("pistike@gmail.com")
+                .password("Pistike1*")
+                .roles(List.of(CustomUserRole.ROLE_USER))
+                .enable(true)
+                .activation("123456789")
+                .build();
+
         estateAgent1 = new EstateAgent(1L, AgentRank.MEDIOR, "Hvj Bátran", 12, "hivjbatran@ingatlan.com", List.of(property1));
         propertyInfo1 = new PropertyInfo(1L, "Kuckó", 5, 40000000, "image/jpeg;base64,/2579j/4AAQSk");
         propertyInfo2 = new PropertyInfo(2L, "Kuckó", 6, 40000000, "image/jpeg;base64,/op79j/4AAQSk");
