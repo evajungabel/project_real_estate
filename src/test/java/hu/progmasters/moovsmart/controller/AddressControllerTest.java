@@ -1,4 +1,4 @@
-package hu.progmasters.moovsmart.service;
+package hu.progmasters.moovsmart.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
