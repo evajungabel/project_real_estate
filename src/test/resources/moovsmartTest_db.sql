@@ -74,7 +74,7 @@ INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_
                                     date_of_sale, description, image_url, name, number_of_rooms, price, status, type,
                                     custom_user_id, estate_agent_id)
 VALUES (1, 120, null, '2023-09-02', null, null, 'Eladó családi ház a Balton partján', 'www.kep-url/122324gfg/kep.hu',
-        'Eladó Balatoni Ház', 4, 63000000, 'ACTIVE', 'HAUSE', 1, null);
+        'Eladó Balatoni Ház', 4, 63000000, 'ACTIVE', 'HOUSE', 1, null);
 
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, status, type,
@@ -193,7 +193,7 @@ INSERT INTO moovsmartTest.address (address_id, city, country, deleted, door_numb
 VALUES (14, 'Alcsút-Dobozos', 'Magyarország', false, null, '4', 'Pozsonyi utca', 7777, 14);
 INSERT INTO moovsmartTest.address (address_id, city, country, deleted, door_number, house_number, street, zipcode,
                                    property_id)
-VALUES (15, 'Péteri', 'Magyarország', true, null, '23/a', 'Kapisztrán utca', 8888, 14);
+VALUES (15, 'Péteri', 'Magyarország', true, null, '23/a', 'Kapisztrán utca', 8888, 15);
 
 INSERT INTO moovsmartTest.property_data(property_data_id, air_conditioner, balcony, garden, heating, insulation,
                                         parking, property_orientation, property_id)
