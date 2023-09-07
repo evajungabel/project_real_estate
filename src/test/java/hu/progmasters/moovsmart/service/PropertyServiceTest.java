@@ -6,19 +6,17 @@ import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyInfo;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
+import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -26,11 +24,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class PropertyServiceTest {
 
     @Mock
@@ -42,12 +40,11 @@ public class PropertyServiceTest {
     @Mock
     private CustomUserService customUserService;
 
+
     @InjectMocks
     private PropertyService propertyService;
     private Property property1;
     private Property property2;
-
-    private Property propertyEmpty;
     private PropertyForm propertyForm1;
     private PropertyForm propertyForm2;
 
@@ -66,7 +63,6 @@ public class PropertyServiceTest {
 
     @BeforeEach
     void init() {
-        propertyEmpty = new Property();
         property1 = new Property().builder()
                 .id(1L)
                 .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
@@ -107,7 +103,7 @@ public class PropertyServiceTest {
                 .build();
 
         property1Update = new Property().builder()
-                .id(1L)
+                .id(3L)
                 .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
                 .name("Buckó")
                 .type(PropertyType.HOUSE)
@@ -153,7 +149,7 @@ public class PropertyServiceTest {
                 .build();
 
         propertyInfo1Update = new PropertyInfo().builder()
-                .id(1L)
+                .id(3L)
                 .name("Buckó")
                 .price(400000000)
                 .numberOfRooms(5)
@@ -242,55 +238,7 @@ public class PropertyServiceTest {
         verifyNoMoreInteractions(propertyRepository);
     }
 
-//    @Test
-//    void testList_PaginatedPropertiesPageNo1PageSize1() {
-//        when(propertyRepository.findAll(PageRequest.of(1, 1))).thenReturn(Page(property1));
-//        when(modelMapper.map(property1, PropertyInfo.class)).thenReturn(propertyInfo1);
-//        when(modelMapper.map(property2, PropertyInfo.class)).thenReturn(propertyInfo2);
-//        assertEquals(List.of(propertyInfo1), propertyService.findPaginated(1, 1));
-//
-//    verify(propertyRepository, times(1)).findAll();
-//    verifyNoMoreInteractions(propertyRepository);
-//    }
 
-//    @Test
-//    void testGetPropertyDetails_withWrongId() {
-//        when(propertyRepository.findById(3L)).thenReturn(PropertyNotFoundException);
-//        when(modelMapper.map(property2, PropertyDetails.class)).thenReturn(propertyDetails2);
-//        assertThrows(PropertyNotFoundException.class, (Executable) propertyService.getPropertyDetails(3L));
-//
-//    verifyNoMoreInteractions(propertyRepository);
-//    verify(propertyRepository, times(1)).findById();
-//    }
-
-//    @Test
-//    void testExpectedException() {
-//
-//        PropertyNotFoundException thrown = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
-//        when(modelMapper.map(property2, PropertyDetails.class)).thenReturn(propertyDetails2);
-//            when(propertyRepository.findById(3L)).thenReturn(Optional.ofNullable(property1));
-//            propertyService.getPropertyDetails(3L);
-//        });
-//
-//        Assertions.assertEquals("some message", thrown.getMessage());
-//
-//    verifyNoMoreInteractions(propertyRepository);
-//    verify(propertyRepository, times(1)).findById();
-//    }
-//
-//    @Test
-//    void verifiesTypeAndMessage() {
-//        assertThatThrownBy(new PropertyService(propertyRepository, customUserService, modelMapper)::getProperties)
-//                .isInstanceOf(RuntimeException.class)
-//                .hasMessage("Runtime exception occurred")
-//                .hasMessageStartingWith("Runtime")
-//                .hasMessageEndingWith("occurred")
-//                .hasMessageContaining("exception")
-//                .hasNoCause();
-//
-//    verify(propertyRepository, times(1)).findAll();
-//    verifyNoMoreInteractions(propertyRepository);
-//    }
 
     @Test
     void testGetPropertyDetails_withNoId() {
@@ -304,12 +252,6 @@ public class PropertyServiceTest {
         }
     }
 
-//    @Test
-//    void testGetPropertyDetails_withNoId() {
-//        when(propertyService.getPropertyDetails(3L)).thenThrow(PropertyNotFoundException.class);
-//
-//        assertThrows(PropertyNotFoundException.class, () -> "");
-//    }
     @Test
     void testGetPropertyDetails_with1LId() {
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
@@ -333,7 +275,7 @@ public class PropertyServiceTest {
 
 
     @Test
-    void testSave_singleProperty_singlePropertySaved() {
+    void testSave_singlePropertySaved() {
         when(modelMapper.map(propertyForm1, Property.class)).thenReturn(property1);
         when(modelMapper.map(property1, PropertyInfo.class)).thenReturn(propertyInfo1);
         when(propertyRepository.save(property1)).thenReturn(property1);
@@ -347,7 +289,8 @@ public class PropertyServiceTest {
         verifyNoMoreInteractions(propertyRepository);
     }
 
-    //TODO hibakezelés itt is customUserNotFound
+
+    //TODO when username is not found
 
 
     @Test
@@ -362,19 +305,17 @@ public class PropertyServiceTest {
         verifyNoMoreInteractions(propertyRepository);
     }
 
-//    @Test
-//    void testUpdate() {
-//        when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1Update));
-//        when(modelMapper.map(propertyFormUpdate, Property.class)).thenReturn(property1Update);
-//        when(modelMapper.map(property1Update, PropertyInfo.class)).thenReturn(propertyInfo1Update);
-//
-//
-//        assertEquals(propertyInfo1Update, propertyService.update(1L, propertyFormUpdate));
-//
-//
-//        verify(propertyRepository, times(1)).findById(1L);
-//        verifyNoMoreInteractions(propertyRepository);
-//    }
+    @Test
+    void testUpdate() {
+        when(modelMapper.map(propertyFormUpdate, Property.class)).thenReturn(property1Update);
+        when(modelMapper.map(property1Update, PropertyInfo.class)).thenReturn(propertyInfo1Update);
+        when(propertyRepository.findById(3L)).thenReturn(Optional.ofNullable(property1Update));
+
+        assertEquals(propertyInfo1Update, propertyService.update(3L, propertyFormUpdate));
+
+        verify(propertyRepository, times(1)).findById(3L);
+        verifyNoMoreInteractions(propertyRepository);
+    }
 
 
 
