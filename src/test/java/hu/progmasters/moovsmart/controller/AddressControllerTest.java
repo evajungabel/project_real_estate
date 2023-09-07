@@ -32,8 +32,7 @@ public class AddressControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
-    @Autowired
-    private EntityManager entityManager;
+
 
     @Test
     void test_saveAddress()  throws Exception {
