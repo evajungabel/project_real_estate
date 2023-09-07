@@ -1,12 +1,14 @@
 package hu.progmasters.moovsmart.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
 @Getter
-@AllArgsConstructor
 public class AddressNotFoundException extends RuntimeException {
-    private final Long propertyId;
+    private final Long addressId;
+
+    public AddressNotFoundException(Long addressId) {
+        super("No player found with id: " + addressId);
+        this.addressId = addressId;
+    }
 }
 

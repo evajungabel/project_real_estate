@@ -54,8 +54,8 @@ public class Property {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "active")
-    private boolean active = true;
+    @Column(name = "status")
+    private PropertyStatus status;
 
     @OneToOne(mappedBy = "property")
     private PropertyData propertyData;
