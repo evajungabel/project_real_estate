@@ -2,6 +2,7 @@ package hu.progmasters.moovsmart.domain;
 
 import hu.progmasters.moovsmart.domain.CustomUser;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Entity
+@Builder
 @Table(name = "confirmationToken")
 public class ConfirmationToken {
     @Id

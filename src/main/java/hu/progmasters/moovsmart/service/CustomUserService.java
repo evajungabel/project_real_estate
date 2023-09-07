@@ -7,10 +7,7 @@ import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
-import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
-import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
-import hu.progmasters.moovsmart.exception.TokenCannotBeUsedException;
-import hu.progmasters.moovsmart.exception.UsernameExistsException;
+import hu.progmasters.moovsmart.exception.*;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,10 +105,6 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-    public void save(CustomUser customUser) {
-        customUserRepository.save(customUser);
-    }
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -140,6 +133,23 @@ public class CustomUserService implements UserDetailsService {
         return customUserInfos;
     }
 
+    public CustomUser findCustomUserByUsername(String username) {
+        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByUsername(username));
+        if (customUserOptional.isEmpty()) {
+            throw new UsernameNotFoundExceptionImp(username);
+        }
+        return customUserOptional.get();
+    }
+
+    public CustomUser findCustomUserByEmail(String email) {
+        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByEmail(email));
+        if (customUserOptional.isEmpty()) {
+            throw new EmailAddressNotFoundException(email);
+        }
+        return customUserOptional.get();
+    }
+
+
     public void userSale(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
@@ -150,13 +160,6 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-    public CustomUser findCustomUserByUsername(String username) {
-        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByUsername(username));
-        if (customUserOptional.isEmpty()) {
-            throw new UsernameNotFoundException(username);
-        }
-        return customUserOptional.get();
-    }
 
     public void userDelete(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
@@ -168,13 +171,6 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-    public CustomUser findCustomUserByEmail(String email) {
-        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByEmail(email));
-        if (customUserOptional.isEmpty()) {
-            throw new EmailAddressNotFoundException(email);
-        }
-        return customUserOptional.get();
-    }
 
     public CustomUserInfo update(String username, CustomUserForm customUserForm) {
         CustomUser customUser = findCustomUserByUsername(username);
