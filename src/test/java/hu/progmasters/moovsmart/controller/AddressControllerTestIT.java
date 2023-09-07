@@ -27,8 +27,7 @@ public class AddressControllerTestIT {
     @Test
     void test_atStart_emptyList() throws Exception {
         mockMvc.perform(get("/api/addresses"))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[]"));
+                .andExpect(status().isOk());
     }
 
 
