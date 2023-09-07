@@ -56,7 +56,7 @@ public class Property {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "status")
+    @Enumerated(value = EnumType.STRING)
     private PropertyStatus status;
 
     @OneToOne(mappedBy = "property")
