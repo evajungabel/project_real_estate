@@ -52,7 +52,6 @@ public class GlobalExceptionHandler {
         for (FieldError fieldError : fieldErrors) {
             validationError.addFieldError(fieldError.getField(), messageSource.getMessage(fieldError, Locale.getDefault()));
         }
-
         return validationError;
     }
 

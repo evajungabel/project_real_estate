@@ -46,6 +46,8 @@ public class PropertyServiceTest {
     private PropertyService propertyService;
     private Property property1;
     private Property property2;
+
+    private Property propertyEmpty;
     private PropertyForm propertyForm1;
     private PropertyForm propertyForm2;
 
@@ -64,6 +66,7 @@ public class PropertyServiceTest {
 
     @BeforeEach
     void init() {
+        propertyEmpty = new Property();
         property1 = new Property().builder()
                 .id(1L)
                 .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
@@ -290,6 +293,24 @@ public class PropertyServiceTest {
 //    }
 
     @Test
+    void testGetPropertyDetails_withNoId() {
+        when(propertyRepository.findById(3L)).thenReturn(Optional.empty());
+
+        try {
+            propertyService.getPropertyDetails(3L);
+            fail("Expected PropertyNotFoundException, but no exception was thrown.");
+        } catch (PropertyNotFoundException e) {
+            assertEquals("No property found with id: 3", e.getMessage());
+        }
+    }
+
+//    @Test
+//    void testGetPropertyDetails_withNoId() {
+//        when(propertyService.getPropertyDetails(3L)).thenThrow(PropertyNotFoundException.class);
+//
+//        assertThrows(PropertyNotFoundException.class, () -> "");
+//    }
+    @Test
     void testGetPropertyDetails_with1LId() {
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
         when(modelMapper.map(property1, PropertyDetails.class)).thenReturn(propertyDetails1);
@@ -333,7 +354,7 @@ public class PropertyServiceTest {
     void testMakeInactive() {
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
 
-        assertEquals(PropertyStatus.INACTIVE, property1.getStatus());
+        propertyService.makeInactive(1L);
 
         assertEquals(PropertyStatus.INACTIVE, property1.getStatus());
 
