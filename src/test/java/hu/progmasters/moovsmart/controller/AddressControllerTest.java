@@ -35,7 +35,7 @@ public class AddressControllerTest {
 
 
     @Test
-    void test_saveAddress()  throws Exception {
+    void IT_saveAddress_test()  throws Exception {
 
         String inputCommand = "{\n" +
                 "    \"zipcode\": 2200,\n" +
@@ -51,5 +51,25 @@ public class AddressControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    void findById() {
+    }
+
+    @Test
+    void update() {
+    }
+
+    @Test
+    void delete() {
+    }
+
+    @Test
+    void findByValue() {
+    }
+
+    @Test
+    void findAllAddress() {
     }
 }
