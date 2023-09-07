@@ -1,4 +1,4 @@
-package hu.progmasters.moovsmart.service;
+package hu.progmasters.moovsmart.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,8 +32,7 @@ public class AddressControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
-    @Autowired
-    private EntityManager entityManager;
+
 
     @Test
     void test_saveAddress()  throws Exception {
