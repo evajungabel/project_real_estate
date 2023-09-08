@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart.controller;
 
+import hu.progmasters.moovsmart.domain.Address;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,11 +10,14 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,6 +28,9 @@ public class AddressControllerTestIT {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @Test
     void test_atStart_emptyList() throws Exception {
         mockMvc.perform(get("/api/addresses"))
@@ -32,7 +39,7 @@ public class AddressControllerTestIT {
 
 
     @Test
-    void IT_saveAddress_test()  throws Exception {
+    void IT_saveAddress_test() throws Exception {
 
         String inputCommand = "{\n" +
                 "    \"zipcode\": 2200,\n" +
@@ -51,19 +58,34 @@ public class AddressControllerTestIT {
     }
 
     @Test
-    void findById() {
+    void IT_addressFindById_test() {
     }
 
     @Test
-    void update() {
+    void IT_addressUpdate_test() {
     }
 
     @Test
-    void delete() {
+    void IT_deleteAddress_test() throws Exception {
+        Address address = entityManager.find(Address.class, 1L);
+        assertFalse(address.getDeleted());
+        mockMvc.perform(delete("/api/addresses/id/1")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+        assertTrue(address.getDeleted());
     }
 
     @Test
-    void findByValue() throws Exception {
+    void IT_AddressNotExists_test() throws Exception {
+        mockMvc.perform(delete("/api/addresses/id/34")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+//        Üzeneteket nem ír ki
+    }
+
+
+    @Test
+    void IT_addressFindByValue_test() throws Exception {
         String value = "mon";
 
         mockMvc.perform(get("/api/addresses")
