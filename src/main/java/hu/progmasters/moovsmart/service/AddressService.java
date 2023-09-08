@@ -2,7 +2,9 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.Address;
 import hu.progmasters.moovsmart.dto.AddressForm;
+import hu.progmasters.moovsmart.dto.weather.Coordinate;
 import hu.progmasters.moovsmart.dto.AddressInfo;
+import hu.progmasters.moovsmart.dto.weather.WeatherData;
 import hu.progmasters.moovsmart.exception.AddressNotFoundException;
 import hu.progmasters.moovsmart.repository.AddressRepository;
 import org.modelmapper.ModelMapper;
@@ -19,11 +21,13 @@ public class AddressService {
 
     private AddressRepository addressRepository;
     private ModelMapper modelMapper;
+    private WeatherService weatherService;
 
     @Autowired
-    public AddressService(AddressRepository addressRepository, ModelMapper modelMapper) {
+    public AddressService(AddressRepository addressRepository, ModelMapper modelMapper, WeatherService weatherService) {
         this.addressRepository = addressRepository;
         this.modelMapper = modelMapper;
+        this.weatherService = weatherService;
     }
 
     public void saveAddress(AddressForm form) {
@@ -31,8 +35,18 @@ public class AddressService {
         addressRepository.save(toSave);
     }
 
+    public WeatherData findWeather(String zipcode){
+        Coordinate coordinates = weatherService.getCoordinatesForZip(zipcode);
+        return weatherService.getWeatherForCoordinates(coordinates.getLat(),coordinates.getLon());
+    }
+
     public AddressInfo findById(Long id) {
-        return modelMapper.map(findAddressById(id), AddressInfo.class);
+        AddressInfo addressInfo = modelMapper.map(findAddressById(id), AddressInfo.class);
+       String zipcode = Integer.toString(addressInfo.getZipcode());
+       WeatherData weatherData = findWeather(zipcode);
+       weatherData.getTemperatureInCelsius();
+       addressInfo.setWeatherData(weatherData);
+        return addressInfo;
     }
 
     public Address findAddressById(Long id) {

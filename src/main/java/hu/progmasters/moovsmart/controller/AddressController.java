@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.controller;
 import hu.progmasters.moovsmart.dto.AddressForm;
 import hu.progmasters.moovsmart.dto.AddressInfo;
 import hu.progmasters.moovsmart.service.AddressService;
+import hu.progmasters.moovsmart.service.WeatherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;

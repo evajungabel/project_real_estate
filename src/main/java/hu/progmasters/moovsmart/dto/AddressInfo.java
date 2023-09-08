@@ -1,10 +1,10 @@
 package hu.progmasters.moovsmart.dto;
 
 
+import hu.progmasters.moovsmart.dto.weather.WeatherData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 
 @Data
 @AllArgsConstructor
@@ -18,4 +18,5 @@ public class AddressInfo {
     private String houseNumber;
     private Integer doorNumber;
     private String propertyName;
+    private WeatherData weatherData;
 }
