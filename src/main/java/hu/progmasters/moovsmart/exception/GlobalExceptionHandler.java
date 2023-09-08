@@ -73,6 +73,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+
+
     @ExceptionHandler(PropertyNotFoundException.class)
     public ResponseEntity<ApiError> handlePropertyNotFoundException(PropertyNotFoundException ex) {
         logger.error("Not found error: ", ex);
