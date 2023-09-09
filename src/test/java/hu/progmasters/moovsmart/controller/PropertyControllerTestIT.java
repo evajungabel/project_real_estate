@@ -104,8 +104,8 @@ public class PropertyControllerTestIT {
                         .content(inputCommand))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is("Eladó Ház")))
-                .andExpect(jsonPath("$.numberOfRooms", is(4)))
-                .andExpect(jsonPath("$.price", is(63000000)))
+                .andExpect(jsonPath("$.numberOfRooms", is(6)))
+                .andExpect(jsonPath("$.price", is(75000000)))
                 .andExpect(jsonPath("$.imageUrl", is("image/jpeg;base68,/9j783/4Adfhdk")));
     }
 
