@@ -26,11 +26,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class CustomUserControllerTestIT {
 
+
+
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private EntityManager entityManager;
+
 
 
     @Test
@@ -46,7 +49,7 @@ public class CustomUserControllerTestIT {
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
-                "    \"email\": \"bogyo.esbaboca@gmail.com\"\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
 
@@ -57,23 +60,231 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
-    void IT_test_nameNotValid() throws Exception {
+    void IT_test_saveCustomUser_nameNotValid() throws Exception {
 
+        String inputCommand = "{\n" +
+                "    \"name\": \"           \",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("name")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Name cannot be empty!")));
     }
 
     @Test
-    void IT_test_usernameNotValid() throws Exception {
+    void IT_test_saveCustomUser_usernameNotBlank() throws Exception {
 
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"          \",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("username")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Username cannot be empty!")));
+    }
+
+
+    @Test
+    void IT_test_saveCustomUser_usernameSizeMinNotValid() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"b\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("username")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Name must be between 3 and 200 characters!")));
+    }
+
+
+    @Test
+    void IT_test_saveCustomUser_usernameSizeMaxNotValid() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("username")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Name must be between 3 and 200 characters!")));
     }
 
     @Test
-    void IT_test_passwordNotValid() throws Exception {
+    void IT_test_saveCustomUser_passwordNotNull() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("password")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Password cannot be empty!")));
     }
 
 
     @Test
-    void IT_test_emailNotValid() throws Exception {
+    void IT_test_saveCustomUser_passwordSizeMinNotValid() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"password\": \"BesB12*\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("password")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("must match \"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$\"")));
     }
+
+
+    @Test
+    void IT_test_saveCustomUser_passwordSizeMaxNotValid() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"password\": \"BesB1234567890123456789*\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("password")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("must match \"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$\"")));
+    }
+
+    @Test
+    void IT_test_saveCustomUser_passwordPatternNotValid() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"password\": \"BesB1234567890123456789\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("password")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("must match \"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$\"")));
+    }
+
+    @Test
+    void IT_test_saveCustomUser_emailNotNull() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"password\": \"BesB1234*\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("email")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("E-mail cannot be empty!")));
+    }
+
+
+    @Test
+    void IT_test_saveCustomUser_emailSizeMinNotValid() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"b@c\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("email")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("must match \"^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$\"")));
+    }
+
+
+    @Test
+    void IT_test_saveCustomUser_emailSizeMaxNotValid() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"bogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.babocabogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("email")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("must be a well-formed email address")));
+    }
+
+    @Test
+    void IT_test_saveCustomUser_emailPatternNotValid() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"bogyo.es.babocagmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("email")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("must match \"^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$\"")));
+    }
+
+
+    @Test
+    void IT_test_loginCustomUser() throws Exception {
+
+    }
+
 
 
 
