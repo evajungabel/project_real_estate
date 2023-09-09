@@ -70,14 +70,14 @@ public class PropertyControllerTestIT {
     }
 
 
-//    @Test
-//    void IT_test_getPropertyDetailsWithNoId() throws Exception {
-//        mockMvc.perform(get("/api/properties/16")
-//                        .accept(MediaType.APPLICATION_JSON_VALUE))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("$[0].field", is("id")))
-//                .andExpect(jsonPath("$[0].errorMessage", is("No property found with id: 16")));
-//    }
+    @Test
+    void IT_test_getPropertyDetailsWithNoId() throws Exception {
+        mockMvc.perform(get("/api/properties/16")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("Property not found error.")))
+                .andExpect(jsonPath("$.details", is("No property found with id: 16")));
+    }
 
 
     @Test
@@ -102,7 +102,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
-    void IT_test_nameNotValid() throws Exception {
+    void IT_test_saveProperty_nameNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"    \",\n" +
                 "    \"type\": \"HOUSE\",\n" +
@@ -118,12 +118,12 @@ public class PropertyControllerTestIT {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field", is("name")))
-                .andExpect(jsonPath("$[0].errorMessage", is("Property name cannot be empty!")));
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("name")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Property name cannot be empty!")));
     }
 
     @Test
-    void IT_test_nameSizeNotValid() throws Exception {
+    void IT_test_saveProperty_nameSizeNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
@@ -139,15 +139,14 @@ public class PropertyControllerTestIT {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field", is("name")))
-                .andExpect(jsonPath("$[0].errorMessage", is("Property name must be between 1 and 200 characters!")));
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("name")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Property name must be between 1 and 200 characters!")));
     }
 
     @Test
-    void IT_test_typeNotValid() throws Exception {
+    void IT_test_saveProperty_typeNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
-                "    \"type\": \"HOUSE\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -160,13 +159,13 @@ public class PropertyControllerTestIT {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[1].field", is("type")))
-                .andExpect(jsonPath("$[1].errorMessage", is("Property type cannot be empty!")));
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("type")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Property type cannot be empty!")));
     }
 
 
     @Test
-    void IT_test_areaMinNotValid() throws Exception {
+    void IT_test_saveProperty_areaMinNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
@@ -182,13 +181,13 @@ public class PropertyControllerTestIT {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[3].field", is("area")))
-                .andExpect(jsonPath("$[3].errorMessage", is("Space must be between 1 and 1000!")));
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("area")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Space must be between 1 and 1000!")));
     }
 
 
     @Test
-    void IT_test_areaMaxNotValid() throws Exception {
+    void IT_test_saveProperty_areaMaxNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
@@ -204,12 +203,12 @@ public class PropertyControllerTestIT {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[3].field", is("area")))
-                .andExpect(jsonPath("$[3].errorMessage", is("Space must be between 1 and 1000!")));
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("area")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Space must be between 1 and 1000!")));
     }
 
     @Test
-    void IT_test_numberOfRoomsMinNotValid() throws Exception {
+    void IT_test_saveProperty_numberOfRoomsMinNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
@@ -225,12 +224,12 @@ public class PropertyControllerTestIT {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[4].field", is("numberOfRooms")))
-                .andExpect(jsonPath("$[4].errorMessage", is("Number of rooms must be between 1 and 40!")));
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("numberOfRooms")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Number of rooms must be between 1 and 40!")));
     }
 
     @Test
-    void IT_test_numberOfRoomsMaxNotValid() throws Exception {
+    void IT_test_saveProperty_numberOfRoomsMaxNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
@@ -246,18 +245,17 @@ public class PropertyControllerTestIT {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[4].field", is("numberOfRooms")))
-                .andExpect(jsonPath("$[4].errorMessage", is("Number of rooms must be between 1 and 40!")));
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("numberOfRooms")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Number of rooms must be between 1 and 40!")));
     }
 
     @Test
-    void IT_test_priceNotValid() throws Exception {
+    void IT_test_saveProperty_priceNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
-                "    \"price\": ,\n" +
                 "    \"description\": \"Kényelmes családi ház\",\n" +
                 "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
                 "    \"customUsername\": \"aprandia\"\n" +
@@ -267,12 +265,12 @@ public class PropertyControllerTestIT {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[5].field", is("price")))
-                .andExpect(jsonPath("$[5].errorMessage", is("Price must be added!")));
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("price")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Price must be added!")));
     }
 
     @Test
-    void IT_test_customUsernameNotValid() throws Exception {
+    void IT_test_saveProperty_customUsernameNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
@@ -280,16 +278,15 @@ public class PropertyControllerTestIT {
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
                 "    \"description\": \"Kényelmes családi ház\",\n" +
-                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
-                "    \"customUsername\": \"\"\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\"\n" +
                 "}";
 
         mockMvc.perform(post("/api/properties")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[6].field", is("customUsername")))
-                .andExpect(jsonPath("$[6].errorMessage", is("Username cannot be empty!")));
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("customUsername")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Username cannot be empty!")));
     }
 
 
@@ -314,7 +311,193 @@ public class PropertyControllerTestIT {
                 .andExpect(status().isOk());
     }
 
-    //TODO validations
+    @Test
+    void IT_test_updateProperty_nameNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"    \",\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"area\": 120,\n" +
+                "    \"numberOfRooms\": 6,\n" +
+                "    \"price\": 75000000,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
+                "    \"customUsername\": \"aprandia\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/properties/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("name")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Property name cannot be empty!")));
+    }
+
+    @Test
+    void IT_test_updateProperty_nameSizeNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij\",\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"area\": 120,\n" +
+                "    \"numberOfRooms\": 6,\n" +
+                "    \"price\": 75000000,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
+                "    \"customUsername\": \"aprandia\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/properties/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("name")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Property name must be between 1 and 200 characters!")));
+    }
+
+    @Test
+    void IT_test_updateProperty_typeNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Eladó Ház\",\n" +
+                "    \"area\": 120,\n" +
+                "    \"numberOfRooms\": 6,\n" +
+                "    \"price\": 75000000,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
+                "    \"customUsername\": \"aprandia\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/properties/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("type")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Property type cannot be empty!")));
+    }
+
+
+    @Test
+    void IT_test_updateProperty_areaMinNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Eladó Ház\",\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"area\": 0,\n" +
+                "    \"numberOfRooms\": 6,\n" +
+                "    \"price\": 75000000,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
+                "    \"customUsername\": \"aprandia\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/properties/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("area")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Space must be between 1 and 1000!")));
+    }
+
+
+    @Test
+    void IT_test_updateProperty_areaMaxNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Eladó Ház\",\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"area\": 20000,\n" +
+                "    \"numberOfRooms\": 6,\n" +
+                "    \"price\": 75000000,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
+                "    \"customUsername\": \"aprandia\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/properties/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("area")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Space must be between 1 and 1000!")));
+    }
+
+    @Test
+    void IT_test_updateProperty_numberOfRoomsMinNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Eladó Ház\",\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"area\": 120,\n" +
+                "    \"numberOfRooms\": 0,\n" +
+                "    \"price\": 75000000,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
+                "    \"customUsername\": \"aprandia\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/properties/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("numberOfRooms")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Number of rooms must be between 1 and 40!")));
+    }
+
+    @Test
+    void IT_test_updateProperty_numberOfRoomsMaxNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Eladó Ház\",\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"area\": 120,\n" +
+                "    \"numberOfRooms\": 41,\n" +
+                "    \"price\": 75000000,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
+                "    \"customUsername\": \"aprandia\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/properties/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("numberOfRooms")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Number of rooms must be between 1 and 40!")));
+    }
+
+    @Test
+    void IT_test_updateProperty_priceNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Eladó Ház\",\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"area\": 120,\n" +
+                "    \"numberOfRooms\": 6,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
+                "    \"customUsername\": \"aprandia\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/properties/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("price")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Price must be added!")));
+    }
+
+    @Test
+    void IT_test_updateProperty_customUsernameNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Eladó Ház\",\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"area\": 120,\n" +
+                "    \"numberOfRooms\": 6,\n" +
+                "    \"price\": 75000000,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/properties/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("customUsername")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Username cannot be empty!")));
+    }
 
 
     @Test
@@ -326,13 +509,6 @@ public class PropertyControllerTestIT {
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
         assertEquals(property.getStatus(), PropertyStatus.INACTIVE);
-
-//
-//
-//        mockMvc.perform(delete("/api/properties/1")
-//                        .accept(MediaType.APPLICATION_JSON_VALUE))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.status", is("INACTIVE")));
     }
 
     @Test
@@ -340,7 +516,6 @@ public class PropertyControllerTestIT {
         mockMvc.perform(delete("/api/properties/16")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("$[0].field", is("propertyId")))
                 .andExpect(jsonPath("$.details", is("No property found with id: 16")));
     }
 
