@@ -2,6 +2,7 @@ package hu.progmasters.moovsmart.dto;
 
 import hu.progmasters.moovsmart.domain.PropertyType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Data
 public class PropertyForm {
 
@@ -35,7 +37,7 @@ public class PropertyForm {
 
     private String imageUrl;
 
-    @NotNull(message = "customUsername cannot be empty!")
+    @NotNull(message = "Username cannot be empty!")
     private String customUsername;
 
 }

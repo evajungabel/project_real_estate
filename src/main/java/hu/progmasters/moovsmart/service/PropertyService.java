@@ -58,6 +58,15 @@ public class PropertyService {
         return modelMapper.map(property, PropertyDetails.class);
     }
 
+    private Property findPropertyById(Long propertyId) {
+        Optional<Property> propertyOptional = propertyRepository.findById(propertyId);
+        if (propertyOptional.isEmpty()) {
+            throw new PropertyNotFoundException(propertyId);
+        }
+        return propertyOptional.get();
+    }
+
+
     public PropertyInfo createProperty(PropertyForm propertyForm) {
         Property toSave = modelMapper.map(propertyForm, Property.class);
         CustomUser customUser = customUserService.findCustomUserByUsername(propertyForm.getCustomUsername());
@@ -72,14 +81,6 @@ public class PropertyService {
         toDelete.setStatus(PropertyStatus.INACTIVE);
     }
 
-    private Property findPropertyById(Long propertyId) {
-        Optional<Property> propertyOptional = propertyRepository.findById(propertyId);
-        if (propertyOptional.isEmpty()) {
-            throw new PropertyNotFoundException(propertyId);
-        }
-        return propertyOptional.get();
-
-    }
 
     public PropertyInfo update(Long id, PropertyForm propertyForm) {
         Property property = findPropertyById(id);

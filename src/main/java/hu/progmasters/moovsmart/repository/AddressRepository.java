@@ -17,3 +17,4 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
             " OR CAST(a.zipcode AS string ) LIKE %:value%")
     List<Address> findAddressByValue(@Param("value") String value);
 }
+

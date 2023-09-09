@@ -1,6 +1,7 @@
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.Address;
+import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.AddressInfo;
 import hu.progmasters.moovsmart.exception.AddressNotFoundException;
 import hu.progmasters.moovsmart.repository.AddressRepository;
@@ -29,6 +30,8 @@ public class AddressServiceTest {
     private AddressRepository addressRepository;
     @Mock
     private ModelMapper modelMapper;
+    @Mock
+    private WeatherService weatherService;
 
     private Address address1;
     private Address address2;
@@ -56,8 +59,13 @@ public class AddressServiceTest {
     void findAddressById_test() {
         Long id = 1L;
         address1.setId(id);
+        Property property = new Property();
+        property.setId(2L);
+        property.setName("Eladó Házs");
+        address1.setProperty(property);
         when(addressRepository.findById(id)).thenReturn(Optional.of(address1));
         when(modelMapper.map(address1, AddressInfo.class)).thenReturn(addressInfo);
+        addressInfo.setZipcode(2200);
 
         AddressInfo result = addressService.findById(id);
 
@@ -74,7 +82,7 @@ public class AddressServiceTest {
             addressService.findById(id);
             fail("Expected AddressNotFoundException, but no exception was thrown.");
         } catch (AddressNotFoundException e) {
-            assertEquals("No player found with id: " + id, e.getMessage());
+            assertEquals("No address found with id: " + id, e.getMessage());
         }
     }
 

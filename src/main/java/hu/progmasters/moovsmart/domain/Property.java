@@ -1,6 +1,7 @@
 package hu.progmasters.moovsmart.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "property")
 public class Property {
@@ -54,13 +56,13 @@ public class Property {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "status")
+    @Enumerated(value = EnumType.STRING)
     private PropertyStatus status;
 
     @OneToOne(mappedBy = "property")
     private PropertyData propertyData;
 
-    @OneToOne(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL)
     private Address address;
 
     @ManyToOne
@@ -70,4 +72,5 @@ public class Property {
     @ManyToOne
     @JoinColumn(name = "estate_agent_id")
     private EstateAgent estateAgent;
+
 }

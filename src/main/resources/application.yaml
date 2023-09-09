@@ -22,6 +22,10 @@ spring:
           starttls:
             enable: true
             required: true
+  openweathermap:
+    api:
+      key: 3c00e57613b45fba6cbe0a0c859ab7f3
+
 
 #  spring.mail.scheduler.persistence.enabled: false
 #  spring.mail.scheduler.persistence.redis.embedded: false
