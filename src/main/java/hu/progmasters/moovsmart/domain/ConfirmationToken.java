@@ -1,10 +1,7 @@
 package hu.progmasters.moovsmart.domain;
 
 import hu.progmasters.moovsmart.domain.CustomUser;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +11,8 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @Table(name = "confirmationToken")
@@ -36,6 +34,7 @@ public class ConfirmationToken {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "custom_user_username")
     private CustomUser customUser;
+
 
 
 }

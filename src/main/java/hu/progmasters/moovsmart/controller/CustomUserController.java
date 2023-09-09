@@ -103,6 +103,8 @@ public class CustomUserController {
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }
 
+    //TODO get 1 customuser
+
     @DeleteMapping("/{customUsername}")
     @Operation(summary = "Delete customer")
     @ApiResponse(responseCode = "200", description = "Customer is deleted")

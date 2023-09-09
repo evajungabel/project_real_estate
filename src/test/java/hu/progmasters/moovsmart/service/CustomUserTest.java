@@ -132,13 +132,14 @@ public class CustomUserTest {
 //    void testRegister_CustomUser() {
 //        when(customUserRepository.save(any())).thenReturn(customUser1);
 //        when(confirmationTokenService.save(any())).thenReturn(confirmationToken);
-//        mock(customUserService.deleteIfItIsNotActivated(customUser1);
+//        when(passwordEncoder.save(any())).thenReturn(confirmationToken);
+//        mock(customUserService.deleteIfItIsNotActivated(customUser1));
 //        customUserService.register(customUserForm1);
 //        verify(customUserRepository).save(customUser1);
-//
+
 //        verify(customUserRepository, times(1)).findAll();
 //        verifyNoMoreInteractions(customUserRepository);
-//    }
+    }
 
     @Test
     void testRegisterCustomerUser_withExistingUsername() {
