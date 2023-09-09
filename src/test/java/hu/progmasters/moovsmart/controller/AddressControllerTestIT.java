@@ -1,9 +1,7 @@
 package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.domain.Address;
-import hu.progmasters.moovsmart.service.WeatherService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional
-public class AddressControllerTestIT {
+class AddressControllerTestIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -60,11 +58,59 @@ public class AddressControllerTestIT {
     }
 
     @Test
-    void IT_addressFindById_test() {
+    void IT_addressFindById_test() throws Exception {
+
+        mockMvc.perform(get("/api/addresses/id/4")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content("4"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.city", is("Tök")))
+                .andExpect(jsonPath("$.country", is("Magyarország")))
+                .andExpect(jsonPath("$.houseNumber", is("2")))
+                .andExpect(jsonPath("$.zipcode", is(2202)))
+                .andExpect(jsonPath("$.propertyName", is("Eladó lakás Pécsett")));
     }
 
     @Test
-    void IT_addressUpdate_test() {
+    void IT_weatherFindById_test() throws Exception {
+
+        mockMvc.perform(get("/api/addresses/weather/id/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content("1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.city", is("Monor")))
+                .andExpect(jsonPath("$.country", is("Magyarország")))
+                .andExpect(jsonPath("$.zipcode", is(2200)));
+    }
+
+    @Test
+    void IT_weather_NOT_Find_test() throws Exception {
+
+        mockMvc.perform(get("/api/addresses/weather/id/14")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content("14"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", is("No weather information found with id: 14")));
+    }
+
+    @Test
+    void IT_addressUpdate_test()  throws Exception {
+        String input = "{" +
+                "\"zipcode\": 2222," +
+                "\"country\": \"Magyarország\"," +
+                "\"city\": \"Tök\"," +
+                "\"street\": \"Almafa utca\"," +
+                "\"houseNumber\": \"43/z\"," +
+                "\"doorNumber\": 14," +
+                "\"propertyId\": 3 " +
+                "}";
+        mockMvc.perform(put("/api/addresses/id/5")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(input))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.zipcode", is(2222)))
+                .andExpect(jsonPath("$.city", is("Tök")))
+                .andExpect(jsonPath("$.street", is("Almafa utca")));
     }
 
     @Test
@@ -82,7 +128,7 @@ public class AddressControllerTestIT {
         mockMvc.perform(delete("/api/addresses/id/34")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.details", is("No address found with id: 34")));
+                .andExpect(jsonPath("$.details", is("No address found with id: 34")));
     }
 
 
