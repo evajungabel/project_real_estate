@@ -116,14 +116,14 @@ public class CustomUserControllerTestIT {
     }
 
 
-//    @Test
-//    void IT_test_getCustomUsersWithNoId() throws Exception {
-//        mockMvc.perform(get("/api/customusers/21")
-//                        .accept(MediaType.APPLICATION_JSON_VALUE))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("$[0].field", is("id")))
-//                .andExpect(jsonPath("$[0].errorMessage", is("No customuser found with id: 21")));
-//    }
+    @Test
+    void IT_test_getCustomUsersWithNoId() throws Exception {
+        mockMvc.perform(get("/api/customusers/21")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].field", is("id")))
+                .andExpect(jsonPath("$[0].errorMessage", is("No customuser found with id: 21")));
+    }
 
 
 

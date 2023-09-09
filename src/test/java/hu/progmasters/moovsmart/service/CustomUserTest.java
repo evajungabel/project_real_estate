@@ -139,7 +139,7 @@ public class CustomUserTest {
 
 //        verify(customUserRepository, times(1)).findAll();
 //        verifyNoMoreInteractions(customUserRepository);
-    }
+//    }
 
     @Test
     void testRegisterCustomerUser_withExistingUsername() {
