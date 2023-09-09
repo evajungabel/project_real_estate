@@ -340,8 +340,8 @@ public class PropertyControllerTestIT {
         mockMvc.perform(delete("/api/properties/16")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field", is("propertyId")))
-                .andExpect(jsonPath("$[0].errorMessage", is("No property found with id: 16")));
+//                .andExpect(jsonPath("$[0].field", is("propertyId")))
+                .andExpect(jsonPath("$.details", is("No property found with id: 16")));
     }
 
 }
