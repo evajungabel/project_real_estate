@@ -1,8 +1,8 @@
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
-import hu.progmasters.moovsmart.domain.ConfirmationToken;
 import hu.progmasters.moovsmart.domain.CustomUser;
+import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;

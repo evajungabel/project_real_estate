@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.controller;
 import hu.progmasters.moovsmart.dto.AddressForm;
 import hu.progmasters.moovsmart.dto.AddressInfo;
 import hu.progmasters.moovsmart.service.AddressService;
+import hu.progmasters.moovsmart.service.WeatherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +37,22 @@ public class AddressController {
     }
 
     @GetMapping("/id/{id}")
-    @Operation(summary = "Find addres by id.")
-    @ApiResponse(responseCode = "200", description = "List of Addresses")
+    @Operation(summary = "Find address by id.")
+    @ApiResponse(responseCode = "200", description = "Find Address")
     public ResponseEntity<AddressInfo> findById(@PathVariable("id") Long id) {
         log.info("Http request, GET /api/addresses/{id} with variable" + id);
         AddressInfo addressInfo = addressService.findById(id);
-        log.info("GET data from repository/api/list of all addresses");
+        log.info("GET data from repository/api/Find Address by id");
+        return new ResponseEntity<>(addressInfo, HttpStatus.OK);
+    }
+
+    @GetMapping("/weather/id/{id}")
+    @Operation(summary = "Find weather for the address by id.")
+    @ApiResponse(responseCode = "200", description = "Weather info for the Address")
+    public ResponseEntity<AddressInfo> findWeatherById(@PathVariable("id") Long id) {
+        log.info("Http request, GET /api/weather/addresses/{id} with variable" + id);
+        AddressInfo addressInfo = addressService.findAddressWeather(id);
+        log.info("GET data from repository/api/weather/list Weather info for the Address");
         return new ResponseEntity<>(addressInfo, HttpStatus.OK);
     }
 

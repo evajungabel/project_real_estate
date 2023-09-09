@@ -1,5 +1,10 @@
 package hu.progmasters.moovsmart.controller;
 
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
+
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
@@ -190,7 +195,7 @@ public class CustomUserControllerTestIT {
     @Test
     void IT_test_customUserDeleteProperty() throws Exception {
 
-    }
+}
 
     //TODO exceptions
 

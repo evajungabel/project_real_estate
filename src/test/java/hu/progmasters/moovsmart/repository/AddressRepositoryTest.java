@@ -19,9 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AddressRepositoryTest {
 
     @Autowired
-    private TestEntityManager entityManager;
-
-    @Autowired
     private AddressRepository addressRepository;
 
     @Test
