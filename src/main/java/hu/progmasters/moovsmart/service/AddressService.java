@@ -6,6 +6,7 @@ import hu.progmasters.moovsmart.dto.weather.Coordinate;
 import hu.progmasters.moovsmart.dto.AddressInfo;
 import hu.progmasters.moovsmart.dto.weather.WeatherData;
 import hu.progmasters.moovsmart.exception.AddressNotFoundException;
+import hu.progmasters.moovsmart.exception.WeatherNotFoundException;
 import hu.progmasters.moovsmart.repository.AddressRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +46,23 @@ public class AddressService {
         }
     }
 
-    public AddressInfo findById(Long id) {
+    public AddressInfo findAddressWeather(Long id){
         AddressInfo addressInfo = modelMapper.map(findAddressById(id), AddressInfo.class);
         String zipcode = Integer.toString(addressInfo.getZipcode());
         WeatherData weatherData = findWeather(zipcode);
+        if(weatherData == null){
+            throw new WeatherNotFoundException(id);
+        }
         weatherData.getTemperatureInCelsius();
         addressInfo.setWeatherData(weatherData);
+        return addressInfo;
+    }
+
+    public AddressInfo findById(Long id) {
+        Address address = findAddressById(id);
+        String propertyName = address.getProperty().getName();
+        AddressInfo addressInfo = modelMapper.map(address, AddressInfo.class);
+        addressInfo.setPropertyName(propertyName);
         return addressInfo;
     }
 

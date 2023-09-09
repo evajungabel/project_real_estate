@@ -73,7 +73,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(WeatherNotFoundException.class)
+    public ResponseEntity<ApiError> handleWeatherNotFoundException(WeatherNotFoundException ex) {
+        logger.error("Not found error: ", ex);
 
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "Weather not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(PropertyNotFoundException.class)
     public ResponseEntity<ApiError> handlePropertyNotFoundException(PropertyNotFoundException ex) {
