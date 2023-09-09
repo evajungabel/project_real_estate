@@ -2,6 +2,7 @@ package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.PropertyType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -66,7 +67,12 @@ public class PropertyControllerTestIT {
         mockMvc.perform(get("/api/properties/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("Eladó Balatoni Ház")));
+                .andExpect(jsonPath("$.name", is("Eladó Balatoni Ház")))
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.description", is("Eladó családi ház a Balton partján")))
+                .andExpect(jsonPath("$.imageUrl", is("www.kep-url/122324gfg/kep.hu")))
+                .andExpect(jsonPath("$.numberOfRooms", is(4)))
+                .andExpect(jsonPath("$.price", is(63000000)));
     }
 
 
@@ -93,12 +99,14 @@ public class PropertyControllerTestIT {
                 "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
                 "    \"customUsername\": \"aprandia\"\n" +
                 "}";
-
-
         mockMvc.perform(post("/api/properties")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", is("Eladó Ház")))
+                .andExpect(jsonPath("$.numberOfRooms", is(4)))
+                .andExpect(jsonPath("$.price", is(63000000)))
+                .andExpect(jsonPath("$.imageUrl", is("image/jpeg;base68,/9j783/4Adfhdk")));
     }
 
     @Test
@@ -308,7 +316,11 @@ public class PropertyControllerTestIT {
         mockMvc.perform(put("/api/properties/1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("Eladó Ház")))
+                .andExpect(jsonPath("$.numberOfRooms", is(6)))
+                .andExpect(jsonPath("$.price", is(75000000)))
+                .andExpect(jsonPath("$.imageUrl", is("image/jpeg;base68,/9j783/4Adfhdk")));
     }
 
     @Test
