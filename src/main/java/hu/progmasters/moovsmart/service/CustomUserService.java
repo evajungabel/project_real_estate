@@ -64,22 +64,22 @@ public class CustomUserService implements UserDetailsService {
                     .build();
             confirmationToken.setCustomUser(customUser);
             customUserRepository.save(customUser);
-            deleteIfItIsNotActivated(customUser);
+//            deleteIfItIsNotActivated(customUser);
         }
     }
 
-    public void deleteIfItIsNotActivated(CustomUser customUser){
-                TimerTask task = new TimerTask() {
-                public void run() {
-                    if (!customUser.isEnabled()) {
-                        customUserRepository.delete(customUser);
-                    }
+    public void deleteIfItIsNotActivated(CustomUser customUser) {
+        TimerTask task = new TimerTask() {
+            public void run() {
+                if (!customUser.isEnabled()) {
+                    customUserRepository.delete(customUser);
                 }
-            };
-            Timer timer = new Timer("Timer");
-            long delay = 60000L;
-            timer.schedule(task, delay);
-        }
+            }
+        };
+        Timer timer = new Timer("Timer");
+        long delay = 60000L;
+        timer.schedule(task, delay);
+    }
 
 
     public ConfirmationToken createConfirmationToken() {
@@ -102,8 +102,8 @@ public class CustomUserService implements UserDetailsService {
                 customUserRepository.delete(customUser);
                 return "The token is invalid or broken";
             }
-        } catch (TokenCannotBeUsedException e){
-            throw  new TokenCannotBeUsedException(confirmationToken);
+        } catch (TokenCannotBeUsedException e) {
+            throw new TokenCannotBeUsedException(confirmationToken);
         }
     }
 
@@ -138,6 +138,12 @@ public class CustomUserService implements UserDetailsService {
                 .map(customUser -> modelMapper.map(customUser, CustomUserInfo.class))
                 .collect(Collectors.toList());
         return customUserInfos;
+    }
+
+
+    public CustomUserInfo getCustomUser(String username) {
+        CustomUser customUser = findCustomUserByUsername(username);
+        return modelMapper.map(customUser, CustomUserInfo.class);
     }
 
     public void userSale(String username, Long pId) {
@@ -194,11 +200,18 @@ public class CustomUserService implements UserDetailsService {
     public void makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
         userDelete(toDelete.getUsername(), toDelete.getCustomUserId());
-        toDelete.setDeleteDate(LocalDateTime.now());
-        toDelete.setDeleted(true);
-        toDelete.setEmail(null);
-        toDelete.setName(null);
-        toDelete.setPassword(null);
-        toDelete.setUsername(null);
+        toDelete.builder()
+                .username(null)
+                .name(null)
+                .email(null)
+                .password(null)
+                .roles(null)
+                .enable(false)
+                .activation(null)
+                .confirmationToken(null)
+                .deleteDate(LocalDateTime.now())
+                .isDeleted(true)
+                .build();
     }
+
 }

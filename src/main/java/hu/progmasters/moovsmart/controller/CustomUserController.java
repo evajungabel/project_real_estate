@@ -37,10 +37,10 @@ public class CustomUserController {
         this.emailService = emailService;
     }
 
-    @GetMapping("/login/me")
+    @GetMapping("/login/{me}")
     @Operation(summary = "Login customer")
     @ApiResponse(responseCode = "201", description = "Customer is logged in")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<UserDetails> getLoggedInUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("Http request, GET /api/customusers, logged in");
@@ -103,14 +103,25 @@ public class CustomUserController {
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{customUsername}")
+    @GetMapping("/{username}")
+//    @Secured({"ROLE_ADMIN"})
+    @Operation(summary = "Get customer with username")
+    @ApiResponse(responseCode = "200", description = "A customer with username")
+    public ResponseEntity<CustomUserInfo> getCustomer(@Valid @PathVariable("username") String username) {
+        log.info("Http request, GET /api/customusers customer with username");
+        CustomUserInfo customerInfo = customUserService.getCustomUser(username);
+        log.info("GET data from repository/api/customusers customer with username");
+        return new ResponseEntity<>(customerInfo, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{username}")
     @Operation(summary = "Delete customer")
     @ApiResponse(responseCode = "200", description = "Customer is deleted")
 //    @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<Void> deleteUser(@PathVariable("customUsername") String customUsername) {
-        log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + customUsername);
-        customUserService.makeInactive(customUsername);
-        log.info("DELETE data from repository/api/customusers/{customUsername} with variable: " + customUsername);
+    public ResponseEntity<Void> deleteUser(@Valid @PathVariable("username") String username) {
+        log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + username);
+        customUserService.makeInactive(username);
+        log.info("DELETE data from repository/api/customusers/{customUsername} with variable: " + username);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -119,7 +130,7 @@ public class CustomUserController {
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer sales a property and it is deleted")
     @ApiResponse(responseCode = "200", description = "Property is sold and deleted by costumer")
-    public ResponseEntity<Void> deleteSale(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
+    public ResponseEntity<Void> deleteSale(@Valid @PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
         log.info("Http request, DELETE /api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
         customUserService.userSale(username, pId);
         log.info("DELETE data from repository/api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
