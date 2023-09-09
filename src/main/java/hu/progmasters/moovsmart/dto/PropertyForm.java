@@ -37,7 +37,7 @@ public class PropertyForm {
 
     private String imageUrl;
 
-    @NotNull(message = "customUsername cannot be empty!")
+    @NotNull(message = "customId cannot be empty!")
     private String customUsername;
 
 }
