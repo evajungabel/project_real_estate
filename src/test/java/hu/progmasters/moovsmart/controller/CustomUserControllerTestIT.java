@@ -290,6 +290,8 @@ public class CustomUserControllerTestIT {
 
     //TODO logintest
 
+    //TODO logout test
+
 //    @Test
 //    void IT_test_loginCustomUser() throws Exception {
 //
