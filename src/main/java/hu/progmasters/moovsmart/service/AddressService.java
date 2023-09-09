@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,17 +36,21 @@ public class AddressService {
         addressRepository.save(toSave);
     }
 
-    public WeatherData findWeather(String zipcode){
+    public WeatherData findWeather(String zipcode) {
         Coordinate coordinates = weatherService.getCoordinatesForZip(zipcode);
-        return weatherService.getWeatherForCoordinates(coordinates.getLat(),coordinates.getLon());
+        if (coordinates != null) {
+            return weatherService.getWeatherForCoordinates(coordinates.getLat(), coordinates.getLon());
+        } else {
+            return null;
+        }
     }
 
     public AddressInfo findById(Long id) {
         AddressInfo addressInfo = modelMapper.map(findAddressById(id), AddressInfo.class);
-       String zipcode = Integer.toString(addressInfo.getZipcode());
-       WeatherData weatherData = findWeather(zipcode);
-       weatherData.getTemperatureInCelsius();
-       addressInfo.setWeatherData(weatherData);
+        String zipcode = Integer.toString(addressInfo.getZipcode());
+        WeatherData weatherData = findWeather(zipcode);
+        weatherData.getTemperatureInCelsius();
+        addressInfo.setWeatherData(weatherData);
         return addressInfo;
     }
 

@@ -1,7 +1,6 @@
 package hu.progmasters.moovsmart.dto.weather;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import hu.progmasters.moovsmart.dto.weather.Weather;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

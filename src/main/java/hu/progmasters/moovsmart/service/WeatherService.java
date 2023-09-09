@@ -3,12 +3,15 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.config.WeatherApiConfig;
 import hu.progmasters.moovsmart.dto.weather.Coordinate;
 import hu.progmasters.moovsmart.dto.weather.WeatherData;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@Slf4j
 public class WeatherService {
     private final WeatherApiConfig appConfig;
     private final RestTemplate restTemplate;
@@ -25,25 +28,40 @@ public class WeatherService {
                 lat + "&lon=" +
                 lon + "&appid=" + apiKey;
 
-        ResponseEntity<WeatherData> response = restTemplate.getForEntity(apiUrl, WeatherData.class);
+        try {
+            log.info("RestTemplate GET WeatherData");
+            ResponseEntity<WeatherData> response = restTemplate.getForEntity(apiUrl, WeatherData.class);
+            log.info("RestTemplate response OK");
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
-        } else {
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return response.getBody();
+            } else {
+                log.error("Weather API did not return a 2xx HTTP status code: " + response.getStatusCodeValue());
+                return null;
+            }
+        } catch (RestClientException e) {
+            log.error("An error occurred during the Weather API call: " + e.getMessage(), e);
             return null;
         }
     }
-
 
     public Coordinate getCoordinatesForZip(String zipcode) {
         String apiKey = appConfig.getOpenWeatherMapApiKey();
         String apiUrl = "http://api.openweathermap.org/geo/1.0/zip?zip=" + zipcode + ",HU&appid=" + apiKey;
 
-        ResponseEntity<Coordinate> response = restTemplate.getForEntity(apiUrl, Coordinate.class);
+        try {
+            log.info("RestTemplate GET coordinate");
+            ResponseEntity<Coordinate> response = restTemplate.getForEntity(apiUrl, Coordinate.class);
+            log.info("RestTemplate response OK");
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
-        } else {
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return response.getBody();
+            } else {
+                log.error("Geo API did not return a 2xx HTTP status code: " + response.getStatusCodeValue());
+                return null;
+            }
+        } catch (RestClientException e) {
+            log.error("An error occurred during the Geo API call: " + e.getMessage(), e);
             return null;
         }
     }
