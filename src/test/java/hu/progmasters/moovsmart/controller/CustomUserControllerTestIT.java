@@ -45,7 +45,7 @@ public class CustomUserControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"bogyóésbabóca\",\n" +
-                "    \"password\": \"120\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
                 "    \"email\": \"bogyo.esbaboca@gmail.com\"\n" +
                 "}";
 
