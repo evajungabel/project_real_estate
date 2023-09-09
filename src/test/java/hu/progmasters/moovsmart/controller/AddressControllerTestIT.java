@@ -1,7 +1,9 @@
 package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.domain.Address;
+import hu.progmasters.moovsmart.service.WeatherService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,8 +81,8 @@ public class AddressControllerTestIT {
     void IT_AddressNotExists_test() throws Exception {
         mockMvc.perform(delete("/api/addresses/id/34")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest());
-//        Üzeneteket nem ír ki
+                .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.details", is("No address found with id: 34")));
     }
 
 

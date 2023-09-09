@@ -29,6 +29,8 @@ public class AddressServiceTest {
     private AddressRepository addressRepository;
     @Mock
     private ModelMapper modelMapper;
+    @Mock
+    private WeatherService weatherService;
 
     private Address address1;
     private Address address2;
