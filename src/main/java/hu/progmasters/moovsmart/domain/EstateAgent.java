@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Builder
 @Entity
 @Table(name = "estate_agent")
 public class EstateAgent {
@@ -26,16 +25,10 @@ public class EstateAgent {
     @Column(name = "agent_rank")
     private AgentRank rank;
 
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "email")
-    private String email;
     @Column(name = "sell_point")
     private Integer sellPoint;
 
-    @OneToMany(mappedBy = "estateAgent")
-    private List<Property> propertyList;
-
-
+    @OneToOne
+    @JoinColumn(name = "custom_user_id")
+    private CustomUser customUser;
 }

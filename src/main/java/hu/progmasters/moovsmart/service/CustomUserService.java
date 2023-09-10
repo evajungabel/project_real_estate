@@ -36,13 +36,15 @@ public class CustomUserService implements UserDetailsService {
     private ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private ConfirmationTokenService confirmationTokenService;
+    private EstateAgentService estateAgentService;
 
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.confirmationTokenService = confirmationTokenService;
+        this.estateAgentService = estateAgentService;
     }
 
     public void register(CustomUserForm command) {
@@ -61,10 +63,15 @@ public class CustomUserService implements UserDetailsService {
                     .enable(false)
                     .activation(confirmationToken.getConfirmationToken())
                     .confirmationToken(confirmationToken)
+                    .isAgent(command.getIsAgent())
                     .build();
             confirmationToken.setCustomUser(customUser);
             customUserRepository.save(customUser);
             deleteIfItIsNotActivated(customUser);
+            if (customUser.isAgent()){
+                customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
+                estateAgentService.save(customUser);
+            }
         }
     }
 

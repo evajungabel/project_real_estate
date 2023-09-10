@@ -194,14 +194,14 @@ public class PropertyServiceTest {
                 .activation("123456789")
                 .build();
 
-        estateAgent1 = new EstateAgent().builder()
-                .id(1L)
-                .rank(AgentRank.PROFESSIONAL)
-                .name("Ügynök Guru")
-                .email("ugynokguru@gmail.com")
-                .sellPoint(98)
-                .propertyList(List.of(property1, property2))
-                .build();
+//        estateAgent1 = new EstateAgent().builder()
+//                .id(1L)
+//                .rank(AgentRank.PROFESSIONAL)
+//                .name("Ügynök Guru")
+//                .email("ugynokguru@gmail.com")
+//                .sellPoint(98)
+//                .propertyList(List.of(property1, property2))
+//                .build();
 
     }
 

@@ -30,5 +30,5 @@ public class CustomUserForm {
     @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
     private String email;
 
-
+    private Boolean isAgent;
 }
