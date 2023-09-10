@@ -39,7 +39,7 @@ public class CustomUserController {
     @GetMapping("/login/me")
     @Operation(summary = "Login customer")
     @ApiResponse(responseCode = "201", description = "Customer is logged in")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<UserDetails> getLoggedInUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("Http request, GET /api/customusers, logged in");
@@ -72,7 +72,7 @@ public class CustomUserController {
     @PutMapping("/{username}")
     @Operation(summary = "Update customer")
     @ApiResponse(responseCode = "200", description = "Customer is updated")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<CustomUserInfo> update(@PathVariable("username") String username, @Valid @RequestBody CustomUserForm customUserForm) {
         log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm + " with variable: " + username);
         CustomUserInfo updated = customUserService.update(username, customUserForm);
@@ -82,7 +82,7 @@ public class CustomUserController {
     }
 
     @GetMapping
-    @Secured({"ROLE_ADMIN"})
+//    @Secured({"ROLE_ADMIN"})
     @Operation(summary = "Get all customers")
     @ApiResponse(responseCode = "200", description = "List of customers")
     public ResponseEntity<List<CustomUserInfo>> getAllCustomers() {
@@ -95,7 +95,7 @@ public class CustomUserController {
     @DeleteMapping("/{customUsername}")
     @Operation(summary = "Delete customer")
     @ApiResponse(responseCode = "200", description = "Customer is deleted")
-    @Secured({"ROLE_ADMIN"})
+//    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Void> deleteUser(@PathVariable("customUsername") String customUsername) {
         log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + customUsername);
         customUserService.makeInactive(customUsername);
@@ -104,7 +104,7 @@ public class CustomUserController {
     }
 
     @DeleteMapping("/sale/{username}/{propertyId}")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer sales a property and it is deleted")
     @ApiResponse(responseCode = "200", description = "Property is sold and deleted by costumer")
     public ResponseEntity<Void> deleteSale(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
@@ -115,7 +115,7 @@ public class CustomUserController {
     }
 
     @DeleteMapping("/{username}/{propertyId}")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer deletes a property")
     @ApiResponse(responseCode = "200", description = "Property is deleted by costumer")
     public ResponseEntity<Void> delete(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {

@@ -1,10 +1,7 @@
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
-import hu.progmasters.moovsmart.domain.ConfirmationToken;
-import hu.progmasters.moovsmart.domain.CustomUser;
-import hu.progmasters.moovsmart.domain.Property;
-import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
@@ -153,6 +150,17 @@ public class CustomUserService implements UserDetailsService {
             if (property.getId().equals(pId)) {
                 property.setStatus(PropertyStatus.INACTIVE);
                 property.setDateOfSale(LocalDateTime.now());
+                if (customUser.getRoles().equals(List.of(CustomUserRole.ROLE_AGENT))){
+                    Integer sellPoint = customUser.getEstateAgent().getSellPoint();
+                    customUser.getEstateAgent().setSellPoint(sellPoint+1);
+                    if (sellPoint >= 50 && sellPoint < 150){
+                        customUser.getEstateAgent().setRank(AgentRank.MEDIOR);
+                    } else if (sellPoint >= 150) {
+                        customUser.getEstateAgent().setRank(AgentRank.PROFESSIONAL);
+                    }else{
+                        customUser.getEstateAgent().setRank(AgentRank.RECRUIT);
+                    }
+                }
             }
         }
     }

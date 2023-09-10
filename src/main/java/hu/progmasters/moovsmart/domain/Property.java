@@ -69,8 +69,4 @@ public class Property {
     @JoinColumn(name = "custom_user_id")
     private CustomUser customUser;
 
-    @ManyToOne
-    @JoinColumn(name = "estate_agent_id")
-    private EstateAgent estateAgent;
-
 }
