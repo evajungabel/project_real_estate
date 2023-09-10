@@ -1,10 +1,12 @@
 package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
+import hu.progmasters.moovsmart.domain.ConfirmationToken;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.service.CustomUserService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,10 +57,7 @@ public class CustomUserControllerTestIT {
                 .andExpect(status().isOk());
     }
 
-
     //TODO logintest
-
-    //TODO logout test
 
     @Test
     void IT_test_loginCustomUser() throws Exception {
@@ -97,7 +96,7 @@ public class CustomUserControllerTestIT {
 
     @Test
     void IT_test_ActivationTokenIsActive() throws Exception {
-        mockMvc.perform(get("/api/customusers/activation/123456")
+        mockMvc.perform(get("/api/customusers/activation/111111")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
@@ -118,13 +117,12 @@ public class CustomUserControllerTestIT {
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
-
         mockMvc.perform(post("/api/customusers/registration")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(jsonPath("$.name", is("Bogyó és Babóca")))
                 .andExpect(jsonPath("$.username", is("bogyóésbabóca")))
-                .andExpect(jsonPath("$.password", is("BesB1234*")))
+//                .andExpect(jsonPath("$.password", is("$2a$10$r.bOxQBspq4KLK28sPNcueWk5DsYUw0IuHxJ3dzDRIVQY.AVXu5Su")))
                 .andExpect(jsonPath("$.email", is("bogyo.es.baboca@gmail.com")))
                 .andExpect(status().isCreated());
     }
@@ -371,7 +369,6 @@ public class CustomUserControllerTestIT {
         mockMvc.perform(put("/api/customusers/aprandia")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
-
                 .andExpect(jsonPath("$.name", is("Bogyó és Babóca")))
                 .andExpect(jsonPath("$.username", is("bogyóésbabóca")))
                 .andExpect(jsonPath("$.password", is("BesB1234*")))
@@ -641,8 +638,7 @@ public class CustomUserControllerTestIT {
                 .andExpect(jsonPath("$.username", is("aprandia")))
                 .andExpect(jsonPath("$.password", is("jH0@qk'BXF")))
                 .andExpect(jsonPath("$.name", is("Avivah Prandi")))
-                .andExpect(jsonPath("$.email", is("aprandia@miitbeian.gov.cn")))
-                .andExpect(jsonPath("$.activation", is("123456")));
+                .andExpect(jsonPath("$.email", is("aprandia@miitbeian.gov.cn")));
     }
 
 

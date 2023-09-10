@@ -74,6 +74,9 @@ insert into moovsmartTest.confirmation_token (token_id, confirmation_token, crea
 values (1, '123456', '2023-08-31', '2025-09-01', 1);
 insert into moovsmartTest.confirmation_token (token_id, confirmation_token, created_date, expired_date, custom_user_id)
 values (2, '654321', '2023-08-31', '2023-09-01', 2);
+insert into moovsmartTest.confirmation_token (token_id, confirmation_token, created_date, expired_date, custom_user_id)
+values (3, '111111', '2023-09-11', '2025-09-11', 3);
+
 
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, status, type,
@@ -104,7 +107,7 @@ VALUES (5, 450, null, '2023-08-18', null, null, 'Tágas családi ház zöld kör
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, status, type,
                                     custom_user_id, estate_agent_id)
-VALUES (6, 60, null, '2023-08-15', null, null, 'Kis lakás kiadó a belvárosban',
+VALUES (6, 60, '2023-09-01 00:00:00', '2023-08-15', null, null, 'Kis lakás kiadó a belvárosban',
         'image/jpeg;base64,/9036j/4AAQSartjarjk...',
         'Kiadó lakás', 1, 150000000, 'ACTIVE', 'FLAT', 3, null);
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
