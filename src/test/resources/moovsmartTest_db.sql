@@ -1,6 +1,6 @@
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
                                        is_deleted, name, password, username)
-values (1, false, 'suspended', '2048-10-10 00:00:00.000000', 'aprandia@miitbeian.gov.cn', true, true, 'Avivah Prandi',
+values (1, false, '123456', '2048-10-10 00:00:00.000000', 'aprandia@miitbeian.gov.cn', true, true, 'Avivah Prandi',
         'jH0@qk''BXF', 'aprandia');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
                                        is_deleted, name, password, username)
@@ -68,6 +68,10 @@ insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activ
                                        is_deleted, name, password, username)
 values (20, true, 'inactive', null, 'cgasking6@cornell.edu', true, false, 'Cosetta Gasking', 'yB3/mHH/<f,\\%g7~',
         'cgasking6');
+
+
+insert into moovsmartTest..confirmation_token (token_id, confirmation_token, created_date, expired_date, custom_user_id)
+values (1, '123456', '2023-08-31', '2023-09-01', 1);
 
 
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,

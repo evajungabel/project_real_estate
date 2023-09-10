@@ -132,6 +132,8 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
+
+
     public List<CustomUserInfo> getCustomUsers() {
         List<CustomUser> customUsers = customUserRepository.findAll();
         List<CustomUserInfo> customUserInfos = customUsers.stream()
@@ -183,17 +185,21 @@ public class CustomUserService implements UserDetailsService {
     }
 
     public CustomUserInfo update(String username, CustomUserForm customUserForm) {
-        CustomUser customUser = findCustomUserByUsername(username);
-        if (customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
-                customUserRepository.findByEmail(customUserForm.getEmail()) != customUser) {
-            throw new EmailAddressExistsException(customUserForm.getEmail());
-        } else if (customUserRepository.findByUsername(customUserForm.getUsername()) != null &&
-                customUserRepository.findByUsername(customUserForm.getUsername()) != customUser) {
-            throw new UsernameExistsException(customUserForm.getUsername());
-        } else {
-            modelMapper.map(customUserForm, customUser);
-            customUser.setPassword(passwordEncoder.encode(customUserForm.getPassword()));
-            return modelMapper.map(customUser, CustomUserInfo.class);
+        try {
+            CustomUser customUser = findCustomUserByUsername(username);
+            if (customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
+                    customUserRepository.findByEmail(customUserForm.getEmail()) != customUser) {
+                throw new EmailAddressExistsException(customUserForm.getEmail());
+            } else if (customUserRepository.findByUsername(customUserForm.getUsername()) != null &&
+                    customUserRepository.findByUsername(customUserForm.getUsername()) != customUser) {
+                throw new UsernameExistsException(customUserForm.getUsername());
+            } else {
+                modelMapper.map(customUserForm, customUser);
+                customUser.setPassword(passwordEncoder.encode(customUserForm.getPassword()));
+                return modelMapper.map(customUser, CustomUserInfo.class);
+            }
+        } catch (UsernameNotFoundException e) {
+            throw new UsernameNotFoundException(username);
         }
     }
 
@@ -210,8 +216,8 @@ public class CustomUserService implements UserDetailsService {
                 .activation(null)
                 .confirmationToken(null)
                 .deleteDate(LocalDateTime.now())
-                .isDeleted(true)
                 .build();
+        toDelete.setDeleted(true);
     }
 
 }
