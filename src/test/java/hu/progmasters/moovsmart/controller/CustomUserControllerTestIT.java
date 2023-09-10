@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -56,6 +55,59 @@ public class CustomUserControllerTestIT {
                 .andExpect(status().isOk());
     }
 
+
+    //TODO logintest
+
+    //TODO logout test
+
+    @Test
+    void IT_test_loginCustomUser() throws Exception {
+        UserDetails userDetails = User
+                .withUsername("username")
+                .password("password")
+                .authorities(AuthorityUtils.createAuthorityList(String.valueOf(CustomUserRole.ROLE_USER))) // Set user roles/authorities
+                .build();
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(authentication);
+
+        mockMvc.perform(get("/api/customusers/login/me").with((RequestPostProcessor) userDetails))
+                .andExpect(status().isOk());
+
+
+//        mockMvc.perform(get("/api/customusers/login/me"))
+//                .andExpect(status().isOk());
+    }
+
+//        }
+
+//        mockMvc.perform(get("/api/customusers/login/me").with(userDetails(userDetails)))
+//            .contentType(MediaType.APPLICATION_JSON))
+//            .andExpect(status().isOk());
+
+
+    @Test
+    public void testLogout() throws Exception {
+        mockMvc.perform(post("/logout"))
+                .andExpect(status().isNoContent());
+    }
+
+
+    @Test
+    void IT_test_ActivationTokenIsActive() throws Exception {
+        mockMvc.perform(get("/api/customusers/activation/123456")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void IT_test_ActivationTokenIsExpired() throws Exception {
+        mockMvc.perform(get("/api/customusers/activation/654321")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
     @Test
     void IT_test_registerCustomUser() throws Exception {
 
@@ -70,6 +122,10 @@ public class CustomUserControllerTestIT {
         mockMvc.perform(post("/api/customusers/registration")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
+                .andExpect(jsonPath("$.name", is("Bogyó és Babóca")))
+                .andExpect(jsonPath("$.username", is("bogyóésbabóca")))
+                .andExpect(jsonPath("$.password", is("BesB1234*")))
+                .andExpect(jsonPath("$.email", is("bogyo.es.baboca@gmail.com")))
                 .andExpect(status().isCreated());
     }
 
@@ -300,53 +356,6 @@ public class CustomUserControllerTestIT {
     }
 
 
-    //TODO logintest
-
-    //TODO logout test
-
-    @Test
-    void IT_test_loginCustomUser() throws Exception {
-        UserDetails userDetails = User
-                .withUsername("username")
-                .password("password")
-                .authorities(AuthorityUtils.createAuthorityList(String.valueOf(CustomUserRole.ROLE_USER))) // Set user roles/authorities
-                .build();
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
-
-        mockMvc.perform(get("/api/customusers/login/me").with((RequestPostProcessor) userDetails))
-                .andExpect(status().isOk());
-
-
-//        mockMvc.perform(get("/api/customusers/login/me"))
-//                .andExpect(status().isOk());
-    }
-
-//        }
-
-//        mockMvc.perform(get("/api/customusers/login/me").with(userDetails(userDetails)))
-//            .contentType(MediaType.APPLICATION_JSON))
-//            .andExpect(status().isOk());
-
-
-    @Test
-    public void testLogout() throws Exception {
-        mockMvc.perform(post("/logout"))
-                .andExpect(status().isNoContent());
-    }
-
-//TODO activation confirmation token
-
-    @Test
-    void IT_test_ActivationToken() throws Exception {
-        mockMvc.perform(get("/api/customusers/activation/123456")
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
-    }
-
 
     @Test
     void IT_test_updateCustomUser() throws Exception {
@@ -362,6 +371,11 @@ public class CustomUserControllerTestIT {
         mockMvc.perform(put("/api/customusers/aprandia")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
+
+                .andExpect(jsonPath("$.name", is("Bogyó és Babóca")))
+                .andExpect(jsonPath("$.username", is("bogyóésbabóca")))
+                .andExpect(jsonPath("$.password", is("BesB1234*")))
+                .andExpect(jsonPath("$.email", is("bogyo.es.baboca@gmail.com")))
                 .andExpect(status().isOk());
     }
 
@@ -624,7 +638,11 @@ public class CustomUserControllerTestIT {
         mockMvc.perform(get("/api/customusers/aprandia")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username", is("aprandia")));
+                .andExpect(jsonPath("$.username", is("aprandia")))
+                .andExpect(jsonPath("$.password", is("jH0@qk'BXF")))
+                .andExpect(jsonPath("$.name", is("Avivah Prandi")))
+                .andExpect(jsonPath("$.email", is("aprandia@miitbeian.gov.cn")))
+                .andExpect(jsonPath("$.activation", is("123456")));
     }
 
 
@@ -677,7 +695,7 @@ public class CustomUserControllerTestIT {
         mockMvc.perform(delete("/api/customusers/sale/glockley5/2")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
-        assertTrue(property.getDateOfSale() != null);
+        assertNotNull(property.getDateOfSale());
     }
 
     @Test
@@ -693,18 +711,18 @@ public class CustomUserControllerTestIT {
     @Test
     void IT_test_customUserDeleteProperty() throws Exception {
         CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(3));
-        assertTrue(customUser != null);
+        assertNotNull(customUser);
 
         Property property = entityManager.find(Property.class, Long.valueOf(6));
-        assertTrue(property != null);
-        assertTrue(property.getDateOfActivation() != null);
+        assertNotNull(property);
+        assertNotNull(property.getDateOfActivation());
 
         assertEquals(customUser.getPropertyList().get(0), property);
 
         mockMvc.perform(delete("/api/customusers/ikoubek4/6")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
-        assertTrue(property.getDateOfInactivation() != null);
+        assertNotNull(property.getDateOfInactivation());
     }
 
     @Test
