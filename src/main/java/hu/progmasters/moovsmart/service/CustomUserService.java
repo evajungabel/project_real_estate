@@ -42,7 +42,7 @@ public class CustomUserService implements UserDetailsService {
         this.confirmationTokenService = confirmationTokenService;
     }
 
-    public void register(CustomUserForm command) {
+    public CustomUserInfo register(CustomUserForm command) {
         if (customUserRepository.findByEmail(command.getEmail()) != null) {
             throw new EmailAddressExistsException(command.getEmail());
         } else if (customUserRepository.findByUsername(command.getUsername()) != null) {
@@ -61,7 +61,7 @@ public class CustomUserService implements UserDetailsService {
                     .build();
             confirmationToken.setCustomUser(customUser);
             customUserRepository.save(customUser);
-            deleteIfItIsNotActivated(customUser);
+            return modelMapper.map(customUser, CustomUserInfo.class);
         }
     }
 
@@ -83,7 +83,7 @@ public class CustomUserService implements UserDetailsService {
         ConfirmationToken confirmationToken = new ConfirmationToken();
         confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
         confirmationToken.setCreatedDate(LocalDateTime.now());
-        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(1));
+        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(2));
         return confirmationTokenService.save(confirmationToken);
 
     }

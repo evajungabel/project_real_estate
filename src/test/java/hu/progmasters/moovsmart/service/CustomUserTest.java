@@ -1,6 +1,7 @@
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
+import hu.progmasters.moovsmart.domain.ConfirmationToken;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.dto.*;
@@ -8,12 +9,14 @@ import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
 import hu.progmasters.moovsmart.exception.UsernameExistsException;
 import hu.progmasters.moovsmart.exception.UsernameNotFoundExceptionImp;
+import hu.progmasters.moovsmart.repository.ConfirmationTokenRepository;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -23,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,7 +72,8 @@ public class CustomUserTest {
                 .password("Pistike1*")
                 .roles(List.of(CustomUserRole.ROLE_USER))
                 .enable(true)
-                .activation("123456789")
+                .activation("123456")
+                .confirmationToken(confirmationToken)
                 .build();
 
         customUserInfo1 = new CustomUserInfo().builder()
@@ -114,7 +119,8 @@ public class CustomUserTest {
                 .tokenId(1L)
                 .confirmationToken("123456")
                 .createdDate(LocalDateTime.now())
-                .expiredDate(LocalDateTime.now().plusMinutes(2))
+                .expiredDate(LocalDateTime.now().plusMinutes(1))
+                .customUser(customUser1)
                 .build();
     }
 
@@ -128,18 +134,23 @@ public class CustomUserTest {
         verifyNoMoreInteractions(customUserRepository);
     }
 
-//    @Test
-//    void testRegister_CustomUser() {
-//        when(customUserRepository.save(any())).thenReturn(customUser1);
-//        when(confirmationTokenService.save(any())).thenReturn(confirmationToken);
-//        when(passwordEncoder.save(any())).thenReturn(confirmationToken);
-//        mock(customUserService.deleteIfItIsNotActivated(customUser1));
-//        customUserService.register(customUserForm1);
-//        verify(customUserRepository).save(customUser1);
+    @Test
+    void testRegister_CustomUser() {
+        when(confirmationTokenService.save(any())).thenReturn(confirmationToken);
+        when(passwordEncoder.encode(any())).thenReturn("Pistike1*");
+        when(customUserRepository.findByEmail(customUserForm1.getEmail())).thenReturn(null);
+        when(customUserRepository.findByUsername(customUserForm1.getUsername())).thenReturn(null);
 
-//        verify(customUserRepository, times(1)).findAll();
-//        verifyNoMoreInteractions(customUserRepository);
-//    }
+//        when(customUserRepository.save(Mockito.any(CustomUser.class)))
+//                .thenAnswer(i -> i.getArguments()[0]);
+        when(customUserRepository.save(any(CustomUser.class))).thenReturn(customUser1);
+        when(modelMapper.map(customUser1, CustomUserInfo.class)).thenReturn(customUserInfo1);
+
+        assertEquals(customUserInfo1, customUserService.register(customUserForm1));
+
+        verify(customUserRepository, times(1)).save(any());
+        verifyNoMoreInteractions(customUserRepository);
+    }
 
     @Test
     void testRegisterCustomerUser_withExistingUsername() {
@@ -166,20 +177,24 @@ public class CustomUserTest {
         }
     }
 
-//    @Test
-//    void testRegisterCustomerUser_deleteIfItIsNotActive() {
-//        customUser1.setEnable(false);
-//        customUserService.deleteIfItIsNotActivated(customUser1);
-//        assertEquals(null, customUser1);
+    @Test
+    void testCreate_ConfirmationToken() {
+        when(confirmationTokenService.save(confirmationToken)).thenReturn(confirmationToken);
 
-//    verify(customUserRepository, times(1)).findByUsername("pistike");
-//    verifyNoMoreInteractions(customUserRepository);
-//    }
+        assertEquals(confirmationToken, customUserService.createConfirmationToken());
+
+        verify(confirmationTokenService, times(1)).save(confirmationToken);
+        verifyNoMoreInteractions(confirmationTokenService);
+    }
 
     @Test
     void testCustomUserActivation() {
+        when(customUserRepository.findByActivation(confirmationToken.getConfirmationToken())).thenReturn(customUser1);
+        when(any(CustomUser.class).getConfirmationToken().getExpiredDate()).thenReturn(confirmationToken.getExpiredDate().minusMinutes(1));
 
-        verify(customUserRepository, times(1)).findByUsername("pistike");
+        assertEquals("Activation is successful!", customUserService.userActivation(confirmationToken.getConfirmationToken()));
+
+        verify(customUserRepository, times(1)).findByActivation(confirmationToken.getConfirmationToken());
         verifyNoMoreInteractions(customUserRepository);
     }
 

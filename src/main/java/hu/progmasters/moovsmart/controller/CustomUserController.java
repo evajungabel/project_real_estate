@@ -53,15 +53,15 @@ public class CustomUserController {
     @PostMapping("/registration")
     @Operation(summary = "Save customer")
     @ApiResponse(responseCode = "201", description = "Customer is saved")
-    public ResponseEntity<Void> register(@Valid @RequestBody CustomUserForm command) {
+    public ResponseEntity<CustomUserInfo> register(@Valid @RequestBody CustomUserForm command) {
         log.info("Http request, POST /api/customusers, body: " + command.toString());
-        customUserService.register(command);
+        CustomUserInfo customUserInfo = customUserService.register(command);
         emailService.sendEmail(command.getEmail(), "Felhasználói fiók aktivalása",
                 "Kedves " + command.getName() +
                 "! \n \n Köszönjük, hogy regisztrált az oldalunkra! \n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját, amire 30 perce van! \n \n http://localhost:8080/api/customusers/activation/"
                         + customUserService.findCustomUserByEmail(command.getEmail()).getActivation());
         log.info("POST data from repository/api/customusers, body: " + command);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(customUserInfo, HttpStatus.CREATED);
     }
 
     @GetMapping("/activation/{confirmationToken}")

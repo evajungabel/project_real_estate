@@ -50,8 +50,8 @@ public class CustomUserControllerTestIT {
     void IT_test_registerCustomUser() throws Exception {
 
         String inputCommand = "{\n" +
-                "    \"name\": \"Bogyó Babóca\",\n" +
-                "    \"username\": \"bogyóbabóca\",\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"120\",\n" +
                 "    \"email\": \"bogyo.baboca@gmail.com\"\n" +
                 "}";
