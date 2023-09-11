@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,6 +28,12 @@ public class EstateAgent {
 
     @Column(name = "sell_point")
     private Integer sellPoint;
+
+    @ElementCollection
+    @CollectionTable(name = "agent_ratings", joinColumns = @JoinColumn(name = "estate_agent_id"))
+    @MapKeyJoinColumn(name = "custom_user_id")
+    @Column(name = "comment")
+    private Map<Long, String> ratings;
 
     @OneToOne
     @JoinColumn(name = "custom_user_id")
