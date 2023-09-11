@@ -1,9 +1,6 @@
 package hu.progmasters.moovsmart.controller;
 
-import hu.progmasters.moovsmart.dto.CustomUserForm;
-import hu.progmasters.moovsmart.dto.CustomUserInfo;
-import hu.progmasters.moovsmart.dto.PropertyForm;
-import hu.progmasters.moovsmart.dto.PropertyInfo;
+import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.service.CustomUserService;
 import hu.progmasters.moovsmart.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,8 +78,8 @@ public class CustomUserController {
         log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm +
                 " with variable: " + username);
         CustomUserInfo updated = customUserService.update(username, customUserForm);
-        emailService.sendEmail(customUserService.findCustomUserByUsername(username).getEmail(), "Felhasználói fiók adatainak megváltoztatása",
-                "Kedves " + customUserService.findCustomUserByUsername(username).getName() +
+        emailService.sendEmail(customUserService.findCustomUserByUsername(updated.getUsername()).getEmail(), "Felhasználói fiók adatainak megváltoztatása",
+                "Kedves " + customUserService.findCustomUserByUsername(updated.getUsername()).getName() +
                         "! \n \n Felhasználói fiókjának adatai megváltoztak! Ha nem Ön tette, mielőbb lépjen kapcsolatba velünk!");
         log.info("PUT data from repository/api/customusers/{customUserId} body: " + customUserForm +
                 " with variable: " + username);
