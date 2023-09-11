@@ -60,8 +60,8 @@ public class CustomUserService implements UserDetailsService {
                     .confirmationToken(confirmationToken)
                     .build();
             confirmationToken.setCustomUser(customUser);
-            customUserRepository.save(customUser);
-            return modelMapper.map(customUser, CustomUserInfo.class);
+            CustomUser savedUser = customUserRepository.save(customUser);
+            return modelMapper.map(savedUser, CustomUserInfo.class);
         }
     }
 
