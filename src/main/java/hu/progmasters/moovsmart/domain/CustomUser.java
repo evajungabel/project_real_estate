@@ -49,6 +49,9 @@ public class CustomUser implements UserDetails {
     @Column(name = "activation")
     private String activation;
 
+    @Column(name = "is_agent")
+    private boolean isAgent;
+
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "custom_user_role")
@@ -59,6 +62,9 @@ public class CustomUser implements UserDetails {
 
     @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL)
     private ConfirmationToken confirmationToken;
+
+    @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private EstateAgent estateAgent;
 
 
     @Override

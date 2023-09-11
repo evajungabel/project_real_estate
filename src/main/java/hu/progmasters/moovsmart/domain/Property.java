@@ -22,7 +22,6 @@ public class Property {
     @Column(name = "property_id")
     private Long id;
 
-
     @Column(name = "date_of_creation")
     private LocalDateTime dateOfCreation;
 
@@ -40,6 +39,9 @@ public class Property {
 
     @Enumerated(value = EnumType.STRING)
     private PropertyType type;
+
+    @Enumerated(value = EnumType.STRING)
+    private PropertyPurpose purpose;
 
     @Column(name = "area")
     private Integer area;
@@ -68,9 +70,5 @@ public class Property {
     @ManyToOne
     @JoinColumn(name = "custom_user_id")
     private CustomUser customUser;
-
-    @ManyToOne
-    @JoinColumn(name = "estate_agent_id")
-    private EstateAgent estateAgent;
 
 }

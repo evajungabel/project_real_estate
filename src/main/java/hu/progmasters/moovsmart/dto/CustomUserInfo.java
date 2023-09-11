@@ -15,7 +15,6 @@ public class CustomUserInfo {
     private String name;
     private String username;
     private String password;
-
     private String email;
 
 }

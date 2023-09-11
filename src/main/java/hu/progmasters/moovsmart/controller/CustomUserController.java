@@ -25,12 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/customusers")
 @Slf4j
-//@Secured({"ROLE_GUEST"})
 public class CustomUserController {
 
     private CustomUserService customUserService;
-
     private EmailService emailService;
+
     @Autowired
     public CustomUserController(CustomUserService customUserService, EmailService emailService) {
         this.customUserService = customUserService;
@@ -40,7 +39,7 @@ public class CustomUserController {
     @GetMapping("/login/me")
     @Operation(summary = "Login customer")
     @ApiResponse(responseCode = "201", description = "Customer is logged in")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<UserDetails> getLoggedInUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("Http request, GET /api/customusers, logged in");
@@ -48,7 +47,6 @@ public class CustomUserController {
         log.info("GET data from repository/api/customusers, logged in");
         return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
     }
-
 
     @PostMapping("/registration")
     @Operation(summary = "Save customer")
@@ -67,7 +65,7 @@ public class CustomUserController {
     @GetMapping("/activation/{confirmationToken}")
     @Operation(summary = "Activation confirmation token by costumer")
     @ApiResponse(responseCode = "200", description = "Activation confirmation token by customer")
-    public ResponseEntity<String> activation(@Valid @PathVariable("confirmationToken") String confirmationToken){
+    public ResponseEntity<String> activation(@Valid @PathVariable("confirmationToken") String confirmationToken) {
         log.info("Http request, GET /api/customusers, activation of confirmation token: " + confirmationToken);
         String result = customUserService.userActivation(confirmationToken);
         log.info("GET /api/customusers, successful activation of confirmation token: " + confirmationToken);
@@ -116,7 +114,6 @@ public class CustomUserController {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-
     @DeleteMapping("/sale/{username}/{propertyId}")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer sales a property and it is deleted")
@@ -127,7 +124,6 @@ public class CustomUserController {
         log.info("DELETE data from repository/api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
-
 
     @DeleteMapping("/{username}/{propertyId}")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
@@ -140,5 +136,14 @@ public class CustomUserController {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-
+    @PostMapping("/comment")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Operation(summary = "Comment estate agent")
+    @ApiResponse(responseCode = "201", description = "Comment created")
+    public ResponseEntity<Void> comment(@Valid @RequestBody UserComment comment) {
+        log.info("Http request, POST /api/customusers/comment, body: " + comment.toString());
+        customUserService.comment(comment);
+        log.info("POST data from repository/api/customusers/comment, body: " + comment);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 }

@@ -1,12 +1,14 @@
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
-import hu.progmasters.moovsmart.domain.ConfirmationToken;
-import hu.progmasters.moovsmart.domain.CustomUser;
-import hu.progmasters.moovsmart.domain.Property;
-import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
+import hu.progmasters.moovsmart.dto.UserComment;
+import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
+import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
+import hu.progmasters.moovsmart.exception.TokenCannotBeUsedException;
+import hu.progmasters.moovsmart.exception.UsernameExistsException;
 import hu.progmasters.moovsmart.exception.*;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
@@ -33,13 +35,15 @@ public class CustomUserService implements UserDetailsService {
     private ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private ConfirmationTokenService confirmationTokenService;
+    private EstateAgentService estateAgentService;
 
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.confirmationTokenService = confirmationTokenService;
+        this.estateAgentService = estateAgentService;
     }
 
     public CustomUserInfo register(CustomUserForm command) {
@@ -58,8 +62,15 @@ public class CustomUserService implements UserDetailsService {
                     .enable(false)
                     .activation(confirmationToken.getConfirmationToken())
                     .confirmationToken(confirmationToken)
+                    .isAgent(command.getIsAgent())
                     .build();
             confirmationToken.setCustomUser(customUser);
+            customUserRepository.save(customUser);
+            deleteIfItIsNotActivated(customUser);
+            if (customUser.isAgent()){
+                customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
+                estateAgentService.save(customUser);
+            }
             CustomUser savedUser = customUserRepository.save(customUser);
             return modelMapper.map(savedUser, CustomUserInfo.class);
         }
@@ -74,7 +85,7 @@ public class CustomUserService implements UserDetailsService {
                 }
             };
             Timer timer = new Timer("Timer");
-            long delay = 60000L;
+            long delay = 6000000L;
             timer.schedule(task, delay);
         }
 
@@ -104,6 +115,10 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
+
+    public void save(CustomUser customUser) {
+        customUserRepository.save(customUser);
+    }
 
 
     @Override
@@ -157,6 +172,17 @@ public class CustomUserService implements UserDetailsService {
                 property.setStatus(PropertyStatus.INACTIVE);
                 property.setDateOfSale(LocalDateTime.now());
                 return "Congratulate! You sold your property!";
+                if (customUser.getRoles().equals(List.of(CustomUserRole.ROLE_AGENT))){
+                    Integer sellPoint = customUser.getEstateAgent().getSellPoint();
+                    customUser.getEstateAgent().setSellPoint(sellPoint+1);
+                    if (sellPoint >= 50 && sellPoint < 150){
+                        customUser.getEstateAgent().setRank(AgentRank.MEDIOR);
+                    } else if (sellPoint >= 150) {
+                        customUser.getEstateAgent().setRank(AgentRank.PROFESSIONAL);
+                    }else{
+                        customUser.getEstateAgent().setRank(AgentRank.RECRUIT);
+                    }
+                }
             }
         } return "There is no property with that id.";
     }
@@ -200,5 +226,13 @@ public class CustomUserService implements UserDetailsService {
         toDelete.setPassword(null);
         toDelete.setUsername(null);
         return "You deleted your profile!";
+    }
+
+    public void comment(UserComment comment) {
+        CustomUser commenter = findCustomUserByUsername(comment.getUserName());
+        CustomUser agent = findCustomUserByUsername(comment.getAgentName());
+        Map<Long,String> ratings = agent.getEstateAgent().getRatings();
+        ratings.put(commenter.getCustomUserId(),comment.getComment());
+        agent.getEstateAgent().setRatings(ratings);
     }
 }

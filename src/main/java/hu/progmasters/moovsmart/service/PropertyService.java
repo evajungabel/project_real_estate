@@ -58,7 +58,7 @@ public class PropertyService {
         return modelMapper.map(property, PropertyDetails.class);
     }
 
-    private Property findPropertyById(Long propertyId) {
+    public Property findPropertyById(Long propertyId) {
         Optional<Property> propertyOptional = propertyRepository.findById(propertyId);
         if (propertyOptional.isEmpty()) {
             throw new PropertyNotFoundException(propertyId);

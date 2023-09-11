@@ -4,7 +4,8 @@ public enum CustomUserRole {
 
     ROLE_GUEST("GUEST"),
     ROLE_USER("USER"),
-    ROLE_ADMIN("ADMIN");
+    ROLE_ADMIN("ADMIN"),
+    ROLE_AGENT("AGENT");
 
     private final String role;
 
