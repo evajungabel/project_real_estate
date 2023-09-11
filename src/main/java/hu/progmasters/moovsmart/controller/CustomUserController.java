@@ -25,12 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/customusers")
 @Slf4j
-//@Secured({"ROLE_GUEST"})
 public class CustomUserController {
 
     private CustomUserService customUserService;
-
     private EmailService emailService;
+
     @Autowired
     public CustomUserController(CustomUserService customUserService, EmailService emailService) {
         this.customUserService = customUserService;
@@ -49,7 +48,6 @@ public class CustomUserController {
         return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
     }
 
-
     @PostMapping("/registration")
     @Operation(summary = "Save customer")
     @ApiResponse(responseCode = "201", description = "Customer is saved")
@@ -67,7 +65,7 @@ public class CustomUserController {
     @GetMapping("/activation/{confirmationToken}")
     @Operation(summary = "Activation confirmation token by costumer")
     @ApiResponse(responseCode = "200", description = "Activation confirmation token by customer")
-    public ResponseEntity<String> activation(@Valid @PathVariable("confirmationToken") String confirmationToken){
+    public ResponseEntity<String> activation(@Valid @PathVariable("confirmationToken") String confirmationToken) {
         log.info("Http request, GET /api/customusers, activation of confirmation token: " + confirmationToken);
         String result = customUserService.userActivation(confirmationToken);
         log.info("GET /api/customusers, successful activation of confirmation token: " + confirmationToken);
@@ -90,7 +88,6 @@ public class CustomUserController {
                 " with variable: " + username);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
-
 
     @GetMapping
 //    @Secured({"ROLE_ADMIN"})
@@ -118,25 +115,23 @@ public class CustomUserController {
     @Operation(summary = "Delete customer")
     @ApiResponse(responseCode = "200", description = "Customer is deleted")
 //    @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<Void> deleteUser(@Valid @PathVariable("username") String username) {
-        log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + username);
-        customUserService.makeInactive(username);
-        log.info("DELETE data from repository/api/customusers/{customUsername} with variable: " + username);
+    public ResponseEntity<Void> deleteUser(@PathVariable("customUsername") String customUsername) {
+        log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + customUsername);
+        customUserService.makeInactive(customUsername);
+        log.info("DELETE data from repository/api/customusers/{customUsername} with variable: " + customUsername);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
     @DeleteMapping("/sale/{username}/{propertyId}")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer sales a property and it is deleted")
     @ApiResponse(responseCode = "200", description = "Property is sold and deleted by costumer")
-    public ResponseEntity<Void> deleteSale(@Valid @PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
+    public ResponseEntity<Void> deleteSale(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
         log.info("Http request, DELETE /api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
         customUserService.userSale(username, pId);
         log.info("DELETE data from repository/api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
     @DeleteMapping("/{username}/{propertyId}")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
@@ -149,5 +144,14 @@ public class CustomUserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
+    @PostMapping("/comment")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Operation(summary = "Comment estate agent")
+    @ApiResponse(responseCode = "201", description = "Comment created")
+    public ResponseEntity<Void> comment(@Valid @RequestBody UserComment comment) {
+        log.info("Http request, POST /api/customusers/comment, body: " + comment.toString());
+        customUserService.comment(comment);
+        log.info("POST data from repository/api/customusers/comment, body: " + comment);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 }

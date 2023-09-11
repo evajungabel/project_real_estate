@@ -10,8 +10,7 @@ package hu.progmasters.moovsmart.exception;/*
  */
 
 import com.fasterxml.jackson.core.JsonParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -27,9 +26,9 @@ import java.util.List;
 import java.util.Locale;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private final MessageSource messageSource;
 
     @Autowired
@@ -39,7 +38,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ValidationError> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        logger.error("A validation error occurred: ", ex);
+        log.error("A validation error occurred: ", ex);
         BindingResult result = ex.getBindingResult();
         List<FieldError> fieldErrors = result.getFieldErrors();
 
@@ -57,16 +56,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(JsonParseException.class)
     public ResponseEntity<ApiError> handleJsonParseException(JsonParseException ex) {
-        logger.error("Request JSON could no be parsed: ", ex);
+        log.error("Request JSON could no be parsed: ", ex);
 
         ApiError body = new ApiError("JSON_PARSE_ERROR", "The request could not be parsed as a valid JSON.", ex.getLocalizedMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
 
     }
+
     @ExceptionHandler(AddressNotFoundException.class)
     public ResponseEntity<ApiError> handleAddressNotFoundException(AddressNotFoundException ex) {
-        logger.error("Not found error: ", ex);
+        log.error("Not found error: ", ex);
 
         ApiError body = new ApiError("NOT_FOUND_ERROR", "Address not found error.", ex.getLocalizedMessage());
 
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(WeatherNotFoundException.class)
     public ResponseEntity<ApiError> handleWeatherNotFoundException(WeatherNotFoundException ex) {
-        logger.error("Not found error: ", ex);
+        log.error("Not found error: ", ex);
 
         ApiError body = new ApiError("NOT_FOUND_ERROR", "Weather not found error.", ex.getLocalizedMessage());
 
@@ -84,16 +84,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PropertyNotFoundException.class)
     public ResponseEntity<ApiError> handlePropertyNotFoundException(PropertyNotFoundException ex) {
-        logger.error("Not found error: ", ex);
+        log.error("Not found error: ", ex);
 
         ApiError body = new ApiError("NOT_FOUND_ERROR", "Property not found error.", ex.getLocalizedMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(PropertyDataNotFoundException.class)
+    public ResponseEntity<ApiError> handlePropertyDataNotFoundException(PropertyDataNotFoundException ex) {
+        log.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "Property data not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ApiError> handleUserNotFoundException(UsernameNotFoundException ex) {
-        logger.error("Not found error: ", ex);
+        log.error("Not found error: ", ex);
 
         ApiError body = new ApiError("NOT_FOUND_ERROR", "User not found error.", ex.getLocalizedMessage());
 
@@ -102,7 +112,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailAddressNotFoundException.class)
     public ResponseEntity<ApiError> handleEmailAddressNotFoundException(EmailAddressNotFoundException ex) {
-        logger.error("Not found error: ", ex);
+        log.error("Not found error: ", ex);
 
         ApiError body = new ApiError("NOT_FOUND_ERROR", "Email address not found error.", ex.getLocalizedMessage());
 
@@ -111,7 +121,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailAddressExistsException.class)
     public ResponseEntity<ApiError> handleEmailAddressExistsException(EmailAddressExistsException ex) {
-        logger.error("Email address exists error: ", ex);
+        log.error("Email address exists error: ", ex);
 
         ApiError body = new ApiError("EMAIL_ADDRESS_EXISTS_ERROR", "Email address exists error.", ex.getLocalizedMessage());
 
@@ -120,7 +130,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SendingEmailException.class)
     public ResponseEntity<ApiError> handleSendingEmailException(SendingEmailException ex) {
-        logger.error("sending email error: ", ex);
+        log.error("sending email error: ", ex);
 
         ApiError body = new ApiError("SENDING_EMAIL_ERROR", "Sending email error.", ex.getLocalizedMessage());
 
@@ -129,7 +139,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsernameExistsException.class)
     public ResponseEntity<ApiError> handleUsernameExistsException(UsernameExistsException ex) {
-        logger.error("Username exists error: ", ex);
+        log.error("Username exists error: ", ex);
 
         ApiError body = new ApiError("USERNAME_EXISTS_ERROR", "Username exists error.", ex.getLocalizedMessage());
 
@@ -138,7 +148,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TokenCannotBeUsedException.class)
     public ResponseEntity<ApiError> handleTokenCannotBeUsedException(TokenCannotBeUsedException ex) {
-        logger.error("The link is invalid or broken error: ", ex);
+        log.error("The link is invalid or broken error: ", ex);
 
         ApiError body = new ApiError("TOKEN_CANNOT_BE_USED_ERROR", "The link is invalid or broken error.", ex.getLocalizedMessage());
 
@@ -147,7 +157,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException ex) {
-        logger.error("Illegal argument error: ", ex);
+        log.error("Illegal argument error: ", ex);
 
         ApiError body = new ApiError("ILLEGAL_ARGUMENT_ERROR", "An illegal argument has been passed to the method.", ex.getLocalizedMessage());
 
@@ -156,7 +166,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ApiError> defaultErrorHandler(Throwable t) {
-        logger.error("An unexpected error occurred: ", t);
+        log.error("An unexpected error occurred: ", t);
 
         ApiError body = new ApiError("UNCLASSIFIED_ERROR", "Oh, snap! Something really unexpected occurred.", t.getLocalizedMessage());
 
