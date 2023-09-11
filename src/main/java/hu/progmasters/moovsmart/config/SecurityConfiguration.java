@@ -40,7 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                 .antMatchers("/registration").permitAll()
                 .antMatchers(HttpMethod.GET).permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and().logout()
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true)

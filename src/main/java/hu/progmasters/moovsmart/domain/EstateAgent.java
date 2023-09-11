@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.List;
@@ -37,5 +38,6 @@ public class EstateAgent {
 
     @OneToOne
     @JoinColumn(name = "custom_user_id")
+    @Cascade(org.hibernate.annotations.CascadeType.REMOVE)
     private CustomUser customUser;
 }

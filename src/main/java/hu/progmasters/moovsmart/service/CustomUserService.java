@@ -4,6 +4,7 @@ import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
+import hu.progmasters.moovsmart.dto.UserComment;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
 import hu.progmasters.moovsmart.exception.TokenCannotBeUsedException;
@@ -81,7 +82,7 @@ public class CustomUserService implements UserDetailsService {
                 }
             };
             Timer timer = new Timer("Timer");
-            long delay = 60000L;
+            long delay = 6000000L;
             timer.schedule(task, delay);
         }
 
@@ -215,5 +216,13 @@ public class CustomUserService implements UserDetailsService {
         toDelete.setName(null);
         toDelete.setPassword(null);
         toDelete.setUsername(null);
+    }
+
+    public void comment(UserComment comment) {
+        CustomUser commenter = findCustomUserByUsername(comment.getUserName());
+        CustomUser agent = findCustomUserByUsername(comment.getAgentName());
+        Map<Long,String> ratings = agent.getEstateAgent().getRatings();
+        ratings.put(commenter.getCustomUserId(),comment.getComment());
+        agent.getEstateAgent().setRatings(ratings);
     }
 }

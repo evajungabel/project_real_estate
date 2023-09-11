@@ -63,7 +63,7 @@ public class CustomUser implements UserDetails {
     @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL)
     private ConfirmationToken confirmationToken;
 
-    @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private EstateAgent estateAgent;
 
 

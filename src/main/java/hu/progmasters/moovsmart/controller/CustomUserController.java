@@ -1,9 +1,6 @@
 package hu.progmasters.moovsmart.controller;
 
-import hu.progmasters.moovsmart.dto.CustomUserForm;
-import hu.progmasters.moovsmart.dto.CustomUserInfo;
-import hu.progmasters.moovsmart.dto.PropertyForm;
-import hu.progmasters.moovsmart.dto.PropertyInfo;
+import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.service.CustomUserService;
 import hu.progmasters.moovsmart.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -123,6 +120,17 @@ public class CustomUserController {
         customUserService.userDelete(username, pId);
         log.info("DELETE data from repository/api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/comment")
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Operation(summary = "Comment estate agent")
+    @ApiResponse(responseCode = "201", description = "Comment created")
+    public ResponseEntity<Void> comment(@Valid @RequestBody UserComment comment) {
+        log.info("Http request, POST /api/customusers/comment, body: " + comment.toString());
+        customUserService.comment(comment);
+        log.info("POST data from repository/api/customusers/comment, body: " + comment);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }
