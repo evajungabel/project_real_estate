@@ -23,6 +23,4 @@ public class CustomUserLogIn {
     @NotNull(message = "E-mail cannot be empty!")
     @Size(min = 1, max = 200, message = "E-mail must be between 3 and 200 characters!")
     private String email;
-
-
 }
