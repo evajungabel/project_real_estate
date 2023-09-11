@@ -5,10 +5,7 @@ import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.dto.UserComment;
-import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
-import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
-import hu.progmasters.moovsmart.exception.TokenCannotBeUsedException;
-import hu.progmasters.moovsmart.exception.UsernameExistsException;
+import hu.progmasters.moovsmart.exception.*;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,9 @@ public class CustomUserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private ConfirmationTokenService confirmationTokenService;
     private EstateAgentService estateAgentService;
+
+    private List<String> listOfEmails = new ArrayList<>();
+    private List<String> listOfUsernames = new ArrayList<>();
 
     @Autowired
     public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService) {
@@ -64,12 +64,15 @@ public class CustomUserService implements UserDetailsService {
                     .isAgent(command.getIsAgent())
                     .build();
             confirmationToken.setCustomUser(customUser);
-            customUserRepository.save(customUser);
             deleteIfItIsNotActivated(customUser);
-            if (customUser.isAgent()){
+            if (customUser.isAgent()) {
                 customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
                 estateAgentService.save(customUser);
             }
+            CustomUser savedUser = customUserRepository.save(customUser);
+            listOfUsernames.add(customUser.getUsername());
+            listOfEmails.add(customUser.getEmail());
+            return modelMapper.map(savedUser, CustomUserInfo.class);
         }
     }
 
@@ -82,7 +85,7 @@ public class CustomUserService implements UserDetailsService {
             }
         };
         Timer timer = new Timer("Timer");
-        long delay = 60000L;
+        long delay = 6000000L;
         timer.schedule(task, delay);
     }
 
@@ -92,9 +95,8 @@ public class CustomUserService implements UserDetailsService {
         ConfirmationToken confirmationToken = new ConfirmationToken();
         confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
         confirmationToken.setCreatedDate(LocalDateTime.now());
-        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(1));
+        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(2));
         return confirmationTokenService.save(confirmationToken);
-
     }
 
     public String userActivation(String confirmationToken) {
@@ -111,11 +113,6 @@ public class CustomUserService implements UserDetailsService {
         } catch (TokenCannotBeUsedException e) {
             throw new TokenCannotBeUsedException(confirmationToken);
         }
-    }
-
-
-    public void save(CustomUser customUser) {
-        customUserRepository.save(customUser);
     }
 
 
@@ -138,8 +135,6 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-
-
     public List<CustomUserInfo> getCustomUsers() {
         List<CustomUser> customUsers = customUserRepository.findAll();
         List<CustomUserInfo> customUserInfos = customUsers.stream()
@@ -148,6 +143,24 @@ public class CustomUserService implements UserDetailsService {
         return customUserInfos;
     }
 
+    public CustomUser findCustomUserByUsername(String username) {
+        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByUsername(username));
+        if (customUserOptional.isEmpty()) {
+            throw new UsernameNotFoundExceptionImp(username);
+        }
+        return customUserOptional.get();
+    }
+
+    public CustomUser findCustomUserByEmail(String email) {
+        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByEmail(email));
+        if (customUserOptional.isEmpty()) {
+            throw new EmailAddressNotFoundException(email);
+        }
+        return customUserOptional.get();
+    }
+
+
+    public String userSale(String username, Long pId) {
 
     public CustomUserInfo getCustomUser(String username) {
         CustomUser customUser = findCustomUserByUsername(username);
@@ -160,55 +173,45 @@ public class CustomUserService implements UserDetailsService {
             if (property.getId().equals(pId)) {
                 property.setStatus(PropertyStatus.INACTIVE);
                 property.setDateOfSale(LocalDateTime.now());
-                if (customUser.getRoles().equals(List.of(CustomUserRole.ROLE_AGENT))){
+                if (customUser.getRoles().equals(List.of(CustomUserRole.ROLE_AGENT))) {
                     Integer sellPoint = customUser.getEstateAgent().getSellPoint();
-                    customUser.getEstateAgent().setSellPoint(sellPoint+1);
-                    if (sellPoint >= 50 && sellPoint < 150){
+                    customUser.getEstateAgent().setSellPoint(sellPoint + 1);
+                    if (sellPoint >= 50 && sellPoint < 150) {
                         customUser.getEstateAgent().setRank(AgentRank.MEDIOR);
                     } else if (sellPoint >= 150) {
                         customUser.getEstateAgent().setRank(AgentRank.PROFESSIONAL);
-                    }else{
+                    } else {
                         customUser.getEstateAgent().setRank(AgentRank.RECRUIT);
                     }
                 }
+                return "Congratulate! You sold your property!";
             }
         }
+        return "There is no property with that id.";
     }
 
-    public CustomUser findCustomUserByUsername(String username) {
-        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByUsername(username));
-        if (customUserOptional.isEmpty()) {
-            throw new UsernameNotFoundException(username);
-        }
-        return customUserOptional.get();
-    }
 
-    public void userDelete(String username, Long pId) {
+    public String userDelete(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
                 property.setStatus(PropertyStatus.INACTIVE);
                 property.setDateOfInactivation(LocalDateTime.now());
+                return "You deleted your property!";
             }
         }
+        return "There is no property with that id.";
     }
 
-    public CustomUser findCustomUserByEmail(String email) {
-        Optional<CustomUser> customUserOptional = Optional.ofNullable(customUserRepository.findByEmail(email));
-        if (customUserOptional.isEmpty()) {
-            throw new EmailAddressNotFoundException(email);
-        }
-        return customUserOptional.get();
-    }
 
     public CustomUserInfo update(String username, CustomUserForm customUserForm) {
         CustomUser customUser = findCustomUserByUsername(username);
-        if (customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
-                customUserRepository.findByEmail(customUserForm.getEmail()) != customUser) {
-            throw new EmailAddressExistsException(customUserForm.getEmail());
-        } else if (customUserRepository.findByUsername(customUserForm.getUsername()) != null &&
-                customUserRepository.findByUsername(customUserForm.getUsername()) != customUser) {
+        if ((listOfUsernames.contains(customUserForm.getUsername())) &&
+                !(customUserForm.getUsername().equals(customUser.getUsername()))) {
             throw new UsernameExistsException(customUserForm.getUsername());
+        } else if ((listOfEmails.contains(customUserForm.getEmail())) &&
+                !(customUserForm.getEmail().equals(customUser.getEmail()))) {
+            throw new EmailAddressExistsException(customUserForm.getEmail());
         } else {
             modelMapper.map(customUserForm, customUser);
             customUser.setPassword(passwordEncoder.encode(customUserForm.getPassword()));
@@ -216,7 +219,7 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-    public void makeInactive(String customUsername) {
+    public String makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
         userDelete(toDelete.getUsername(), toDelete.getCustomUserId());
         toDelete.builder()
@@ -231,13 +234,14 @@ public class CustomUserService implements UserDetailsService {
                 .deleteDate(LocalDateTime.now())
                 .build();
         toDelete.setDeleted(true);
+        return "You deleted your profile!";
     }
 
     public void comment(UserComment comment) {
         CustomUser commenter = findCustomUserByUsername(comment.getUserName());
         CustomUser agent = findCustomUserByUsername(comment.getAgentName());
-        Map<Long,String> ratings = agent.getEstateAgent().getRatings();
-        ratings.put(commenter.getCustomUserId(),comment.getComment());
+        Map<Long, String> ratings = agent.getEstateAgent().getRatings();
+        ratings.put(commenter.getCustomUserId(), comment.getComment());
         agent.getEstateAgent().setRatings(ratings);
     }
 }
