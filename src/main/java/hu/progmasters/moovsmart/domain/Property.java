@@ -41,6 +41,9 @@ public class Property {
     @Enumerated(value = EnumType.STRING)
     private PropertyType type;
 
+    @Enumerated(value = EnumType.STRING)
+    private PropertyPurpose purpose;
+
     @Column(name = "area")
     private Integer area;
 

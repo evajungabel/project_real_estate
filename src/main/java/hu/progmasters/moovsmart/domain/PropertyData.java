@@ -18,27 +18,46 @@ public class PropertyData {
     @Column(name = "property_data_id")
     private Long id;
 
-    @Column(name = "parking")
-    private boolean parking;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "condition")
+    private PropertyCondition condition;
+
+    @Column(name = "year_built")
+    private int yearBuilt;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "property_orientation")
-    private PropertyOrientation propertyOrientation;
+    @Column(name = "parking")
+    private PropertyParking parking;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "orientation")
+    private PropertyOrientation orientation;
+
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "heating")
-    private String heating;
+    private PropertyHeatingType heating;
 
-    @Column(name = "balcony")
-    private boolean balcony;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "energy_certificate")
+    private PropertyEnergyPerformanceCertificate energyCertificate;
 
-    @Column(name = "insulation")
-    private boolean insulation;
+    @Column(name = "has_balcony")
+    private boolean hasBalcony;
 
-    @Column(name = "air_conditioner")
-    private boolean airConditioner;
+    @Column(name = "has_lift")
+    private boolean hasLift;
 
-    @Column(name = "garden")
-    private boolean garden;
+    @Column(name = "is_accessible")
+    private boolean isAccessible;
+
+    @Column(name = "is_insulated")
+    private boolean isInsulated;
+
+    @Column(name = "has_air_condition")
+    private boolean hasAirCondition;
+
+    @Column(name = "has_garden")
+    private boolean hasGarden;
 
     @OneToOne
     @JoinColumn(name = "property_id")
