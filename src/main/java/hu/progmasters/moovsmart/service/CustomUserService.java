@@ -150,25 +150,28 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-    public void userSale(String username, Long pId) {
+    public String userSale(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
                 property.setStatus(PropertyStatus.INACTIVE);
                 property.setDateOfSale(LocalDateTime.now());
+                return "Congratulate! You sold your property!";
             }
-        }
+        } return "There is no property with that id.";
     }
 
 
-    public void userDelete(String username, Long pId) {
+
+    public String userDelete(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
                 property.setStatus(PropertyStatus.INACTIVE);
                 property.setDateOfInactivation(LocalDateTime.now());
+                return "You deleted your property!";
             }
-        }
+        } return "There is no property with that id.";
     }
 
 
@@ -187,7 +190,7 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-    public void makeInactive(String customUsername) {
+    public String makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
         userDelete(toDelete.getUsername(), toDelete.getCustomUserId());
         toDelete.setDeleteDate(LocalDateTime.now());
@@ -196,5 +199,6 @@ public class CustomUserService implements UserDetailsService {
         toDelete.setName(null);
         toDelete.setPassword(null);
         toDelete.setUsername(null);
+        return "You deleted your profile!";
     }
 }

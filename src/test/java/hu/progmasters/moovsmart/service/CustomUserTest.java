@@ -3,30 +3,28 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.ConfirmationToken;
 import hu.progmasters.moovsmart.domain.CustomUser;
+import hu.progmasters.moovsmart.domain.Property;
+import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
-import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
 import hu.progmasters.moovsmart.exception.UsernameExistsException;
 import hu.progmasters.moovsmart.exception.UsernameNotFoundExceptionImp;
-import hu.progmasters.moovsmart.repository.ConfirmationTokenRepository;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +37,7 @@ public class CustomUserTest {
 
     @Mock
     private CustomUserRepository customUserRepository;
+
 
     @Mock
     private ModelMapper modelMapper;
@@ -60,10 +59,19 @@ public class CustomUserTest {
     private CustomUser customUser2;
     private CustomUserInfo customUserInfo2;
 
+    private CustomUser customUserDeleted;
+    private Property property1;
+
     private ConfirmationToken confirmationToken;
 
     @BeforeEach
     void init() {
+        property1 = new Property().builder()
+                .id(1L)
+                .customUser(customUser1)
+                .status(PropertyStatus.INACTIVE)
+                .build();
+
         customUser1 = new CustomUser().builder()
                 .customUserId(1L)
                 .username("pistike")
@@ -74,6 +82,20 @@ public class CustomUserTest {
                 .enable(true)
                 .activation("123456")
                 .confirmationToken(confirmationToken)
+                .propertyList(List.of(property1))
+                .build();
+
+        customUserDeleted = new CustomUser().builder()
+                .customUserId(1L)
+                .username(null)
+                .name(null)
+                .email(null)
+                .password(null)
+                .roles(List.of())
+                .enable(false)
+                .activation(null)
+                .confirmationToken(null)
+                .propertyList(List.of())
                 .build();
 
         customUserInfo1 = new CustomUserInfo().builder()
@@ -122,6 +144,8 @@ public class CustomUserTest {
                 .expiredDate(LocalDateTime.now().plusMinutes(1))
                 .customUser(customUser1)
                 .build();
+
+
     }
 
 
@@ -141,8 +165,6 @@ public class CustomUserTest {
         when(customUserRepository.findByEmail(customUserForm1.getEmail())).thenReturn(null);
         when(customUserRepository.findByUsername(customUserForm1.getUsername())).thenReturn(null);
 
-//        when(customUserRepository.save(Mockito.any(CustomUser.class)))
-//                .thenAnswer(i -> i.getArguments()[0]);
         when(customUserRepository.save(any(CustomUser.class))).thenReturn(customUser1);
         when(modelMapper.map(customUser1, CustomUserInfo.class)).thenReturn(customUserInfo1);
 
@@ -150,6 +172,11 @@ public class CustomUserTest {
 
         verify(customUserRepository, times(1)).save(any());
         verifyNoMoreInteractions(customUserRepository);
+    }
+
+    @Test
+    void testUpdate_CustomUser() {
+
     }
 
     @Test
@@ -295,14 +322,56 @@ public class CustomUserTest {
     }
 
     @Test
-    void testCustomUser_sale() {
+    void testCustomUser_saleWithExistingId() {
+        when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
+        assertEquals("Congratulate! You sold your property!", customUserService.userSale("pistike", 1L));
+
+        verify(customUserRepository, times(1)).findByUsername("pistike");
+        verifyNoMoreInteractions(customUserRepository);
     }
 
     @Test
-    void testCustomUser_delete() {
+    void testCustomUser_saleWithWrongPropertyId() {
+        when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
+        assertEquals("There is no property with that id.", customUserService.userSale("pistike", 3L));
+
+        verify(customUserRepository, times(1)).findByUsername("pistike");
+        verifyNoMoreInteractions(customUserRepository);
     }
+
+    @Test
+    void testCustomUser_deleteWithExistingId() {
+        when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
+
+        assertEquals("You deleted your property!", customUserService.userDelete("pistike", 1L));
+
+        verify(customUserRepository, times(1)).findByUsername("pistike");
+        verifyNoMoreInteractions(customUserRepository);
+    }
+
+    @Test
+    void testCustomUser_deleteWithWrongPropertyId() {
+        when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
+
+        assertEquals("There is no property with that id.", customUserService.userDelete("pistike", 3L));
+
+        verify(customUserRepository, times(1)).findByUsername("pistike");
+        verifyNoMoreInteractions(customUserRepository);
+    }
+
+    @Test
+    void testCustomUser_makeInactive() {
+        when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
+
+        assertEquals("You deleted your property!", customUserService.userDelete("pistike", 1L));
+        assertEquals("You deleted your profile!", customUserService.makeInactive("pistike"));
+
+        verify(customUserRepository, times(3)).findByUsername("pistike");
+        verifyNoMoreInteractions(customUserRepository);
+    }
+
 
     @Test
     void testCustomUser_update() {

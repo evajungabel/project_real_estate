@@ -109,11 +109,11 @@ public class CustomUserController {
     @Operation(summary = "Delete customer")
     @ApiResponse(responseCode = "200", description = "Customer is deleted")
 //    @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<Void> deleteUser(@PathVariable("customUsername") String customUsername) {
+    public ResponseEntity<String> deleteUser(@PathVariable("customUsername") String customUsername) {
         log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + customUsername);
-        customUserService.makeInactive(customUsername);
+        String message = customUserService.makeInactive(customUsername);
         log.info("DELETE data from repository/api/customusers/{customUsername} with variable: " + customUsername);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 
@@ -121,11 +121,11 @@ public class CustomUserController {
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer sales a property and it is deleted")
     @ApiResponse(responseCode = "200", description = "Property is sold and deleted by costumer")
-    public ResponseEntity<Void> deleteSale(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
+    public ResponseEntity<String> deleteSale(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
         log.info("Http request, DELETE /api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
-        customUserService.userSale(username, pId);
+        String message = customUserService.userSale(username, pId);
         log.info("DELETE data from repository/api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 
@@ -133,11 +133,11 @@ public class CustomUserController {
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer deletes a property")
     @ApiResponse(responseCode = "200", description = "Property is deleted by costumer")
-    public ResponseEntity<Void> delete(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
+    public ResponseEntity<String> delete(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
         log.info("Http request, DELETE /api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
-        customUserService.userDelete(username, pId);
+        String message = customUserService.userDelete(username, pId);
         log.info("DELETE data from repository/api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 
