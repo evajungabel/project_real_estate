@@ -22,7 +22,6 @@ public class Property {
     @Column(name = "property_id")
     private Long id;
 
-
     @Column(name = "date_of_creation")
     private LocalDateTime dateOfCreation;
 

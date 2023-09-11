@@ -123,7 +123,7 @@ public class CustomUserController {
     }
 
     @PostMapping("/comment")
-//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Comment estate agent")
     @ApiResponse(responseCode = "201", description = "Comment created")
     public ResponseEntity<Void> comment(@Valid @RequestBody UserComment comment) {
@@ -132,5 +132,4 @@ public class CustomUserController {
         log.info("POST data from repository/api/customusers/comment, body: " + comment);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
 }

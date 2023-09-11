@@ -25,7 +25,6 @@ public class PropertyForm {
     @Max(value = 1000, message = "Space must be between 1 and 1000!")
     private Integer area;
 
-
     @Min(value = 1, message = "Number of rooms must be between 1 and 40!")
     @Max(value = 40, message = "Number of rooms must be between 1 and 40!")
     private Integer numberOfRooms;

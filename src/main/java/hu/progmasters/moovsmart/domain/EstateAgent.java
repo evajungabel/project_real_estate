@@ -2,13 +2,11 @@ package hu.progmasters.moovsmart.domain;
 
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor

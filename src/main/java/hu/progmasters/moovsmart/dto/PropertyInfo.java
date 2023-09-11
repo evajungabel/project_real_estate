@@ -10,11 +10,9 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class PropertyInfo {
-
     private long id;
     private String name;
     private int numberOfRooms;
     private int price;
     private String imageUrl;
-
 }
