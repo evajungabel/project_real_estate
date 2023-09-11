@@ -37,7 +37,7 @@ public class CustomUserController {
         this.emailService = emailService;
     }
 
-    @GetMapping("/login/{me}")
+    @GetMapping("/login/me")
     @Operation(summary = "Login customer")
     @ApiResponse(responseCode = "201", description = "Customer is logged in")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})

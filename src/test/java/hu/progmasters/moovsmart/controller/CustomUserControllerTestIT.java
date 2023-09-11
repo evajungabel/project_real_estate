@@ -62,17 +62,17 @@ public class CustomUserControllerTestIT {
     @Test
     void IT_test_loginCustomUser() throws Exception {
         UserDetails userDetails = User
-                .withUsername("username")
+                .withUsername("aprandia")
                 .password("password")
-                .authorities(AuthorityUtils.createAuthorityList(String.valueOf(CustomUserRole.ROLE_USER))) // Set user roles/authorities
+                .authorities(AuthorityUtils.createAuthorityList(String.valueOf(CustomUserRole.ROLE_USER)))
                 .build();
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
+//        securityContext.setAuthentication(authentication);
 
-        mockMvc.perform(get("/api/customusers/login/me").with((RequestPostProcessor) userDetails))
+        mockMvc.perform(get("/api/customusers/login/me"))
                 .andExpect(status().isOk());
 
 
