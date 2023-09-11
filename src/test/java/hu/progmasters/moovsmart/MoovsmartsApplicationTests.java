@@ -12,5 +12,4 @@ public class MoovsmartsApplicationTests {
     @Test
     public void contextLoads() {
     }
-
 }
