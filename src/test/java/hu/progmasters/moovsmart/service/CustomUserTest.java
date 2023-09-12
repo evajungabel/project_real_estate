@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.reflect.Modifier.PROTECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -243,12 +242,9 @@ public class CustomUserTest {
 
         assertEquals(customUserInfo1, customUserService.update("pistike", customUserForm2));
 
-        verify(customUserRepository, times(1)).findByUsername(any());
+        verify(customUserRepository, times(2)).findByUsername(any());
+        verify(customUserRepository, times(1)).findByEmail(any());
         verifyNoMoreInteractions(customUserRepository);
-    }
-    @Test
-    void testUpdate_CustomUser() {
-
     }
 
     @Test
