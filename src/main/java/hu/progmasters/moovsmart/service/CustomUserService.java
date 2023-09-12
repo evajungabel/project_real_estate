@@ -70,8 +70,6 @@ public class CustomUserService implements UserDetailsService {
                 estateAgentService.save(customUser);
             }
             CustomUser savedUser = customUserRepository.save(customUser);
-            listOfUsernames.add(customUser.getUsername());
-            listOfEmails.add(customUser.getEmail());
             return modelMapper.map(savedUser, CustomUserInfo.class);
         }
     }
@@ -85,7 +83,7 @@ public class CustomUserService implements UserDetailsService {
             }
         };
         Timer timer = new Timer("Timer");
-        long delay = 6000000L;
+        long delay = 10000L;
         timer.schedule(task, delay);
     }
 
@@ -204,10 +202,10 @@ public class CustomUserService implements UserDetailsService {
 
     public CustomUserInfo update(String username, CustomUserForm customUserForm) {
         CustomUser customUser = findCustomUserByUsername(username);
-        if ((listOfUsernames.contains(customUserForm.getUsername())) &&
+        if (customUserRepository.findByUsername(customUserForm.getUsername()) != null &&
                 !(customUserForm.getUsername().equals(customUser.getUsername()))) {
             throw new UsernameExistsException(customUserForm.getUsername());
-        } else if ((listOfEmails.contains(customUserForm.getEmail())) &&
+        } else if (customUserRepository.findByEmail(customUserForm.getEmail()) != null &&
                 !(customUserForm.getEmail().equals(customUser.getEmail()))) {
             throw new EmailAddressExistsException(customUserForm.getEmail());
         } else {
