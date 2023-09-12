@@ -1,9 +1,6 @@
 package hu.progmasters.moovsmart.controller;
 
-import hu.progmasters.moovsmart.dto.CustomUserForm;
-import hu.progmasters.moovsmart.dto.CustomUserInfo;
-import hu.progmasters.moovsmart.dto.PropertyForm;
-import hu.progmasters.moovsmart.dto.PropertyInfo;
+import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.service.CustomUserService;
 import hu.progmasters.moovsmart.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -101,7 +98,16 @@ public class CustomUserController {
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }
 
-    //TODO get 1 customuser
+    @GetMapping("/{username}")
+//    @Secured({"ROLE_ADMIN"})
+    @Operation(summary = "Get a customer with username")
+    @ApiResponse(responseCode = "200", description = "Get a customer with username")
+    public ResponseEntity<CustomUserInfo> getCustomUser(@PathVariable("username") String username) {
+        log.info("Http request, GET /api/customusers get a customer with username: " + username);
+        CustomUserInfo customerInfoList = customUserService.getCustomUser(username);
+        log.info("GET data from repository/api/customusers get a customer with username: " + username);
+        return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
+    }
 
     @DeleteMapping("/{customUsername}")
     @Operation(summary = "Delete customer")

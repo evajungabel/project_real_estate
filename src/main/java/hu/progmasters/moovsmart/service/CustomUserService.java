@@ -160,14 +160,12 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-    public String userSale(String username, Long pId) {
-
     public CustomUserInfo getCustomUser(String username) {
         CustomUser customUser = findCustomUserByUsername(username);
         return modelMapper.map(customUser, CustomUserInfo.class);
     }
 
-    public void userSale(String username, Long pId) {
+    public String userSale(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
