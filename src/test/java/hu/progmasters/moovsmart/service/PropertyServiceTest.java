@@ -113,7 +113,7 @@ public class PropertyServiceTest {
                 .status(PropertyStatus.ACTIVE)
                 .description("Jó kis házikó")
                 .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
-//                .estateAgent(estateAgent1)
+//                .customUser(estateAgent1)
                 .build();
 
         propertyFormUpdate = new PropertyForm().builder()

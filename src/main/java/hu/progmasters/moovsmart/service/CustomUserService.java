@@ -45,7 +45,7 @@ public class CustomUserService implements UserDetailsService {
         this.estateAgentService = estateAgentService;
     }
 
-    public void register(CustomUserForm command) {
+    public CustomUserInfo register(CustomUserForm command) {
         if (customUserRepository.findByEmail(command.getEmail()) != null) {
             throw new EmailAddressExistsException(command.getEmail());
         } else if (customUserRepository.findByUsername(command.getUsername()) != null) {
@@ -70,6 +70,7 @@ public class CustomUserService implements UserDetailsService {
                 customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
                 estateAgentService.save(customUser);
             }
+            return modelMapper.map(customUser,CustomUserInfo.class);
         }
     }
 

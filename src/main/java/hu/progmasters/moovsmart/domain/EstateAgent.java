@@ -36,6 +36,6 @@ public class EstateAgent {
 
     @OneToOne
     @JoinColumn(name = "custom_user_id")
-    @Cascade(org.hibernate.annotations.CascadeType.REMOVE)
+    @Cascade(org.hibernate.annotations.CascadeType.PERSIST)
     private CustomUser customUser;
 }

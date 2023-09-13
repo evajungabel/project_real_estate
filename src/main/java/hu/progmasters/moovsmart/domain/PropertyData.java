@@ -19,7 +19,7 @@ public class PropertyData {
     private Long id;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "condition")
+    @Column(name = "property_condition")
     private PropertyCondition condition;
 
     @Column(name = "year_built")
