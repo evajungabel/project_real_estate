@@ -826,9 +826,9 @@ public class CustomUserControllerTestIT {
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("aprandia")))
-                .andExpect(jsonPath("$.password", is("jH0@qk'BXF")))
                 .andExpect(jsonPath("$.name", is("Avivah Prandi")))
-                .andExpect(jsonPath("$.email", is("aprandia@miitbeian.gov.cn")));
+                .andExpect(jsonPath("$.email", is("aprandia@miitbeian.gov.cn")))
+                .andExpect(jsonPath("$.phoneNumber", is("+36306363631")));
     }
 
 

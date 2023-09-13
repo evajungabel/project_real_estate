@@ -1,10 +1,7 @@
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
-import hu.progmasters.moovsmart.domain.ConfirmationToken;
-import hu.progmasters.moovsmart.domain.CustomUser;
-import hu.progmasters.moovsmart.domain.Property;
-import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
@@ -56,6 +53,8 @@ public class CustomUserTest {
     @Mock
     private EstateAgentService estateAgentService;
 
+    @Mock
+    private CustomUserEmailService customUserEmailService;
     @InjectMocks
     private CustomUserService customUserService;
     private CustomUser customUser1;
@@ -74,6 +73,8 @@ public class CustomUserTest {
     private ConfirmationToken confirmationToken2;
 
     private User customUserLoggedIn1;
+
+    private CustomUserEmail customUserEmail;
 
     private List<String> listOfUsernames = new ArrayList<>();
     private List<String> listOfEmails = new ArrayList<>();
@@ -106,6 +107,7 @@ public class CustomUserTest {
                 .confirmationToken(confirmationToken1)
                 .propertyList(List.of(property1))
                 .isAgent(false)
+                .hasNewsletter(false)
                 .build();
 
         customUserDeleted = new CustomUser().builder()
@@ -120,6 +122,7 @@ public class CustomUserTest {
                 .activation(null)
                 .confirmationToken(null)
                 .propertyList(List.of())
+                .hasNewsletter(false)
                 .build();
 
         customUserInfo1 = new CustomUserInfo().builder()
@@ -150,6 +153,7 @@ public class CustomUserTest {
                 .confirmationToken(confirmationToken2)
                 .enable(true)
                 .isAgent(true)
+                .hasNewsletter(true)
                 .activation("987654321")
                 .build();
 
@@ -160,6 +164,7 @@ public class CustomUserTest {
                 .phoneNumber("+36303333333")
                 .password("Pistike1*")
                 .isAgent(false)
+                .hasNewsletter(false)
                 .build();
 
         customUserForm2 = new CustomUserForm().builder()
@@ -168,6 +173,7 @@ public class CustomUserTest {
                 .email("rosszcsont.moricka@gmail.com")
                 .password("Moricka1*")
                 .isAgent(true)
+                .hasNewsletter(true)
                 .build();
 
         customUserInfo2 = new CustomUserInfo().builder()
@@ -176,6 +182,12 @@ public class CustomUserTest {
                 .phoneNumber("+36303333333")
                 .email("rosszcsont.moricka@gmail.com")
                 .customUserRoles(List.of(CustomUserRole.ROLE_AGENT))
+                .build();
+
+        customUserEmail = new CustomUserEmail().builder()
+                .customUserEmailId(1L)
+                .customUser(customUser2)
+                .email("rosszcsont.moricka@gmail.com")
                 .build();
 
         customUserLoggedIn1 = (User) User
@@ -226,6 +238,7 @@ public class CustomUserTest {
         when(estateAgentService.save(customUser2)).thenReturn(customUserInfo2);
 
         when(customUserRepository.save(any(CustomUser.class))).thenReturn(customUser2);
+        when(customUserEmailService.save(any(CustomUserEmail.class))).thenReturn(customUserEmail);
         when(modelMapper.map(customUser2, CustomUserInfo.class)).thenReturn(customUserInfo2);
 
         assertEquals(customUserInfo2, customUserService.register(customUserForm2));
