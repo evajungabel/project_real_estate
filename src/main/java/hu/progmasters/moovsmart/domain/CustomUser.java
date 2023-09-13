@@ -34,6 +34,9 @@ public class CustomUser implements UserDetails {
     @Column(name = "e_mail")
     private String email;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @Column(name = "enable")
     private boolean enable;
 

@@ -40,6 +40,7 @@ public class CustomUserService implements UserDetailsService {
 
     private CustomUserEmailService customUserEmailService;
 
+    private Timer activationTimer = new Timer("Timer");
 
     @Autowired
     public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService) {
@@ -86,26 +87,28 @@ public class CustomUserService implements UserDetailsService {
                     .email(command.getEmail())
                     .customUser(customUser)
                     .build();
-            customUserEmailService.save(customUserEmail);
+            CustomUserEmail savedEmail = customUserEmailService.save(customUserEmail);
             CustomUser savedUser = customUserRepository.save(customUser);
-            deleteIfItIsNotActivated(customUser, customUserEmail);
-            return modelMapper.map(savedUser, CustomUserInfo.class);
+            deleteIfItIsNotActivated(savedUser, savedEmail);
+            CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
+            customUserInfo.setCustomUserRoles(customUser.getRoles());
+            return customUserInfo;
         }
     }
 
     public void deleteIfItIsNotActivated(CustomUser customUser, CustomUserEmail customUserEmail) {
         TimerTask task = new TimerTask() {
             public void run() {
-                if (!customUser.isEnabled()) {
+                if (!(customUser.isEnabled())) {
                     customUserRepository.delete(customUser);
                     customUserEmailService.delete(customUserEmail);
                 }
             }
         };
-        Timer timer = new Timer("Timer");
-        long delay = 20000L;
-        timer.schedule(task, delay);
+        long delay = 60000L;
+        activationTimer.schedule(task, delay);
     }
+
 
 
     public ConfirmationToken createConfirmationToken() {
@@ -122,6 +125,7 @@ public class CustomUserService implements UserDetailsService {
             if ((LocalDateTime.now()).isBefore(customUser.getConfirmationToken().getExpiredDate())) {
                 customUser.setEnable(true);
                 customUser.setActivation("");
+                activationTimer.cancel();
                 return "Activation is successful!";
             } else {
                 customUserRepository.delete(customUser);

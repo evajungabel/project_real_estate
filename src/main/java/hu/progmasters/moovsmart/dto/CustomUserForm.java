@@ -27,6 +27,12 @@ public class CustomUserForm {
     private String password;
 
     @NotNull(message = "E-mail cannot be empty!")
+    @Size(min = 1, max = 200, message = " must be between 3 and 200 characters!")
+    @Pattern(regexp = "/^(\\+{0,})(\\d{0,})([(]{1}\\d{1,3}[)]{0,}){0,}(\\s?\\d+|\\+\\d{2,3}\\s{1}\\d+|\\d+){1}[\\s|-]?\\d+([\\s|-]?\\d+){1,2}(\\s){0,}$/gm\n")
+    private String phoneNumber;
+
+
+    @NotNull(message = "E-mail cannot be empty!")
     @Size(min = 1, max = 200, message = "E-mail must be between 3 and 200 characters!")
     @Email
     @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")

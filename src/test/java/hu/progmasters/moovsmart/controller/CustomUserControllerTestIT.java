@@ -53,6 +53,7 @@ public class CustomUserControllerTestIT {
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"120\",\n" +
+                "    \"phoneNumber\": \"+3\",\n" +
                 "    \"email\": \"bogyo.baboca@gmail.com\"\n" +
                 "}";
 

@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.modelmapper.ModelMapper;
@@ -30,4 +31,6 @@ public class MoovsmartApplication {
 						.version("1.0.1")
 						.description("This is a Estate trade application."));
 	}
+
+
 }

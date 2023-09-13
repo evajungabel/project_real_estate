@@ -19,8 +19,9 @@ public class CustomUserEmailService {
         this.customUserEmailRepository = customUserEmailRepository;
     }
 
-    public void save(CustomUserEmail customUserEmail) {
+    public CustomUserEmail save(CustomUserEmail customUserEmail) {
         customUserEmailRepository.save(customUserEmail);
+        return customUserEmail;
     }
 
     public void delete(CustomUserEmail customUserEmail) {
