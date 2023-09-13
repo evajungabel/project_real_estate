@@ -6,7 +6,6 @@ import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyInfo;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
-import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

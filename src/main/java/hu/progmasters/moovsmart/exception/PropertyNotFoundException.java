@@ -9,6 +9,8 @@ public class PropertyNotFoundException extends RuntimeException{
         this.propertyId = propertyId;
     }
 
+
+
     public Long getPropertyId() {
         return propertyId;
     }
