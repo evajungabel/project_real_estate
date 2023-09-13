@@ -12,12 +12,9 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class CustomUserInfo {
-
+    //tú sok minden jön föl. Kód legalább is biztos nem kell.
     private String name;
     private String username;
-    private String password;
     private String email;
-
-    private CustomUserRole customUserRole;
-
+    private CustomUserRole roles; // ez valamiért null. Lehet azért mert csak rolessnek kéne lennie
 }

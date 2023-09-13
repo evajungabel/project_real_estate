@@ -4,6 +4,7 @@ import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
+import hu.progmasters.moovsmart.dto.EstateAgentInfo;
 import hu.progmasters.moovsmart.dto.UserComment;
 import hu.progmasters.moovsmart.exception.*;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
@@ -65,12 +66,12 @@ public class CustomUserService implements UserDetailsService {
                     .build();
             confirmationToken.setCustomUser(customUser);
             deleteIfItIsNotActivated(customUser);
+            customUserRepository.save(customUser);
             if (customUser.isAgent()) {
                 customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
                 estateAgentService.save(customUser);
             }
-            CustomUser savedUser = customUserRepository.save(customUser);
-            return modelMapper.map(savedUser, CustomUserInfo.class);
+            return modelMapper.map(customUser, CustomUserInfo.class);
         }
     }
 
@@ -83,7 +84,7 @@ public class CustomUserService implements UserDetailsService {
             }
         };
         Timer timer = new Timer("Timer");
-        long delay = 10000L;
+        long delay = 1000000L;
         timer.schedule(task, delay);
     }
 
@@ -227,5 +228,11 @@ public class CustomUserService implements UserDetailsService {
         Map<Long, String> ratings = agent.getEstateAgent().getRatings();
         ratings.put(commenter.getCustomUserId(), comment.getComment());
         agent.getEstateAgent().setRatings(ratings);
+    }
+
+    public EstateAgentInfo getAgentInfo(String userName) {
+        CustomUser customUser = findCustomUserByUsername(userName);
+        EstateAgent agent = customUser.getEstateAgent();
+        return modelMapper.map(agent,EstateAgentInfo.class);
     }
 }
