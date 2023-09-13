@@ -52,11 +52,10 @@ public class CustomUserTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+
     @Mock
     private EstateAgentService estateAgentService;
 
-    @Mock
-    private ConfirmationTokenRepository confirmationTokenRepository;
     @InjectMocks
     private CustomUserService customUserService;
     private CustomUser customUser1;
@@ -100,6 +99,7 @@ public class CustomUserTest {
                 .name("Kis Pistike")
                 .email("pistike@gmail.com")
                 .password("Pistike1*")
+                .phoneNumber("+36303333333")
                 .roles(List.of(CustomUserRole.ROLE_USER))
                 .enable(true)
                 .activation("123456")
@@ -114,6 +114,7 @@ public class CustomUserTest {
                 .name(null)
                 .email(null)
                 .password(null)
+                .phoneNumber(null)
                 .roles(List.of())
                 .enable(false)
                 .activation(null)
@@ -125,8 +126,8 @@ public class CustomUserTest {
                 .name("Kis Pistike")
                 .username("pistike")
                 .email("pistike@gmail.com")
-                .password("Pistike1*")
-                .customUserRole(CustomUserRole.ROLE_USER)
+                .customUserRoles(List.of(CustomUserRole.ROLE_USER))
+                .phoneNumber("+36303333333")
                 .build();
 
         confirmationToken2 = new ConfirmationToken().builder()
@@ -143,6 +144,7 @@ public class CustomUserTest {
                 .name("Rosszcsont Móricka")
                 .email("rosszcsont.moricka@gmail.com")
                 .password("Moricka1*")
+                .phoneNumber("+36303333334")
                 .roles(List.of(CustomUserRole.ROLE_AGENT))
                 .activation("654321")
                 .confirmationToken(confirmationToken2)
@@ -155,6 +157,7 @@ public class CustomUserTest {
                 .username("pistike")
                 .name("Kis Pistike")
                 .email("pistike@gmail.com")
+                .phoneNumber("+36303333333")
                 .password("Pistike1*")
                 .isAgent(false)
                 .build();
@@ -170,9 +173,9 @@ public class CustomUserTest {
         customUserInfo2 = new CustomUserInfo().builder()
                 .username("moricka")
                 .name("Rosszcsont Móricka")
+                .phoneNumber("+36303333333")
                 .email("rosszcsont.moricka@gmail.com")
-                .password("Moricka1*")
-                .customUserRole(CustomUserRole.ROLE_AGENT)
+                .customUserRoles(List.of(CustomUserRole.ROLE_AGENT))
                 .build();
 
         customUserLoggedIn1 = (User) User
@@ -220,6 +223,7 @@ public class CustomUserTest {
         when(passwordEncoder.encode(any())).thenReturn("Moricka1*");
         when(customUserRepository.findByEmail(customUserForm2.getEmail())).thenReturn(null);
         when(customUserRepository.findByUsername(customUserForm2.getUsername())).thenReturn(null);
+        when(estateAgentService.save(customUser2)).thenReturn(customUserInfo2);
 
         when(customUserRepository.save(any(CustomUser.class))).thenReturn(customUser2);
         when(modelMapper.map(customUser2, CustomUserInfo.class)).thenReturn(customUserInfo2);
@@ -272,15 +276,6 @@ public class CustomUserTest {
         }
     }
 
-//    @Test
-//    void test_Create_ConfirmationToken() {
-//        when(confirmationTokenService.save(confirmationToken)).thenReturn(confirmationToken);
-//
-//        assertEquals(confirmationToken, customUserService.createConfirmationToken());
-//
-////        verify(confirmationTokenService, times(1)).save(confirmationToken);
-////        verifyNoMoreInteractions(confirmationTokenService);
-//    }
 
     @Test
     void test_CustomUserActivationIsTRue() {

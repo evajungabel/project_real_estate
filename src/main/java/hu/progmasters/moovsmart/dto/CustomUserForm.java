@@ -25,9 +25,9 @@ public class CustomUserForm {
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$")
     private String password;
 
-    @NotNull(message = "E-mail cannot be empty!")
-    @Size(min = 1, max = 200, message = " must be between 3 and 200 characters!")
-    @Pattern(regexp = "/^(\\+{0,})(\\d{0,})([(]{1}\\d{1,3}[)]{0,}){0,}(\\s?\\d+|\\+\\d{2,3}\\s{1}\\d+|\\d+){1}[\\s|-]?\\d+([\\s|-]?\\d+){1,2}(\\s){0,}$/gm\n")
+    @NotNull(message = "Phone number cannot be empty!")
+    @Size(min = 1, max = 200, message = "Phone number must be between 3 and 20 characters!")
+    @Pattern(regexp = "^(\\+{0,})(\\d{0,})([(]{1}\\d{1,3}[)]{0,}){0,}(\\s?\\d+|\\+\\d{2,3}\\s{1}\\d+|\\d+){1}[\\s|-]?\\d+([\\s|-]?\\d+){1,2}(\\s){0,}$")
     private String phoneNumber;
 
 
@@ -39,4 +39,6 @@ public class CustomUserForm {
 
     //VALID
     private Boolean isAgent;
+
+    private Boolean hasNewsletter;
 }

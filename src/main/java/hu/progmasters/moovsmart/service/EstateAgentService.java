@@ -2,6 +2,7 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.EstateAgent;
+import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.repository.EstateAgentRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,10 @@ public class EstateAgentService {
     }
 
 
-    public void save(CustomUser customUser) {
+    public CustomUserInfo save(CustomUser customUser) {
         EstateAgent toSave = new EstateAgent();
         toSave.setCustomUser(customUser);
         estateAgentRepository.save(toSave);
+        return modelMapper.map(customUser, CustomUserInfo.class);
     }
 }

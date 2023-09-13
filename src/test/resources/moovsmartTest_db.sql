@@ -1,73 +1,95 @@
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_agent, is_deleted, name, password, username)
-values (1, false, '123456', '2048-10-10 00:00:00.000000', 'aprandia@miitbeian.gov.cn', true, false, true, 'Avivah Prandi',
-        'jH0@qk''BXF', 'aprandia');
+                                       is_agent, is_deleted, has_newsletter, name, password, username, phone_number, custom)
+values (1, false, '123456', '2048-10-10 00:00:00.000000', 'aprandia@miitbeian.gov.cn', true, false, true, true, 'Avivah Prandi',
+        'jH0@qk''BXF', 'aprandia', '+36306363631');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (2, true, '654321', null, 'glockley5@howstuffworks.com', true, false, false, 'Gunter Lockley', 'jF0$=2+q$~iG',
-        'glockley5');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (2, true, '654321', null, 'glockley5@howstuffworks.com', true, false, false, true, 'Gunter Lockley', 'jF0$=2+q$~iG',
+        'glockley5', '+36306363632');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_agent, is_deleted, name, password, username)
-values (3, true, '111111', null, 'ikoubek4@a8.net', true,  true, false, 'Idelle Koubek', 'lX1%uEvzX+9\\yL', 'ikoubek4');
+                                       is_agent, is_deleted, has_newsletter, name, password, username, phone_number)
+values (3, true, '111111', null, 'ikoubek4@a8.net', true,  true, false, false, 'Idelle Koubek', 'lX1%uEvzX+9\\yL', 'ikoubek4', '+36306363633');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_agent, is_deleted, name, password, username)
-values (4, true, '222222', null, 'cduprec@scribd.com', true, false, false, 'Cymbre Dupre', 'yK9_Y+Jm}ICga%r', 'cduprec');
+                                       is_agent, is_deleted, has_newsletter, name, password, username, phone_number)
+values (4, true, '222222', null, 'cduprec@scribd.com', true, false, false, true, 'Cymbre Dupre', 'yK9_Y+Jm}ICga%r', 'cduprec', '+36306363634');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_agent, is_deleted, name, password, username)
-values (5, true, '333333', null, 'dknottonb@tumblr.com', true, false, false, 'Dani Knotton', 'qA6}Z(CPsD/', 'dknottonb');
+                                       is_agent, is_deleted, has_newsletter, name, password, username, phone_number)
+values (5, true, '333333', null, 'dknottonb@tumblr.com', true, false, false, false, 'Dani Knotton', 'qA6}Z(CPsD/', 'dknottonb', '+36306363635');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_agent, is_deleted, name, password, username)
-values (6, true, '444444', null, 'cglowacha3@ning.com', true, true, false, 'Cathleen Glowacha', 'eT9@$Je!M6KA2oHx',
-        'cglowacha3');
+                                       is_agent, is_deleted, has_newsletter, name, password, username, phone_number)
+values (6, true, '444444', null, 'cglowacha3@ning.com', true, true, false, true, 'Cathleen Glowacha', 'eT9@$Je!M6KA2oHx',
+        'cglowacha3', '+36306363636');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (7, true, '55555', null, 'sbenzingi@wikimedia.org', true, false, false, 'Stevy Benzing', 'nV1|tkIElyW', 'sbenzingi');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (7, true, '55555', null, 'sbenzingi@wikimedia.org', true, false, false, false, 'Stevy Benzing', 'nV1|tkIElyW', 'sbenzingi', '+36306363637');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (8, false, '666666', null, 'czambonini8@wordpress.com', false, true, false, 'Caresse Zambonini', 'gT1{gnY21',
-        'czambonini8');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (8, false, '666666', null, 'czambonini8@wordpress.com', false, true, false, false, 'Caresse Zambonini', 'gT1{gnY21',
+        'czambonini8', '+36306363638');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (9, true, '777777', null, 'ikennadyg@diigo.com', true, false, false, 'Ikey Kennady', 'tV0}!jk8Ab2.3V5z', 'ikennadyg');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (9, true, '777777', null, 'ikennadyg@diigo.com', true, false, false, false, 'Ikey Kennady', 'tV0}!jk8Ab2.3V5z', 'ikennadyg', '+36306363639');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (10, false, '8888888', '2075-06-04 00:00:00.000000', 'kshard7@123-reg.co.uk', true, false, true, 'Kacy Shard',
-        'tF4|oCOAS''b', 'kshard7');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (10, false, '8888888', '2075-06-04 00:00:00.000000', 'kshard7@123-reg.co.uk', true, false, true, true, 'Kacy Shard',
+        'tF4|oCOAS''b', 'kshard7', '+36306363630');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (11, true, '9999999', '2059-03-06 00:00:00.000000', 'bmoyes2@jalbum.net', false, true, true, 'Belvia Moyes',
-        'cY8#5C9x!>6M0=uJ', 'bmoyes2');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (11, true, '9999999', '2059-03-06 00:00:00.000000', 'bmoyes2@jalbum.net', false, true, true, true, 'Belvia Moyes',
+        'cY8#5C9x!>6M0=uJ', 'bmoyes2', '+36306363610');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (12, true, '122222', null, 'erobej@craigslist.org', false, false, false, 'Elvira Robe', 'mX5<.}"AulaK', 'erobej');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (12, true, '122222', null, 'erobej@craigslist.org', false, false, false, false, 'Elvira Robe', 'mX5<.}"AulaK', 'erobej', '+36306363611');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (13, true, '133333', null, 'wmcinteer9@mac.com', true, true, false, 'Waylan McInteer', 'gB8|2hZVJ', 'wmcinteer9');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (13, true, '133333', null, 'wmcinteer9@mac.com', true, true, false, true, 'Waylan McInteer', 'gB8|2hZVJ', 'wmcinteer9', '+36306363612');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (14, false, '144444', null, 'fmartijn0@nhs.uk', false, false, false, 'Florenza Martijn', 'wP5+dMvZX', 'fmartijn0');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (14, false, '144444', null, 'fmartijn0@nhs.uk', false, false, false, true, 'Florenza Martijn', 'wP5+dMvZX', 'fmartijn0', '+36306363613');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (15, false, '155555', null, 'dmugef@weather.com', false, true, false, 'Darbee Muge', 'fT8%nQ{b7', 'dmugef');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (15, false, '155555', null, 'dmugef@weather.com', false, true, false, false, 'Darbee Muge', 'fT8%nQ{b7', 'dmugef', '+36306363614');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (16, true, '166666', null, 'gfrossell1@over-blog.com', true, true, false, 'Garrek Frossell', 'wU7~7Yiww/#',
-        'gfrossell1');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (16, true, '166666', null, 'gfrossell1@over-blog.com', true, true, false, true, 'Garrek Frossell', 'wU7~7Yiww/#',
+        'gfrossell1', '+36306363615');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (17, false, '177777', null, 'wchaterd@g.co', true, false, false, 'Windham Chater', 'sO9=IYjICM~fEYS', 'wchaterd');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (17, false, '177777', null, 'wchaterd@g.co', true, false, false, false, 'Windham Chater', 'sO9=IYjICM~fEYS', 'wchaterd', '+36306363616');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (18, false, '188888', null, 'dfilyukovh@ustream.tv', false, false, false, 'Danny Filyukov', 'mI0\\bo&5&eQ',
-        'dfilyukovh');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (18, false, '188888', null, 'dfilyukovh@ustream.tv', false, false, false, true, 'Danny Filyukov', 'mI0\\bo&5&eQ',
+        'dfilyukovh', '+36306363617');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (19, true, '199999', null, 'gjakubczyke@mozilla.org', true, false, false, 'Gabriela Jakubczyk', 'xG0.<7xHLQ?u',
-        'gjakubczyke');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (19, true, '199999', null, 'gjakubczyke@mozilla.org', true, false, false, true, 'Gabriela Jakubczyk', 'xG0.<7xHLQ?u',
+        'gjakubczyke', '+36306363618');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
-                                       is_deleted, name, password, username)
-values (20, true, '2111111', null, 'cgasking6@cornell.edu', true, true, false, 'Cosetta Gasking', 'yB3/mHH/<f,\\%g7~',
-        'cgasking6');
+                                       is_deleted, has_newsletter, name, password, username, phone_number)
+values (20, true, '2111111', null, 'cgasking6@cornell.edu', true, true, false, false, 'Cosetta Gasking', 'yB3/mHH/<f,\\%g7~',
+        'cgasking6', '+36306363619');
+
+
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (1, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (2, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (3, 'ROLE_AGENT');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (4, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (5, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (6, 'ROLE_AGENT');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (7, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (8, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (9, 'ROLE_AGENT');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (10, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (11, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (12, 'ROLE_AGENT');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (13, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (14, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (15, 'ROLE_AGENT');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (16, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (17, 'ROLE_USER');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (18, 'ROLE_AGENT');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (19, 'ROLE_AGENT');
+insert into moovsmartTest.custom_user_role(custom_user_custom_user_id, roles) value (20, 'ROLE_USER');
 
 
 insert into moovsmartTest.confirmation_token (token_id, confirmation_token, created_date, expired_date, custom_user_id)

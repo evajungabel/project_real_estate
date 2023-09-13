@@ -71,9 +71,11 @@ public class CustomUserService implements UserDetailsService {
                     .username(command.getUsername())
                     .name(command.getName())
                     .email(command.getEmail())
+                    .phoneNumber(command.getPhoneNumber())
                     .password(passwordEncoder.encode(command.getPassword()))
                     .roles(List.of(CustomUserRole.ROLE_USER))
                     .enable(false)
+                    .hasNewsletter(command.getHasNewsletter())
                     .activation(confirmationToken.getConfirmationToken())
                     .confirmationToken(confirmationToken)
                     .isAgent(command.getIsAgent())
@@ -87,21 +89,22 @@ public class CustomUserService implements UserDetailsService {
                     .email(command.getEmail())
                     .customUser(customUser)
                     .build();
-            CustomUserEmail savedEmail = customUserEmailService.save(customUserEmail);
+            if(customUser.isHasNewsletter()) {
+                customUserEmailService.save(customUserEmail);
+            }
             CustomUser savedUser = customUserRepository.save(customUser);
-            deleteIfItIsNotActivated(savedUser, savedEmail);
+            deleteIfItIsNotActivated(savedUser);
             CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
             customUserInfo.setCustomUserRoles(customUser.getRoles());
             return customUserInfo;
         }
     }
 
-    public void deleteIfItIsNotActivated(CustomUser customUser, CustomUserEmail customUserEmail) {
+    public void deleteIfItIsNotActivated(CustomUser customUser) {
         TimerTask task = new TimerTask() {
             public void run() {
                 if (!(customUser.isEnabled())) {
                     customUserRepository.delete(customUser);
-                    customUserEmailService.delete(customUserEmail);
                 }
             }
         };
@@ -234,7 +237,9 @@ public class CustomUserService implements UserDetailsService {
         } else {
             modelMapper.map(customUserForm, customUser);
             customUser.setPassword(passwordEncoder.encode(customUserForm.getPassword()));
-            return modelMapper.map(customUser, CustomUserInfo.class);
+            CustomUserInfo customUserInfo = modelMapper.map(customUser, CustomUserInfo.class);
+            customUserInfo.setCustomUserRoles(customUser.getRoles());
+            return customUserInfo;
         }
     }
 
@@ -246,6 +251,8 @@ public class CustomUserService implements UserDetailsService {
                 .name(null)
                 .email(null)
                 .password(null)
+                .phoneNumber(null)
+                .hasNewsletter(false)
                 .roles(null)
                 .enable(false)
                 .activation(null)

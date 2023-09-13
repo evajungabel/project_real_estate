@@ -105,8 +105,11 @@ public class CustomUserControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"bogyóésbabóca\",\n" +
-                "    \"password\": \"120\",\n" +
-                "    \"email\": \"bogyo.baboca@gmail.com\"\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
         mockMvc.perform(post("/api/customusers/registration")
@@ -115,6 +118,8 @@ public class CustomUserControllerTestIT {
                 .andExpect(jsonPath("$.name", is("Bogyó és Babóca")))
                 .andExpect(jsonPath("$.username", is("bogyóésbabóca")))
                 .andExpect(jsonPath("$.email", is("bogyo.es.baboca@gmail.com")))
+                .andExpect(jsonPath("$.phoneNumber", is("+36306363634")))
+                .andExpect(jsonPath("$.customUserRoles", is(List.of("ROLE_USER"))))
                 .andExpect(status().isCreated());
     }
 
@@ -128,6 +133,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -147,6 +154,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -166,6 +175,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -184,6 +195,8 @@ public class CustomUserControllerTestIT {
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"          \",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"isAgent\": \"false\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
@@ -204,6 +217,8 @@ public class CustomUserControllerTestIT {
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"b\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"isAgent\": \"false\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
@@ -224,6 +239,8 @@ public class CustomUserControllerTestIT {
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"isAgent\": \"false\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
@@ -243,6 +260,8 @@ public class CustomUserControllerTestIT {
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -263,6 +282,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB12*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -283,6 +304,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234567890123456789*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -302,6 +325,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234567890123456789\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -320,6 +345,8 @@ public class CustomUserControllerTestIT {
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"password\": \"BesB1234*\"\n" +
                 "}";
 
@@ -340,6 +367,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bi@c.ko\"\n" +
                 "}";
 
@@ -360,6 +389,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbab.oca@gmail.com\"\n" +
                 "}";
 
@@ -379,6 +410,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.babocagmail.com\"\n" +
                 "}";
 
@@ -392,13 +425,36 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    void IT_test_saveCustomUser_phoneNumberPatternNotValid() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306.634\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("phoneNumber")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("must match \"^(\\+{0,})(\\d{0,})([(]{1}\\d{1,3}[)]{0,}){0,}(\\s?\\d+|\\+\\d{2,3}\\s{1}\\d+|\\d+){1}[\\s|-]?\\d+([\\s|-]?\\d+){1,2}(\\s){0,}$\"")));
+    }
+
+    @Test
     void IT_test_updateCustomUser() throws Exception {
 
         String inputCommand = "{\n" +
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"bogyoesbaboca\",\n" +
                 "    \"password\": \"bESb1234*\",\n" +
-                "    \"isAgent\": \"false\",\n" +
+                "    \"isAgent\": \"true\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -409,6 +465,8 @@ public class CustomUserControllerTestIT {
                 .andExpect(jsonPath("$.name", is("Bogyó és Babóca")))
                 .andExpect(jsonPath("$.username", is("bogyoesbaboca")))
                 .andExpect(jsonPath("$.email", is("bogyo.es.baboca@gmail.com")))
+                .andExpect(jsonPath("$.phoneNumber", is("+36306363634")))
+                .andExpect(jsonPath("$.customUserRoles", is(List.of("ROLE_USER"))))
                 .andExpect(status().isOk());
     }
 
@@ -422,6 +480,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -441,6 +501,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -460,6 +522,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -479,6 +543,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"          \",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -499,6 +565,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"b\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -519,6 +587,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -537,6 +607,8 @@ public class CustomUserControllerTestIT {
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -557,6 +629,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB12*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -577,6 +651,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234567890123456789*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -596,6 +672,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234567890123456789\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
                 "}";
 
@@ -614,6 +692,8 @@ public class CustomUserControllerTestIT {
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"password\": \"BesB1234*\"\n" +
                 "}";
 
@@ -634,6 +714,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bi@c.ko\"\n" +
                 "}";
 
@@ -654,6 +736,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbabocabogyoesbab.oca@gmail.com\"\n" +
                 "}";
 
@@ -673,6 +757,8 @@ public class CustomUserControllerTestIT {
                 "    \"username\": \"bogyóésbabóca\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
                 "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"email\": \"bogyo.es.babocagmail.com\"\n" +
                 "}";
 
@@ -682,6 +768,27 @@ public class CustomUserControllerTestIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.fieldErrors[0].field", is("email")))
                 .andExpect(jsonPath("$.fieldErrors", hasSize(2)));
+    }
+
+    @Test
+    void IT_test_updateCustomUser_phoneNumberPatternNotValid() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306.634\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/customusers/aprandia")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("phoneNumber")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("must match \"^(\\+{0,})(\\d{0,})([(]{1}\\d{1,3}[)]{0,}){0,}(\\s?\\d+|\\+\\d{2,3}\\s{1}\\d+|\\d+){1}[\\s|-]?\\d+([\\s|-]?\\d+){1,2}(\\s){0,}$\"")));
     }
 
 
