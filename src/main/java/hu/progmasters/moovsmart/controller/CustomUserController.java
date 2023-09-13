@@ -2,7 +2,7 @@ package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.service.CustomUserService;
-import hu.progmasters.moovsmart.service.EmailService;
+import hu.progmasters.moovsmart.service.SendingEmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +25,12 @@ import java.util.List;
 public class CustomUserController {
 
     private CustomUserService customUserService;
-    private EmailService emailService;
+    private SendingEmailService sendingEmailService;
 
     @Autowired
-    public CustomUserController(CustomUserService customUserService, EmailService emailService) {
+    public CustomUserController(CustomUserService customUserService, SendingEmailService sendingEmailService) {
         this.customUserService = customUserService;
-        this.emailService = emailService;
+        this.sendingEmailService = sendingEmailService;
     }
 
     @GetMapping("/login/me")
@@ -51,7 +51,7 @@ public class CustomUserController {
     public ResponseEntity<CustomUserInfo> register(@Valid @RequestBody CustomUserForm command) {
         log.info("Http request, POST /api/customusers, body: " + command.toString());
         CustomUserInfo customUserInfo = customUserService.register(command);
-        emailService.sendEmail(command.getEmail(), "Felhasználói fiók aktivalása",
+        sendingEmailService.sendEmail(command.getEmail(), "Felhasználói fiók aktivalása",
                 "Kedves " + command.getName() +
                 "! \n \n Köszönjük, hogy regisztrált az oldalunkra! \n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját, amire 30 perce van! \n \n http://localhost:8080/api/customusers/activation/"
                         + customUserService.findCustomUserByEmail(command.getEmail()).getActivation());
@@ -78,7 +78,7 @@ public class CustomUserController {
         log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm +
                 " with variable: " + username);
         CustomUserInfo updated = customUserService.update(username, customUserForm);
-        emailService.sendEmail(customUserService.findCustomUserByUsername(updated.getUsername()).getEmail(), "Felhasználói fiók adatainak megváltoztatása",
+        sendingEmailService.sendEmail(customUserService.findCustomUserByUsername(updated.getUsername()).getEmail(), "Felhasználói fiók adatainak megváltoztatása",
                 "Kedves " + customUserService.findCustomUserByUsername(updated.getUsername()).getName() +
                         "! \n \n Felhasználói fiókjának adatai megváltoztak! Ha nem Ön tette, mielőbb lépjen kapcsolatba velünk!");
         log.info("PUT data from repository/api/customusers/{customUserId} body: " + customUserForm +

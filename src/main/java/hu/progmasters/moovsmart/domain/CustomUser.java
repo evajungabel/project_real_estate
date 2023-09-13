@@ -52,6 +52,9 @@ public class CustomUser implements UserDetails {
     @Column(name = "is_agent")
     private boolean isAgent;
 
+    @Column(name = "has_newsletter")
+    private boolean hasNewsletter;
+
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "custom_user_role")
@@ -66,6 +69,9 @@ public class CustomUser implements UserDetails {
     @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private EstateAgent estateAgent;
 
+
+    @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CustomUserEmail customUserEmail;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

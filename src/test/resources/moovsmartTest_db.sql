@@ -1,80 +1,115 @@
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (1, false, 'suspended', '2048-10-10 00:00:00.000000', 'aprandia@miitbeian.gov.cn', true, true, 'Avivah Prandi',
-        'jH0@qk''BXF', 'aprandia');
+        'jH0@qk''BXF', 'aprandia', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (2, true, 'inactive', null, 'glockley5@howstuffworks.com', true, false, 'Gunter Lockley', 'jF0$=2+q$~iG',
-        'glockley5');
+        'glockley5', false);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
-values (3, true, 'active', null, 'ikoubek4@a8.net', true, false, 'Idelle Koubek', 'lX1%uEvzX+9\\yL', 'ikoubek4');
+                                       is_deleted, name, password, username, has_newsletter)
+values (3, true, 'active', null, 'ikoubek4@a8.net', true, false, 'Idelle Koubek', 'lX1%uEvzX+9\\yL', 'ikoubek4', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
-values (4, true, 'inactive', null, 'cduprec@scribd.com', true, false, 'Cymbre Dupre', 'yK9_Y+Jm}ICga%r', 'cduprec');
+                                       is_deleted, name, password, username, has_newsletter)
+values (4, true, 'inactive', null, 'cduprec@scribd.com', true, false, 'Cymbre Dupre', 'yK9_Y+Jm}ICga%r', 'cduprec', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
-values (5, true, 'inactive', null, 'dknottonb@tumblr.com', true, false, 'Dani Knotton', 'qA6}Z(CPsD/', 'dknottonb');
+                                       is_deleted, name, password, username, has_newsletter)
+values (5, true, 'inactive', null, 'dknottonb@tumblr.com', true, false, 'Dani Knotton', 'qA6}Z(CPsD/', 'dknottonb', false);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (6, true, 'active', null, 'cglowacha3@ning.com', true, false, 'Cathleen Glowacha', 'eT9@$Je!M6KA2oHx',
-        'cglowacha3');
+        'cglowacha3', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (7, true, 'active', null, 'sbenzingi@wikimedia.org', true, false, 'Stevy Benzing', 'nV1|tkIElyW', 'sbenzingi');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (8, false, 'active', null, 'czambonini8@wordpress.com', false, false, 'Caresse Zambonini', 'gT1{gnY21',
-        'czambonini8');
+        'czambonini8', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
-values (9, true, 'active', null, 'ikennadyg@diigo.com', true, false, 'Ikey Kennady', 'tV0}!jk8Ab2.3V5z', 'ikennadyg');
+                                       is_deleted, name, password, username, has_newsletter)
+values (9, true, 'active', null, 'ikennadyg@diigo.com', true, false, 'Ikey Kennady', 'tV0}!jk8Ab2.3V5z', 'ikennadyg', false);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (10, false, 'suspended', '2075-06-04 00:00:00.000000', 'kshard7@123-reg.co.uk', true, true, 'Kacy Shard',
-        'tF4|oCOAS''b', 'kshard7');
+        'tF4|oCOAS''b', 'kshard7', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (11, true, 'suspended', '2059-03-06 00:00:00.000000', 'bmoyes2@jalbum.net', false, true, 'Belvia Moyes',
-        'cY8#5C9x!>6M0=uJ', 'bmoyes2');
+        'cY8#5C9x!>6M0=uJ', 'bmoyes2', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (12, true, 'active', null, 'erobej@craigslist.org', false, false, 'Elvira Robe', 'mX5<.}"AulaK', 'erobej');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (13, true, 'inactive', null, 'wmcinteer9@mac.com', true, false, 'Waylan McInteer', 'gB8|2hZVJ', 'wmcinteer9');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
-values (14, false, 'inactive', null, 'fmartijn0@nhs.uk', false, false, 'Florenza Martijn', 'wP5+dMvZX', 'fmartijn0');
+                                       is_deleted, name, password, username, has_newsletter)
+values (14, false, 'inactive', null, 'fmartijn0@nhs.uk', false, false, 'Florenza Martijn', 'wP5+dMvZX', 'fmartijn0', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
-values (15, false, 'active', null, 'dmugef@weather.com', false, false, 'Darbee Muge', 'fT8%nQ{b7', 'dmugef');
+                                       is_deleted, name, password, username, has_newsletter)
+values (15, false, 'active', null, 'dmugef@weather.com', false, false, 'Darbee Muge', 'fT8%nQ{b7', 'dmugef', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (16, true, 'suspended', null, 'gfrossell1@over-blog.com', true, false, 'Garrek Frossell', 'wU7~7Yiww/#',
-        'gfrossell1');
+        'gfrossell1', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
-values (17, false, 'inactive', null, 'wchaterd@g.co', true, false, 'Windham Chater', 'sO9=IYjICM~fEYS', 'wchaterd');
+                                       is_deleted, name, password, username, has_newsletter)
+values (17, false, 'inactive', null, 'wchaterd@g.co', true, false, 'Windham Chater', 'sO9=IYjICM~fEYS', 'wchaterd', false);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (18, false, 'active', null, 'dfilyukovh@ustream.tv', false, false, 'Danny Filyukov', 'mI0\\bo&5&eQ',
-        'dfilyukovh');
+        'dfilyukovh', true);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (19, true, 'active', null, 'gjakubczyke@mozilla.org', true, false, 'Gabriela Jakubczyk', 'xG0.<7xHLQ?u',
-        'gjakubczyke');
+        'gjakubczyke', false);
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_deleted, name, password, username)
+                                       is_deleted, name, password, username, has_newsletter)
 values (20, true, 'inactive', null, 'cgasking6@cornell.edu', true, false, 'Cosetta Gasking', 'yB3/mHH/<f,\\%g7~',
-        'cgasking6');
+        'cgasking6', true);
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (1, 'aprandia@miitbeian.gov.cn', 1)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (2, 'ikoubek4@a8.net', 3)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (3, 'cduprec@scribd.com', 4)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (4, 'cglowacha3@ning.com', 6)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (5, 'czambonini8@wordpress.com', 8)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (6, 'kshard7@123-reg.co.uk', 10)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (7, 'bmoyes2@jalbum.net', 11)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (8, 'fmartijn0@nhs.uk', 14)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (9, 'dmugef@weather.com', 15)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (11, 'gfrossell1@over-blog.com', 16)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (12, 'dfilyukovh@ustream.tv', 18)
+
+insert into moovsmartTest.custom_user_email (custom_user_email_id, e_mail, custom_user_id)
+values (13, 'cgasking6@cornell.edu', 20)
 
 
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, status, type,
                                     custom_user_id, estate_agent_id)
-VALUES (1, 120, '2023-09-02', '2023-09-02', null, null, 'Eladó családi ház a Balton partján', 'www.kep-url/122324gfg/kep.hu',
-        'Eladó Balatoni Ház', 4, 63000000, 'ACTIVE', 'HOUSE', 1, null);
+VALUES (1, 120, '2023-09-02', '2023-09-02', null, null, 'Eladó családi ház a Balton partján', 'www.kep-url/122324gfg/kep.hu', 'Eladó Balatoni Ház', 4, 63000000, 'ACTIVE', 'HOUSE', 1, null);
 
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, status, type,
@@ -121,7 +156,8 @@ VALUES (9, 990, null, '2023-08-31', null, null, 'Elegáns villa kerttel és mede
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, status, type,
                                     custom_user_id, estate_agent_id)
-VALUES (10, 90, '2023-08-31', '2023-08-29', null, null, 'Praktikus lakás fiataloknak', 'image/jpeg;base64,/9j/4AAQSk...',
+VALUES (10, 90, '2023-08-31', '2023-08-29', null, null, 'Praktikus lakás fiataloknak',
+        'image/jpeg;base64,/9j/4AAQSk...',
         'Eladó lakás', 3, 250000000, 'ACTIVE', 'FLAT', 10, null);
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, status, type,
@@ -137,7 +173,7 @@ INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_
                                     date_of_sale, description, image_url, name, number_of_rooms, price, status, type,
                                     custom_user_id, estate_agent_id)
 VALUES (13, 90, null, '2023-08-29', null, null, 'Praktikus lakás fiataloknak', 'image/jpeg;base64,/9j/4AAQSk...',
-        'Eladó lakás', 3, 250000000,'INACTIVE', 'FLAT', 5, null);
+        'Eladó lakás', 3, 250000000, 'INACTIVE', 'FLAT', 5, null);
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, status, type,
                                     custom_user_id, estate_agent_id)

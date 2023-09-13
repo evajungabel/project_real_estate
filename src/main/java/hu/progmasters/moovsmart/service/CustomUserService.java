@@ -9,6 +9,7 @@ import hu.progmasters.moovsmart.exception.*;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,16 +34,29 @@ public class CustomUserService implements UserDetailsService {
     private ConfirmationTokenService confirmationTokenService;
     private EstateAgentService estateAgentService;
 
-    private List<String> listOfEmails = new ArrayList<>();
-    private List<String> listOfUsernames = new ArrayList<>();
+    private SendingEmailService sendingEmailService;
+
+    private PropertyService propertyService;
+
+    private CustomUserEmailService customUserEmailService;
+
 
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.confirmationTokenService = confirmationTokenService;
         this.estateAgentService = estateAgentService;
+        this.sendingEmailService = sendingEmailService;
+        this.customUserEmailService = customUserEmailService;
+    }
+
+
+    @Autowired
+    public CustomUserService setPropertyService(PropertyService propertyService) {
+        this.propertyService = propertyService;
+        return this;
     }
 
     public CustomUserInfo register(CustomUserForm command) {
@@ -64,26 +78,32 @@ public class CustomUserService implements UserDetailsService {
                     .isAgent(command.getIsAgent())
                     .build();
             confirmationToken.setCustomUser(customUser);
-            deleteIfItIsNotActivated(customUser);
             if (customUser.isAgent()) {
                 customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
                 estateAgentService.save(customUser);
             }
+            CustomUserEmail customUserEmail = CustomUserEmail.builder()
+                    .email(command.getEmail())
+                    .customUser(customUser)
+                    .build();
+            customUserEmailService.save(customUserEmail);
             CustomUser savedUser = customUserRepository.save(customUser);
+            deleteIfItIsNotActivated(customUser, customUserEmail);
             return modelMapper.map(savedUser, CustomUserInfo.class);
         }
     }
 
-    public void deleteIfItIsNotActivated(CustomUser customUser) {
+    public void deleteIfItIsNotActivated(CustomUser customUser, CustomUserEmail customUserEmail) {
         TimerTask task = new TimerTask() {
             public void run() {
                 if (!customUser.isEnabled()) {
                     customUserRepository.delete(customUser);
+                    customUserEmailService.delete(customUserEmail);
                 }
             }
         };
         Timer timer = new Timer("Timer");
-        long delay = 10000L;
+        long delay = 20000L;
         timer.schedule(task, delay);
     }
 
@@ -227,5 +247,17 @@ public class CustomUserService implements UserDetailsService {
         Map<Long, String> ratings = agent.getEstateAgent().getRatings();
         ratings.put(commenter.getCustomUserId(), comment.getComment());
         agent.getEstateAgent().setRatings(ratings);
+    }
+
+
+    @Scheduled(cron = "0 * * ? * *")
+    public void sendingNewsletter() {
+        for (CustomUserEmail customUserEmail : customUserEmailService.getCustomUserEmails()) {
+            sendingEmailService.sendEmail(customUserEmail.getEmail(), "Hírlevél az újdonságokról!",
+                    "Kedves " + customUserRepository.findByEmail(customUserEmail.getEmail()).getName() +
+                            "! \n \n Ezennel küldjük a 24 óra alatt regisztrált új ingatlanokat!"
+                            + "\n \n" + propertyService.getProperties().toString());
+
+        }
     }
 }

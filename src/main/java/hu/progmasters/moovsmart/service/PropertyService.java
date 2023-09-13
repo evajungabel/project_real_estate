@@ -26,16 +26,23 @@ import java.util.stream.Collectors;
 public class PropertyService {
 
     private PropertyRepository propertyRepository;
-
     private CustomUserService customUserService;
     private ModelMapper modelMapper;
 
     @Autowired
-    public PropertyService(PropertyRepository propertyRepository, CustomUserService customUserService, ModelMapper modelMapper) {
+    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper) {
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
-        this.customUserService = customUserService;
     }
+
+    @Autowired
+    public PropertyService setCustomUserService(CustomUserService customUserService) {
+        this.customUserService = customUserService;
+        return this;
+    }
+
+
+
 
     public List<PropertyInfo> getProperties() {
         List<Property> properties = propertyRepository.findAll();
