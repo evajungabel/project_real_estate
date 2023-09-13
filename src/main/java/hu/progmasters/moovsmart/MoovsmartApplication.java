@@ -34,8 +34,8 @@ public class MoovsmartApplication {
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
 				.info(new Info()
-						.title("Estate trade API")
+						.title("Estate trade APP")
 						.version("1.0.1")
-						.description("This is a Estate trade application."));
+						.description("This is the backand of an Estate trade application."));
 	}
 }
