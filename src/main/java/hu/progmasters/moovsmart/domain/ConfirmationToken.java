@@ -32,7 +32,7 @@ public class ConfirmationToken {
     private LocalDateTime expiredDate;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "custom_user_username")
+    @JoinColumn(name = "custom_user_id")
     private CustomUser customUser;
 
 

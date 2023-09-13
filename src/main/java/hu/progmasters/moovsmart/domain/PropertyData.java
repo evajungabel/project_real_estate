@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +24,7 @@ public class PropertyData {
 //    private PropertyCondition condition;
 
     @Column(name = "year_built")
-    private int yearBuilt;
+    private Integer yearBuilt;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "parking")

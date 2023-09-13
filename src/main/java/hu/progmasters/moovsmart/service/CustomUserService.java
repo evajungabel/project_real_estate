@@ -181,6 +181,11 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
+    public CustomUserInfo getCustomUser(String username) {
+        CustomUser customUser = findCustomUserByUsername(username);
+        return modelMapper.map(customUser, CustomUserInfo.class);
+    }
+
     public String userSale(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
@@ -236,12 +241,18 @@ public class CustomUserService implements UserDetailsService {
     public String makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
         userDelete(toDelete.getUsername(), toDelete.getCustomUserId());
-        toDelete.setDeleteDate(LocalDateTime.now());
+        toDelete.builder()
+                .username(null)
+                .name(null)
+                .email(null)
+                .password(null)
+                .roles(null)
+                .enable(false)
+                .activation(null)
+                .confirmationToken(null)
+                .deleteDate(LocalDateTime.now())
+                .build();
         toDelete.setDeleted(true);
-        toDelete.setEmail(null);
-        toDelete.setName(null);
-        toDelete.setPassword(null);
-        toDelete.setUsername(null);
         return "You deleted your profile!";
     }
 

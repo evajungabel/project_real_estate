@@ -3,7 +3,9 @@ package hu.progmasters.moovsmart.domain;
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -105,4 +107,6 @@ public class CustomUser implements UserDetails {
     public boolean isEnabled() {
         return enable;
     }
+
+
 }
