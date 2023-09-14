@@ -1,5 +1,5 @@
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
-                                       is_agent, is_deleted, has_newsletter, name, password, username, phone_number, custom)
+                                       is_agent, is_deleted, has_newsletter, name, password, username, phone_number)
 values (1, false, '123456', '2048-10-10 00:00:00.000000', 'aprandia@miitbeian.gov.cn', true, false, true, true, 'Avivah Prandi',
         'jH0@qk''BXF', 'aprandia', '+36306363631');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
@@ -104,7 +104,7 @@ INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_
                                     date_of_sale, description, image_url, name, number_of_rooms, price, purpose, status,
                                     type, custom_user_id)
 VALUES (1, 120, '2023-09-02', '2023-09-02', null, null, 'Eladó családi ház a Balton partján', 'www.kep-url/122324gfg/kep.hu',
-        'Eladó Balatoni Ház', 4, 63000000, 'FOR_SALE', 'ACTIVE', 'HOUSE', 1);
+        'Eladó Balatoni Ház', 4, 63000000, 'TO_RENT', 'ACTIVE', 'HOUSE', 1);
 
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, purpose, status,
@@ -151,7 +151,7 @@ INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_
                                     date_of_sale, description, image_url, name, number_of_rooms, price, purpose, status,
                                     type, custom_user_id)
 VALUES (10, 90, '2023-08-31', '2023-08-29', null, null, 'Praktikus lakás fiataloknak', 'image/jpeg;base64,/9j/4AAQSk...',
-        'Eladó lakás', 3, 250000000, 'ACTIVE', 'FLAT', 'TO_RENT', 10);
+        'Eladó lakás', 3, 250000000, 'TO_RENT', 'ACTIVE', 'FLAT', 10);
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, purpose, status,
                                     type, custom_user_id)
@@ -161,7 +161,7 @@ INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_
                                     date_of_sale, description, image_url, name, number_of_rooms, price, purpose, status,
                                     type, custom_user_id)
 VALUES (12, 50, null, '2023-08-31', null, null, 'Elegáns lakás kerttel', 'image/jpeg;base64,/9j/4AAasadasdQSk...',
-        'Eladó villa', 8, 11000000, 'FOR_RENT', 'ACTIVE', 'FLAT', 9);
+        'Eladó villa', 8, 11000000, 'TO_RENT', 'ACTIVE', 'FLAT', 9);
 INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_of_creation, date_of_inactivation,
                                     date_of_sale, description, image_url, name, number_of_rooms, price, purpose, status,
                                     type, custom_user_id)

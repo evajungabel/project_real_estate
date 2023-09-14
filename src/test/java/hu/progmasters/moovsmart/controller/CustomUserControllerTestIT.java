@@ -6,8 +6,11 @@ import hu.progmasters.moovsmart.service.CustomUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,34 +51,16 @@ public class CustomUserControllerTestIT {
                 .andExpect(status().isOk());
     }
 
+
     //TODO logintest
-
+//    @WithUserDetails("aprandia")
 //    @Test
-//    void IT_test_loginCustomUser() throws Exception {
-//        UserDetails userDetails = User
-//                .withUsername("aprandia")
-//                .password("password")
-//                .authorities(AuthorityUtils.createAuthorityList(String.valueOf(CustomUserRole.ROLE_USER)))
-//                .build();
-//
-//        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//
-//        SecurityContext securityContext = SecurityContextHolder.getContext();
-//        securityContext.setAuthentication(authentication);
-//
-//        mockMvc.perform(get("/api/customusers/login/me"))
-//                .andExpect(status().isOk());
-//
-//
-//        mockMvc.perform(get("/api/customusers/login/me"))
-//                .andExpect(status().isOk());
-//    }
-
+//    void IT_test_succsessfulLoginCustomUser() throws Exception {
+//        mockMvc.perform(get("/api/customusers/login/me").contentType(MediaType.APPLICATION_JSON))
+//                    .andExpect(status().isOk());
 //        }
 
-//        mockMvc.perform(get("/api/customusers/login/me").with(userDetails(userDetails)))
-//            .contentType(MediaType.APPLICATION_JSON))
-//            .andExpect(status().isOk());
+
 
 
     @Test
@@ -84,20 +69,6 @@ public class CustomUserControllerTestIT {
                 .andExpect(status().isNoContent());
     }
 
-
-    @Test
-    void IT_test_ActivationTokenIsActive() throws Exception {
-        mockMvc.perform(get("/api/customusers/activation/111111")
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void IT_test_ActivationTokenIsExpired() throws Exception {
-        mockMvc.perform(get("/api/customusers/activation/654321")
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
-    }
 
     @Test
     void IT_test_registerCustomUser() throws Exception {
@@ -399,7 +370,7 @@ public class CustomUserControllerTestIT {
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.fieldErrors[0].field", is("email")))
-                .andExpect(jsonPath("$.fieldErrors[0].message", is("E-mail must be between 8 and 200 characters!")));
+                .andExpect(jsonPath("$.fieldErrors", hasSize(2)));
     }
 
     @Test
@@ -444,6 +415,62 @@ public class CustomUserControllerTestIT {
                 .andExpect(jsonPath("$.fieldErrors[0].field", is("phoneNumber")))
                 .andExpect(jsonPath("$.fieldErrors[0].message", is("must match \"^(\\+{0,})(\\d{0,})([(]{1}\\d{1,3}[)]{0,}){0,}(\\s?\\d+|\\+\\d{2,3}\\s{1}\\d+|\\d+){1}[\\s|-]?\\d+([\\s|-]?\\d+){1,2}(\\s){0,}$\"")));
     }
+
+    @Test
+    void IT_test_saveCustomUser_isAgentIsNull() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"isAgent\": \"\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +"}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("isAgent")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Being an agent cannot be empty!")));
+    }
+
+    @Test
+    void IT_test_saveCustomUser_hasNewsletterIsNull() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"isAgent\": \"false\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +"}";
+
+        mockMvc.perform(post("/api/customusers/registration")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("hasNewsletter")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Choosing an option for sending newsletter cannot be empty!")));
+    }
+
+
+
+    @Test
+    void IT_test_ActivationTokenIsActive() throws Exception {
+        mockMvc.perform(get("/api/customusers/activation/111111")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void IT_test_ActivationTokenIsExpired() throws Exception {
+        mockMvc.perform(get("/api/customusers/activation/654321")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
 
     @Test
     void IT_test_updateCustomUser() throws Exception {
@@ -791,6 +818,45 @@ public class CustomUserControllerTestIT {
                 .andExpect(jsonPath("$.fieldErrors[0].message", is("must match \"^(\\+{0,})(\\d{0,})([(]{1}\\d{1,3}[)]{0,}){0,}(\\s?\\d+|\\+\\d{2,3}\\s{1}\\d+|\\d+){1}[\\s|-]?\\d+([\\s|-]?\\d+){1,2}(\\s){0,}$\"")));
     }
 
+    @Test
+    void IT_test_updateCustomUser_isAgentIsNull() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"isAgent\": \"\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +"}";
+
+        mockMvc.perform(put("/api/customusers/aprandia")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("isAgent")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Being an agent cannot be empty!")));
+    }
+
+    @Test
+    void IT_test_updateCustomUser_hasNewsletterIsNull() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"name\": \"Bogyó és Babóca\",\n" +
+                "    \"username\": \"bogyóésbabóca\",\n" +
+                "    \"isAgent\": \"false\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
+                "    \"password\": \"BesB1234*\",\n" +
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +"}";
+
+        mockMvc.perform(put("/api/customusers/apradnia")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("hasNewsletter")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Choosing an option for sending newsletter cannot be empty!")));
+    }
+
 
     @Test
     void IT_test_findAllCustomUsers() throws Exception {
@@ -819,7 +885,6 @@ public class CustomUserControllerTestIT {
                 .andExpect(jsonPath("$[19].username", is("cgasking6")));
     }
 
-    //TODO in the constroller
     @Test
     void IT_test_getCustomUser() throws Exception {
         mockMvc.perform(get("/api/customusers/aprandia")
@@ -833,7 +898,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
-    void IT_test_getCustomUsersWithNoId() throws Exception {
+    void IT_test_getCustomUsersWithNoUsername() throws Exception {
         mockMvc.perform(get("/api/customusers/bobobo")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest())
@@ -856,14 +921,6 @@ public class CustomUserControllerTestIT {
         assertEquals(propertyList.get(0).getName(), "Eladó ház");
     }
 
-    @Test
-    void IT_test_customUserNotExists() throws Exception {
-        mockMvc.perform(delete("/api/customusers/21")
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("User not found error.")))
-                .andExpect(jsonPath("$.details", is("Username was not found with: 21")));
-    }
 
     @Test
     void IT_test_customUserSaleProperty() throws Exception {

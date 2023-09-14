@@ -18,6 +18,7 @@ public interface CustomUserRepository extends JpaRepository<CustomUser, Long> {
 
     CustomUser findByActivation(String confirmationToken);
 
+
     CustomUser findByUsername(String username);
 
 }

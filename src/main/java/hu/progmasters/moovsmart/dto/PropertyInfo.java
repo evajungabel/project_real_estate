@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart.dto;
 
+import hu.progmasters.moovsmart.domain.PropertyPurpose;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +11,11 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class PropertyInfo {
-    private long id;
+    private Long id;
     private String name;
-    private int numberOfRooms;
-    private int price;
+
+    private PropertyPurpose purpose;
+    private Integer numberOfRooms;
+    private Integer price;
     private String imageUrl;
 }

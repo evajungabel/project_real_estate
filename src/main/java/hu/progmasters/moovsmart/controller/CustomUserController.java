@@ -48,14 +48,10 @@ public class CustomUserController {
     @PostMapping("/registration")
     @Operation(summary = "Save customer")
     @ApiResponse(responseCode = "201", description = "Customer is saved")
-    public ResponseEntity<CustomUserInfo> register(@Valid @RequestBody CustomUserForm command) {
-        log.info("Http request, POST /api/customusers, body: " + command.toString());
-        CustomUserInfo customUserInfo = customUserService.register(command);
-        sendingEmailService.sendEmail(command.getEmail(), "Felhasználói fiók aktivalása",
-                "Kedves " + command.getName() +
-                "! \n \n Köszönjük, hogy regisztrált az oldalunkra! \n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját, amire 30 perce van! \n \n http://localhost:8080/api/customusers/activation/"
-                        + customUserService.findCustomUserByEmail(command.getEmail()).getActivation());
-        log.info("POST data from repository/api/customusers, body: " + command);
+    public ResponseEntity<CustomUserInfo> register(@Valid @RequestBody CustomUserForm customUserForm) {
+        log.info("Http request, POST /api/customusers, body: " + customUserForm.toString());
+        CustomUserInfo customUserInfo = customUserService.register(customUserForm);
+        log.info("POST data from repository/api/customusers, body: " + customUserForm);
         return new ResponseEntity<>(customUserInfo, HttpStatus.CREATED);
     }
 
@@ -66,6 +62,16 @@ public class CustomUserController {
         log.info("Http request, GET /api/customusers, activation of confirmation token: " + confirmationToken);
         String result = customUserService.userActivation(confirmationToken);
         log.info("GET /api/customusers, successful activation of confirmation token: " + confirmationToken);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/unsubscribenewsletter/{confirmationToken}")
+    @Operation(summary = "Unsubscribe from newsletter")
+    @ApiResponse(responseCode = "200", description = "Customer unsubscribe from the newsletter")
+    public ResponseEntity<String> unsubscribe(@PathVariable("confirmationToken") String confirmationToken) {
+        log.info("Http request, GET /api/customusers/unsubscribeNewsletter/{username}, unsubscribe from newsletter by confirmationToken: " + confirmationToken);
+        String result = customUserService.userUnsubscribeNewsletter(confirmationToken);
+        log.info("GET /api/customusers/unsubscribeNewsletter/{username}, successful unsubscribe from newsletter by confirmationToken: " + confirmationToken);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -102,9 +108,9 @@ public class CustomUserController {
 //    @Secured({"ROLE_ADMIN"})
     @Operation(summary = "Get a customer with username")
     @ApiResponse(responseCode = "200", description = "Get a customer with username")
-    public ResponseEntity<CustomUserInfo> getCustomUser(@PathVariable("username") String username) {
+    public ResponseEntity<CustomUserInfo> getCustomUserDetails(@PathVariable("username") String username) {
         log.info("Http request, GET /api/customusers get a customer with username: " + username);
-        CustomUserInfo customerInfoList = customUserService.getCustomUser(username);
+        CustomUserInfo customerInfoList = customUserService.getCustomUserDetails(username);
         log.info("GET data from repository/api/customusers get a customer with username: " + username);
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }

@@ -37,8 +37,11 @@ public class CustomUserForm {
     @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
     private String email;
 
-    //VALID
+    @NotNull(message = "Being an agent cannot be empty!")
     private Boolean isAgent;
 
+    @NotNull(message = "Choosing an option for sending newsletter cannot be empty!")
     private Boolean hasNewsletter;
+
+
 }

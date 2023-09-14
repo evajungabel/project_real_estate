@@ -40,6 +40,7 @@ public class PropertyServiceTest {
     private CustomUserService customUserService;
 
 
+
     @InjectMocks
     private PropertyService propertyService;
     private Property property1;
@@ -73,7 +74,6 @@ public class PropertyServiceTest {
                 .status(PropertyStatus.ACTIVE)
                 .description("Jó kis házikó")
                 .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
-//                .estateAgent(estateAgent1)
                 .build();
 
         property2 = new Property().builder()
@@ -87,7 +87,6 @@ public class PropertyServiceTest {
                 .description("Jó kis családi ház")
                 .imageUrl("image/jpeg;base64,/2555879j/4AAQSk")
                 .customUser(customUser1)
-//                .estateAgent(estateAgent1)
                 .build();
 
         propertyForm1 = new PropertyForm().builder()
@@ -112,7 +111,6 @@ public class PropertyServiceTest {
                 .status(PropertyStatus.ACTIVE)
                 .description("Jó kis házikó")
                 .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
-//                .estateAgent(estateAgent1)
                 .build();
 
         propertyFormUpdate = new PropertyForm().builder()
@@ -164,7 +162,6 @@ public class PropertyServiceTest {
                 .build();
 
         propertyDetails1 = new PropertyDetails().builder()
-                .id(1L)
                 .name("Kuckó")
                 .price(400000000)
                 .numberOfRooms(5)
@@ -173,7 +170,6 @@ public class PropertyServiceTest {
                 .build();
 
         propertyDetails2 = new PropertyDetails().builder()
-                .id(2L)
                 .name("Kulipintyó")
                 .price(35000000)
                 .numberOfRooms(4)
@@ -193,14 +189,6 @@ public class PropertyServiceTest {
                 .activation("123456789")
                 .build();
 
-//        estateAgent1 = new EstateAgent().builder()
-//                .id(1L)
-//                .rank(AgentRank.PROFESSIONAL)
-//                .name("Ügynök Guru")
-//                .email("ugynokguru@gmail.com")
-//                .sellPoint(98)
-//                .propertyList(List.of(property1, property2))
-//                .build();
 
     }
 

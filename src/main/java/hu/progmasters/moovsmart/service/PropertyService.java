@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.dto.AddressInfo;
 import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyInfo;
@@ -30,16 +31,13 @@ public class PropertyService {
     private ModelMapper modelMapper;
 
     @Autowired
-    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper) {
+    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService) {
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
+        this.customUserService = customUserService;
     }
 
-    @Autowired
-    public PropertyService setCustomUserService(CustomUserService customUserService) {
-        this.customUserService = customUserService;
-        return this;
-    }
+
 
 
 
@@ -51,6 +49,13 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
+    public List<PropertyInfo> getProperties24() {
+        List<Property> properties = propertyRepository.findAll();
+        return properties.stream()
+                .filter(property -> property.getDateOfCreation().isAfter(LocalDateTime.now().minusMinutes(1)))
+                .map(property -> modelMapper.map(property, PropertyInfo.class))
+                .collect(Collectors.toList());
+    }
     public List<PropertyInfo> findPaginated(int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Property> pagedResult = propertyRepository.findAll(paging);
