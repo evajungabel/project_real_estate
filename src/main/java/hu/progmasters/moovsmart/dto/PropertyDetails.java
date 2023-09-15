@@ -1,11 +1,14 @@
 package hu.progmasters.moovsmart.dto;
 
+import hu.progmasters.moovsmart.domain.PropertyImageURL;
 import hu.progmasters.moovsmart.domain.PropertyPurpose;
 import hu.progmasters.moovsmart.domain.PropertyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,5 +22,5 @@ public class PropertyDetails {
     private PropertyPurpose purpose;
     private Integer area;
     private String description;
-    private String imageUrl;
+    private List<PropertyImageURL> propertyImageURLS;
 }

@@ -1,8 +1,6 @@
 package hu.progmasters.moovsmart.controller;
 
-import hu.progmasters.moovsmart.dto.PropertyDetails;
-import hu.progmasters.moovsmart.dto.PropertyForm;
-import hu.progmasters.moovsmart.dto.PropertyInfo;
+import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.service.PropertyService;
 import hu.progmasters.moovsmart.validation.PropertyFormValidator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -94,6 +92,7 @@ public class PropertyController {
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
+
     @DeleteMapping("/{propertyId}")
     @Operation(summary = "Delete property")
     @ApiResponse(responseCode = "200", description = "Property is deleted")
@@ -103,6 +102,17 @@ public class PropertyController {
         propertyService.makeInactive(id);
         log.info("DELETE data from repository/api/property/{propertyId} with variable: " + id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{propertyId}/imageurls")
+    @Operation(summary = "Save property's list of image URLs")
+    @ApiResponse(responseCode = "201", description = "Property's list of image URLs is saved")
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<PropertyImageURLInfo> createListOfImageURLs(@PathVariable("propertyId") Long id, @RequestBody @Valid PropertyImageURLForm propertyImageURLForm) {
+        log.info("Http request, POST /api/property/imageurls, body: " + propertyImageURLForm.toString());
+        PropertyImageURLInfo propertyImageURLInfo = propertyService.createListOfImageURLs(id, propertyImageURLForm);
+        log.info("POST data from repository/api/property/imageurls, body: " + propertyImageURLForm);
+        return new ResponseEntity<>(propertyImageURLInfo, HttpStatus.CREATED);
     }
 
 }

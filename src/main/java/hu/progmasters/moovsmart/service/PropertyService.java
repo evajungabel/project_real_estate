@@ -2,11 +2,9 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
+import hu.progmasters.moovsmart.domain.PropertyImageURL;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
-import hu.progmasters.moovsmart.dto.AddressInfo;
-import hu.progmasters.moovsmart.dto.PropertyDetails;
-import hu.progmasters.moovsmart.dto.PropertyForm;
-import hu.progmasters.moovsmart.dto.PropertyInfo;
+import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.modelmapper.ModelMapper;
@@ -28,18 +26,17 @@ public class PropertyService {
 
     private PropertyRepository propertyRepository;
     private CustomUserService customUserService;
+
+    private PropertyImageURLService propertyImageURLService;
     private ModelMapper modelMapper;
 
     @Autowired
-    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService) {
+    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService) {
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
         this.customUserService = customUserService;
+        this.propertyImageURLService = propertyImageURLService;
     }
-
-
-
-
 
 
     public List<PropertyInfo> getProperties() {
@@ -56,6 +53,7 @@ public class PropertyService {
                 .map(property -> modelMapper.map(property, PropertyInfo.class))
                 .collect(Collectors.toList());
     }
+
     public List<PropertyInfo> findPaginated(int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Property> pagedResult = propertyRepository.findAll(paging);
@@ -99,4 +97,10 @@ public class PropertyService {
         modelMapper.map(propertyForm, property);
         return modelMapper.map(property, PropertyInfo.class);
     }
+
+    public PropertyImageURLInfo createListOfImageURLs(Long id, PropertyImageURLForm propertyImageURLForm) {
+        PropertyImageURL propertyImageURL = modelMapper.map(propertyImageURLForm, PropertyImageURL.class);
+        propertyImageURL.setProperty(findPropertyById(id));
+        return modelMapper.map(propertyImageURLService.save(propertyImageURL),PropertyImageURLInfo .class);
+}
 }

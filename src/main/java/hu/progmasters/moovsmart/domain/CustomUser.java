@@ -78,6 +78,7 @@ public class CustomUser implements UserDetails {
     @OneToOne(mappedBy = "customUser")
     private CustomUserEmail customUserEmail;
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new HashSet<>();

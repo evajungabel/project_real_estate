@@ -57,8 +57,6 @@ public class Property {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "image_url")
-    private String imageUrl;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
@@ -69,6 +67,9 @@ public class Property {
 
     @OneToOne(mappedBy = "property", cascade = CascadeType.ALL)
     private Address address;
+
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PropertyImageURL propertyImageURL;
 
     @ManyToOne
     @JoinColumn(name = "custom_user_id")

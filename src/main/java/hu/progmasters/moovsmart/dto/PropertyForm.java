@@ -38,8 +38,6 @@ public class PropertyForm {
 
     private String description;
 
-    private String imageUrl;
-
     @NotNull(message = "Username cannot be empty!")
     private String customUsername;
 
