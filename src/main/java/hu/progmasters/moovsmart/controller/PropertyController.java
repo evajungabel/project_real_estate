@@ -1,5 +1,7 @@
 package hu.progmasters.moovsmart.controller;
 
+import hu.progmasters.moovsmart.domain.Property;
+import hu.progmasters.moovsmart.domain.SimplePage;
 import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyInfo;
@@ -9,14 +11,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/properties")
@@ -38,7 +47,7 @@ public class PropertyController {
         binder.addValidators(propertyFormValidator);
     }
 
-    @GetMapping
+    @GetMapping("/allproperties")
     @Operation(summary = "Get all properties")
     @ApiResponse(responseCode = "200", description = "List of properties")
     public ResponseEntity<List<PropertyDetails>> getAllProperties() {
@@ -48,16 +57,50 @@ public class PropertyController {
         return new ResponseEntity<>(propertyList, HttpStatus.OK);
     }
 
-    @GetMapping("/{pageNo}/{pageSize}")
-    @Operation(summary = "Get properties on one page {pageSize} number")
-    @ApiResponse(responseCode = "200", description = "Property saved")
-    public List<PropertyInfo> getPaginatedProperties(@PathVariable int pageNo,
-                                                     @PathVariable int pageSize) {
-        log.info("Http request, GET /api/list of properties with " + pageSize + " number on " + pageNo + " pages");
-        List<PropertyInfo> propertyInfos = propertyService.findPaginated(pageNo, pageSize);
-        log.info("GET data from repository/api/list of properties with " + pageSize + " number on " + pageNo + " pages");
-        return propertyInfos;
+    @GetMapping
+    public ResponseEntity<SimplePage<PropertyDetails>> getAllRoles(
+            @SortDefault(sort = "price") @PageableDefault(size = 10) final Pageable pageable) {
+        return ResponseEntity.ok(propertyService.getPropertyListPaginated(pageable));
     }
+
+
+
+//    @GetMapping
+//    @ResponseBody
+//    public List<PropertyDetails> getPropertyListPaginated(
+//            @PathVariable("page") int page,
+//            @PathVariable("size") int size,
+//            @PathVariable("sortDir") String sortDir,
+//            @PathVariable("sort") String sort) {
+//
+//        List<PropertyDetails> propertyDetailsList = propertyService.getPropertyListPaginated(page, size, sortDir, sort);
+//        return propertyDetailsList;
+//    }
+
+//    @GetMapping(params = { "page", "size" })
+//    public List<PropertyDetails> findPaginated(@RequestParam("page") int page,
+//                                   @RequestParam("size") int size, UriComponentsBuilder uriBuilder,
+//                                   HttpServletResponse response) {
+//        Page<PropertyDetails> resultPage = (Page<PropertyDetails>) propertyService.findPaginated(page, size);
+//        if (page > resultPage.getTotalPages()) {
+//            throw new MyResourceNotFoundException();
+//        }
+//        eventPublisher.publishEvent(new PaginatedResultsRetrievedEvent<PropertyDetails>(
+//                PropertyDetails.class, uriBuilder, response, page, resultPage.getTotalPages(), size));
+//
+//        return resultPage.getContent();
+//    }
+
+//    @GetMapping("/{pageNo}/{pageSize}")
+//    @Operation(summary = "Get properties on one page {pageSize} number")
+//    @ApiResponse(responseCode = "200", description = "Property saved")
+//    public List<PropertyInfo> getPaginatedProperties(@PathVariable int pageNo,
+//                                                     @PathVariable int pageSize) {
+//        log.info("Http request, GET /api/list of properties with " + pageSize + " number on " + pageNo + " pages");
+//        List<PropertyInfo> propertyInfos = propertyService.findPaginated(pageNo, pageSize);
+//        log.info("GET data from repository/api/list of properties with " + pageSize + " number on " + pageNo + " pages");
+//        return propertyInfos;
+//    }
 
     @GetMapping("/{propertyId}")
     @Operation(summary = "Get property with {propertyId}")

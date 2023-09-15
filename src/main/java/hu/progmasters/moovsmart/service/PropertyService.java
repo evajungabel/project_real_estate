@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.SimplePage;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -56,13 +58,47 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
-    public List<PropertyInfo> findPaginated(int pageNo, int pageSize) {
-        Pageable paging = PageRequest.of(pageNo, pageSize);
-        Page<Property> pagedResult = propertyRepository.findAll(paging);
-        return pagedResult.stream()
-                .map(property -> modelMapper.map(property, PropertyInfo.class))
+    public SimplePage<PropertyDetails> getPropertyListPaginated(final Pageable pageable) {
+        final Page<Property> page = propertyRepository.findAll(pageable);
+        return new SimplePage<>(page.getContent()
+                .stream()
+                .map(property -> modelMapper.map(property, PropertyDetails.class))
+                .collect(Collectors.toList()),
+                page.getTotalElements(), pageable);
+    }
+
+//    public List<PropertyDetails> getPropertyListPaginated(int page, int size, String sortDir, String sort) {
+//
+//        PageRequest pageReq
+//                = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
+//
+//        Page<Property> properties = (Page<Property>) propertyRepository.findAllByPrice(10, pageReq);
+//        List<PropertyDetails> propertyDetailsList = properties.stream()
+//                .map(property -> modelMapper.map(property, PropertyDetails.class))
+//                .collect(Collectors.toList());
+//        return propertyDetailsList;
+//    }
+
+    public List<PropertyDetails> findPaginated(int pageNo, int pageSize) {
+        Pageable pageNoWithPageSizeOfElements = PageRequest.of(pageNo, pageSize);
+
+        Page<Property> allProducts = propertyRepository.findAll(pageNoWithPageSizeOfElements);
+
+        List<Property> allTenDollarProducts =
+                propertyRepository.findAllByPrice(10, pageNoWithPageSizeOfElements);
+        return allProducts.stream()
+                .map(property -> modelMapper.map(property, PropertyDetails.class))
                 .collect(Collectors.toList());
     }
+
+
+//    public List<PropertyInfo> findPaginated(int pageNo, int pageSize) {
+//        Pageable paging = PageRequest.of(pageNo, pageSize);
+//        Page<Property> pagedResult = propertyRepository.findAll(paging);
+//        return pagedResult.stream()
+//                .map(property -> modelMapper.map(property, PropertyInfo.class))
+//                .collect(Collectors.toList());
+//    }
 
 
     public PropertyDetails getPropertyDetails(Long id) {
