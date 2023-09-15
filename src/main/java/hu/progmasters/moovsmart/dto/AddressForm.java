@@ -31,7 +31,7 @@ public class AddressForm {
 
     private Integer doorNumber;
 
-    @NotNull(message = "propertyId canot be null!")
+    @NotNull(message = "propertyId cannot be null!")
     @Positive
     private Long propertyId;
 }

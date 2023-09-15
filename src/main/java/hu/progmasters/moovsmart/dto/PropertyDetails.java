@@ -13,11 +13,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PropertyDetails {
     private String name;
-    private Integer numberOfRooms;
-    private Integer price;
     private PropertyType type;
     private PropertyPurpose purpose;
     private Integer area;
+    private Integer numberOfRooms;
+    private Integer price;
     private String description;
     private String imageUrl;
+    private AddressInfoForProperty addressInfoForProperty;
 }
