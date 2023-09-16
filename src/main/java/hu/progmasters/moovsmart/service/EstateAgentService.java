@@ -6,6 +6,7 @@ import hu.progmasters.moovsmart.domain.EstateAgent;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.repository.EstateAgentRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,6 +17,7 @@ public class EstateAgentService {
     private EstateAgentRepository estateAgentRepository;
     private ModelMapper modelMapper;
 
+    @Autowired
     public EstateAgentService(EstateAgentRepository estateAgentRepository, ModelMapper modelMapper) {
         this.estateAgentRepository = estateAgentRepository;
         this.modelMapper = modelMapper;
