@@ -43,7 +43,7 @@ public class CustomUserService implements UserDetailsService {
     private Timer activationTimer = new Timer("Timer");
 
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService, AgentCommentRepository agentCommentRepository) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
@@ -83,6 +83,7 @@ public class CustomUserService implements UserDetailsService {
                     .isAgent(customUserForm.getIsAgent())
                     .build();
             confirmationToken.setCustomUser(customUser);
+            CustomUser savedUser = customUserRepository.save(customUser);
             if (customUser.isAgent()) {
                 customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
                 estateAgentService.save(customUser);
@@ -94,7 +95,6 @@ public class CustomUserService implements UserDetailsService {
             if (customUser.isHasNewsletter()) {
                 customUserEmailService.save(customUserEmail);
             }
-            CustomUser savedUser = customUserRepository.save(customUser);
             deleteIfItIsNotActivated(savedUser);
             CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
             customUserInfo.setCustomUserRoles(customUser.getRoles());
@@ -121,7 +121,7 @@ public class CustomUserService implements UserDetailsService {
                 }
             }
         };
-        long delay = 60000L;
+        long delay = 600000L;
         activationTimer.schedule(task, delay);
     }
 
