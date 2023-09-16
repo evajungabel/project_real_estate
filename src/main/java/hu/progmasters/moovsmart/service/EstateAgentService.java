@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart.service;
 
+import hu.progmasters.moovsmart.domain.AgentRank;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.EstateAgent;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
@@ -24,6 +25,8 @@ public class EstateAgentService {
     public CustomUserInfo save(CustomUser customUser) {
         EstateAgent toSave = new EstateAgent();
         toSave.setCustomUser(customUser);
+        toSave.setRank(AgentRank.RECRUIT);
+        toSave.setSellPoint(0);
         estateAgentRepository.save(toSave);
         return modelMapper.map(customUser, CustomUserInfo.class);
     }

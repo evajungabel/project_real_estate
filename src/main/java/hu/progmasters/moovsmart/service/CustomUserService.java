@@ -2,10 +2,9 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.*;
-import hu.progmasters.moovsmart.dto.CustomUserForm;
-import hu.progmasters.moovsmart.dto.CustomUserInfo;
-import hu.progmasters.moovsmart.dto.UserComment;
+import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.*;
+import hu.progmasters.moovsmart.repository.AgentCommentRepository;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,7 @@ public class CustomUserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private ConfirmationTokenService confirmationTokenService;
     private EstateAgentService estateAgentService;
+    private AgentCommentRepository agentCommentRepository;
 
     private SendingEmailService sendingEmailService;
 
@@ -49,6 +49,7 @@ public class CustomUserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
         this.confirmationTokenService = confirmationTokenService;
         this.estateAgentService = estateAgentService;
+        this.agentCommentRepository = agentCommentRepository;
         this.sendingEmailService = sendingEmailService;
         this.customUserEmailService = customUserEmailService;
     }
@@ -283,12 +284,28 @@ public class CustomUserService implements UserDetailsService {
         return "You deleted your profile!";
     }
 
-    public void comment(UserComment comment) {
-        CustomUser commenter = findCustomUserByUsername(comment.getUserName());
+    public AgentCommentInfo comment(CommentForm comment) {
         CustomUser agent = findCustomUserByUsername(comment.getAgentName());
-        Map<Long, String> ratings = agent.getEstateAgent().getRatings();
-        ratings.put(commenter.getCustomUserId(), comment.getComment());
-        agent.getEstateAgent().setRatings(ratings);
+        CustomUser user = findCustomUserByUsername(comment.getUserName());
+        AgentComment agentComment = new AgentComment();
+        agentComment.setComment(comment.getComment());
+        agentComment.setCustomUsername(user.getUsername());
+        agentComment.setEstateAgent(agent.getEstateAgent());
+        agentCommentRepository.save(agentComment);
+        return modelMapper.map(agentComment, AgentCommentInfo.class);
+    }
+
+    public EstateAgentInfo getAgentInfo(String userName) {
+        CustomUser customUser = findCustomUserByUsername(userName);
+        EstateAgent agent = customUser.getEstateAgent();
+        List<AgentComment> comments = agent.getComments();
+        List<AgentCommentInfo> commentInfos = new ArrayList<>();
+        for (AgentComment comment : comments) {
+            commentInfos.add(modelMapper.map(comment, AgentCommentInfo.class));
+        }
+        EstateAgentInfo info = modelMapper.map(agent, EstateAgentInfo.class);
+        info.setCommentInfo(commentInfos);
+        return info;
     }
 
 

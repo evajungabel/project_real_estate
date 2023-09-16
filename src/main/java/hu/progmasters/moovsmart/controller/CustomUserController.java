@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -149,13 +148,23 @@ public class CustomUserController {
     }
 
     @PostMapping("/comment")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+//    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Comment estate agent")
     @ApiResponse(responseCode = "201", description = "Comment created")
-    public ResponseEntity<Void> comment(@Valid @RequestBody UserComment comment) {
+    public ResponseEntity<Void> comment(@Valid @RequestBody CommentForm comment) {
         log.info("Http request, POST /api/customusers/comment, body: " + comment.toString());
         customUserService.comment(comment);
         log.info("POST data from repository/api/customusers/comment, body: " + comment);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/comment/{userName}")
+    @Operation(summary = "List comments from agent")
+    @ApiResponse(responseCode = "200", description = "Comment listed")
+    public ResponseEntity<EstateAgentInfo> listComments (@PathVariable("userName") String userName){
+        log.info("Http request, GET /api/customusers/comment/ " + userName);
+        EstateAgentInfo estateAgentInfo = customUserService.getAgentInfo(userName);
+        log.info("GET data from repository/api/customusers/comment/{userName} " + userName);
+        return new ResponseEntity<>(estateAgentInfo, HttpStatus.OK);
     }
 }
