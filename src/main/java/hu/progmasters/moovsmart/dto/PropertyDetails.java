@@ -22,7 +22,6 @@ public class PropertyDetails {
     private PropertyPurpose purpose;
     private Integer area;
     private String description;
-    private String imageUrl;
     private AddressInfoForProperty addressInfoForProperty;
     private List<PropertyImageURL> propertyImageURLS;
 }

@@ -2,9 +2,7 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.*;
-import hu.progmasters.moovsmart.dto.PropertyDetails;
-import hu.progmasters.moovsmart.dto.PropertyForm;
-import hu.progmasters.moovsmart.dto.PropertyInfo;
+import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +39,8 @@ public class PropertyServiceTest {
     private CustomUserService customUserService;
 
 
+    @Mock
+    private PropertyImageURLService propertyImageURLService;
 
     @InjectMocks
     private PropertyService propertyService;
@@ -56,14 +56,18 @@ public class PropertyServiceTest {
 
     private PropertyInfo propertyInfo1Update;
 
-    private PropertyDetails<Serializable> propertyDetails1;
-    private PropertyDetails<Serializable> propertyDetails2;
+    private PropertyDetails propertyDetails1;
+    private PropertyDetails propertyDetails2;
     private CustomUser customUser1;
-    private EstateAgent estateAgent1;
+
+    private PropertyImageURL propertyImageURL;
+    private PropertyImageURLForm propertyImageURLForm;
+    private PropertyImageURLInfo propertyImageURLInfo;
 
 
     @BeforeEach
     void init() {
+
         property1 = new Property().builder()
                 .id(1L)
                 .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
@@ -74,7 +78,21 @@ public class PropertyServiceTest {
                 .numberOfRooms(5)
                 .status(PropertyStatus.ACTIVE)
                 .description("Jó kis házikó")
-                .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
+                .propertyImageURL(propertyImageURL)
+                .build();
+
+        propertyImageURL = new PropertyImageURL().builder()
+                .propertyImageUrlId(1L)
+                .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
+                .property(property1)
+                .build();
+
+        propertyImageURLForm = new PropertyImageURLForm().builder()
+                .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
+                .build();
+
+        propertyImageURLInfo = new PropertyImageURLInfo().builder()
+                .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
                 .build();
 
         property2 = new Property().builder()
@@ -86,7 +104,7 @@ public class PropertyServiceTest {
                 .area(85)
                 .numberOfRooms(4)
                 .description("Jó kis családi ház")
-                .imageUrl("image/jpeg;base64,/2555879j/4AAQSk")
+                .propertyImageURL(propertyImageURL)
                 .customUser(customUser1)
                 .build();
 
@@ -97,7 +115,6 @@ public class PropertyServiceTest {
                 .area(90)
                 .numberOfRooms(5)
                 .description("Jó kis házikó")
-                .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
                 .customUsername("pistike")
                 .build();
 
@@ -110,8 +127,8 @@ public class PropertyServiceTest {
                 .area(91)
                 .numberOfRooms(5)
                 .status(PropertyStatus.ACTIVE)
+                .propertyImageURL(propertyImageURL)
                 .description("Jó kis házikó")
-                .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
                 .build();
 
         propertyFormUpdate = new PropertyForm().builder()
@@ -121,7 +138,6 @@ public class PropertyServiceTest {
                 .area(91)
                 .numberOfRooms(5)
                 .description("Jó kis házikó")
-                .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
                 .customUsername("pistike")
                 .build();
 
@@ -132,7 +148,6 @@ public class PropertyServiceTest {
                 .area(85)
                 .numberOfRooms(4)
                 .description("Jó kis családi ház")
-                .imageUrl("image/jpeg;base64,/2555879j/4AAQSk")
                 .customUsername("pistike")
                 .build();
 
@@ -142,8 +157,8 @@ public class PropertyServiceTest {
                 .id(1L)
                 .name("Kuckó")
                 .price(400000000)
+                .propertyImageURLS(List.of(propertyImageURL))
                 .numberOfRooms(5)
-                .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
                 .build();
 
         propertyInfo1Update = new PropertyInfo().builder()
@@ -151,7 +166,6 @@ public class PropertyServiceTest {
                 .name("Buckó")
                 .price(400000000)
                 .numberOfRooms(5)
-                .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
                 .build();
 
         propertyInfo2 = new PropertyInfo().builder()
@@ -159,23 +173,23 @@ public class PropertyServiceTest {
                 .name("Kulipintyó")
                 .price(35000000)
                 .numberOfRooms(4)
-                .imageUrl("image/jpeg;base64,/2555879j/4AAQSk")
+                .propertyImageURLS(List.of(propertyImageURL))
                 .build();
 
-        propertyDetails1 = new PropertyDetails<Serializable>().builder()
+        propertyDetails1 = new PropertyDetails().builder()
                 .name("Kuckó")
                 .price(400000000)
                 .numberOfRooms(5)
                 .description("Jó kis házikó")
-                .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
+                .propertyImageURLS(List.of(propertyImageURL))
                 .build();
 
-        propertyDetails2 = new PropertyDetails<Serializable>().builder()
+        propertyDetails2 = new PropertyDetails().builder()
                 .name("Kulipintyó")
                 .price(35000000)
                 .numberOfRooms(4)
                 .description("Jó kis családi ház")
-                .imageUrl("image/jpeg;base64,/2555879j/4AAQSk")
+                .propertyImageURLS(List.of(propertyImageURL))
                 .build();
 
 
@@ -305,6 +319,20 @@ public class PropertyServiceTest {
         verifyNoMoreInteractions(propertyRepository);
     }
 
+    @Test
+    void testCreateListOfImageURLs() {
+        when(modelMapper.map(propertyImageURLForm, PropertyImageURL.class)).thenReturn(propertyImageURL);
+        when(propertyImageURLService.save(propertyImageURL)).thenReturn(propertyImageURL);
+        when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
+        when(modelMapper.map(propertyImageURL, PropertyImageURLInfo.class)).thenReturn(propertyImageURLInfo);
+
+        assertEquals(List.of(propertyImageURLInfo), propertyService.createListOfImageURLs(1L, List.of(propertyImageURLForm)));
+
+        verify(propertyRepository, times(1)).findById(1L);
+        verify(propertyImageURLService, times(1)).save(propertyImageURL);
+        verifyNoMoreInteractions(propertyRepository);
+        verifyNoMoreInteractions(propertyImageURLService);
+    }
 
 
 }

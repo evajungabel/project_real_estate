@@ -23,7 +23,6 @@ public class PropertyInfo {
     private Integer area;
     private Integer numberOfRooms;
     private Integer price;
-    private String imageUrl;
     private AddressInfoForProperty addressInfoForProperty;
     private List<PropertyImageURL> propertyImageURLS;
 }
