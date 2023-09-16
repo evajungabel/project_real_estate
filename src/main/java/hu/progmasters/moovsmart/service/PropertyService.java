@@ -89,7 +89,7 @@ public class PropertyService {
 //        Page<Property> allProducts = propertyRepository.findAll(pageNoWithPageSizeOfElements);
 //
 ////        List<Property> allTenDollarProducts =
-////                propertyRepository.findAllByPrice(10, pageNoWithPageSizeOfElements);
+//                propertyRepository.findAllByPrice(10, pageNoWithPageSizeOfElements);
 //        return allProducts;
 //    }
 

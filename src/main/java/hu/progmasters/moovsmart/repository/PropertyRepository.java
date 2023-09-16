@@ -10,7 +10,9 @@ import java.util.List;
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
-//    List<Property> findAllByPrice(Pageable pageable);
+
+
+//    List<Property> findAllByPrice(double price, Pageable pageable);
 
 //    @Query("select u from Post u where u.userName=:userName")
 //    Page<Post> findByUser(@Param("userName") String userName, Pageable pageReq);

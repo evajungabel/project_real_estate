@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart.controller;
 
+import hu.progmasters.moovsmart.domain.SimplePage;
 import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyInfo;
@@ -10,6 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
@@ -58,7 +62,7 @@ public class PropertyController {
 
 
 
-    @GetMapping(params = {"page", "size", "sortDir", "size"})
+    @GetMapping(params = {"page", "size", "sortDir", "sort"})
     public List<PropertyDetails> findPaginated(
              @RequestParam("sortDir") String sortDir,
              @RequestParam("sort") String sort,
