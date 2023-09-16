@@ -1,6 +1,5 @@
 package hu.progmasters.moovsmart.controller;
 
-import hu.progmasters.moovsmart.domain.SimplePage;
 import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.dto.PropertyForm;
 import hu.progmasters.moovsmart.dto.PropertyInfo;
@@ -9,11 +8,7 @@ import hu.progmasters.moovsmart.validation.PropertyFormValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
@@ -53,12 +48,6 @@ public class PropertyController {
         return new ResponseEntity<>(propertyList, HttpStatus.OK);
     }
 
-//    @GetMapping
-//    public ResponseEntity<SimplePage<PropertyDetails>> getAllPropertyDetails(
-//            @SortDefault(sort = "price") @PageableDefault(size = 10) final Pageable pageable) {
-//
-//        return ResponseEntity.ok(propertyService.getPropertyListPaginated(pageable));
-//    }
 
 
 
@@ -69,9 +58,7 @@ public class PropertyController {
              @RequestParam("page") int page,
              @RequestParam("size") int size) {
         List<PropertyDetails> propertyDetailsList = propertyService.getPropertyListPaginated(page, size, sortDir, sort);
-//        if (page > resultPage.getTotalPages()) {
-//            throw new MyResourceNotFoundException();
-//        }
+
         return propertyDetailsList;
     }
 

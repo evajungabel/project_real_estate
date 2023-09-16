@@ -5,6 +5,7 @@ import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
 import hu.progmasters.moovsmart.domain.SimplePage;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.exception.NoResourceFoundException;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.modelmapper.ModelMapper;
@@ -78,20 +79,13 @@ public class PropertyService {
                 = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
 
         Page<Property> properties = propertyRepository.findAll(pageReq);
+        if (page > properties.getTotalPages()) {
+            throw new NoResourceFoundException(properties.getTotalPages());
+        }
         return properties.getContent().stream()
                 .map(property -> modelMapper.map(property, PropertyDetails.class))
                 .collect(Collectors.toList());
     }
-
-//    public Page<Property> getPropertyListPaginated(int pageNo, int pageSize) {
-//        Pageable pageNoWithPageSizeOfElements = PageRequest.of(pageNo, pageSize);
-//
-//        Page<Property> allProducts = propertyRepository.findAll(pageNoWithPageSizeOfElements);
-//
-////        List<Property> allTenDollarProducts =
-//                propertyRepository.findAllByPrice(10, pageNoWithPageSizeOfElements);
-//        return allProducts;
-//    }
 
 
 
