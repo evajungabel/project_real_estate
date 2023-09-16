@@ -44,9 +44,7 @@ public class PropertyService {
     }
 
 
-
-
-    public List<PropertyInfo> getProperties() {
+    public List<PropertyDetails> getProperties() {
         List<Property> properties = propertyRepository.findAll();
         List<PropertyDetails> propertyDetailsList = new ArrayList<>();
         for (Property property : properties) {
@@ -78,19 +76,18 @@ public class PropertyService {
         }
         return properties.getContent().stream()
                 .map(property -> modelMapper.map(property, PropertyDetails.class))
-
-    public List<PropertyInfo> findPaginated(int pageNo, int pageSize) {
-        Pageable paging = PageRequest.of(pageNo, pageSize);
-        Page<Property> pagedResult = propertyRepository.findAll(paging);
-        return pagedResult.stream()
-                .map(property -> modelMapper.map(property, PropertyInfo.class))
                 .collect(Collectors.toList());
     }
 
 
+
+
     public PropertyDetails getPropertyDetails(Long id) {
         Property property = findPropertyById(id);
-        return modelMapper.map(property, PropertyDetails.class);
+        PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
+        AddressInfoForProperty addressInfoForProperty = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
+        propertyDetails.setAddressInfoForProperty(addressInfoForProperty);
+        return propertyDetails;
     }
 
     public Property findPropertyById(Long propertyId) {
