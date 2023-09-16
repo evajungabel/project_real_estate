@@ -41,9 +41,9 @@ public class PropertyController {
     @GetMapping("/allproperties")
     @Operation(summary = "Get all properties")
     @ApiResponse(responseCode = "200", description = "List of properties")
-    public ResponseEntity<List<PropertyDetails<Serializable>>> getAllProperties() {
+    public ResponseEntity<List<PropertyDetails>> getAllProperties() {
         log.info("Http request, GET /api/list of all properties");
-        List<PropertyDetails<Serializable>> propertyList = propertyService.getProperties();
+        List<PropertyDetails> propertyList = propertyService.getProperties();
         log.info("GET data from repository/api/list of all properties");
         return new ResponseEntity<>(propertyList, HttpStatus.OK);
     }
@@ -66,9 +66,9 @@ public class PropertyController {
     @GetMapping("/{propertyId}")
     @Operation(summary = "Get property with {propertyId}")
     @ApiResponse(responseCode = "200", description = "Property details")
-    public ResponseEntity<PropertyDetails<Serializable>> getPropertyDetails(@PathVariable("propertyId") Long id) {
+    public ResponseEntity<PropertyDetails> getPropertyDetails(@PathVariable("propertyId") Long id) {
         log.info("Http request, GET /api/property/{propertyId} with variable: " + id);
-        PropertyDetails<Serializable> propertyDetails = propertyService.getPropertyDetails(id);
+        PropertyDetails propertyDetails = propertyService.getPropertyDetails(id);
         log.info("GET data from repository/property/{propertyId} with variable: " + id);
         return new ResponseEntity<>(propertyDetails, HttpStatus.OK);
     }

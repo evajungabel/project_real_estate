@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @Builder
-public class PropertyDetails<T extends Serializable> implements Serializable {
+public class PropertyDetails {
     private String name;
     private PropertyType type;
     private PropertyPurpose purpose;

@@ -40,11 +40,11 @@ public class PropertyService {
     }
 
 
-    public List<PropertyDetails<Serializable>> getProperties() {
+    public List<PropertyDetails> getProperties() {
         List<Property> properties = propertyRepository.findAll();
-        List<PropertyDetails<Serializable>> propertyDetailsList = new ArrayList<>();
+        List<PropertyDetails> propertyDetailsList = new ArrayList<>();
         for (Property property : properties) {
-            PropertyDetails<Serializable> propertyDetails = modelMapper.map(property, PropertyDetails.class);
+            PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
             AddressInfoForProperty addressInfoForProperties = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
             propertyDetails.setAddressInfoForProperty(addressInfoForProperties);
             propertyDetailsList.add(propertyDetails);
@@ -78,9 +78,9 @@ public class PropertyService {
 
 
 
-    public PropertyDetails<Serializable> getPropertyDetails(Long id) {
+    public PropertyDetails getPropertyDetails(Long id) {
         Property property = findPropertyById(id);
-        PropertyDetails<Serializable> propertyDetails = modelMapper.map(property, PropertyDetails.class);
+        PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
         AddressInfoForProperty addressInfoForProperty = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
         propertyDetails.setAddressInfoForProperty(addressInfoForProperty);
         return propertyDetails;
