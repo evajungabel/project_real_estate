@@ -120,9 +120,19 @@ public class PropertyService {
         return modelMapper.map(property, PropertyInfo.class);
     }
 
-    public PropertyImageURLInfo createListOfImageURLs(Long id, PropertyImageURLForm propertyImageURLForm) {
-        PropertyImageURL propertyImageURL = modelMapper.map(propertyImageURLForm, PropertyImageURL.class);
-        propertyImageURL.setProperty(findPropertyById(id));
-        return modelMapper.map(propertyImageURLService.save(propertyImageURL),PropertyImageURLInfo .class);
-}
+    public List<PropertyImageURLInfo> createListOfImageURLs(Long id, List<PropertyImageURLForm> propertyImageURLForms) {
+        List<PropertyImageURL> propertyImageURLs = propertyImageURLForms.stream()
+                .map(propertyImageURLForm -> {
+                    PropertyImageURL propertyImageURL = modelMapper.map(propertyImageURLForm, PropertyImageURL.class);
+                    propertyImageURL.setProperty(findPropertyById(id));
+                    propertyImageURLService.save(propertyImageURL);
+                    return propertyImageURL;
+                })
+                .collect(Collectors.toList());
+
+        return propertyImageURLs.stream()
+                .map(propertyImageURL -> modelMapper.map(propertyImageURL, PropertyImageURLInfo.class))
+                .collect(Collectors.toList());
+    }
+
 }

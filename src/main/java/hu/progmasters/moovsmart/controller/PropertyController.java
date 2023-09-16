@@ -112,11 +112,11 @@ public class PropertyController {
     @Operation(summary = "Save property's list of image URLs")
     @ApiResponse(responseCode = "201", description = "Property's list of image URLs is saved")
 //    @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<PropertyImageURLInfo> createListOfImageURLs(@PathVariable("propertyId") Long id, @RequestBody @Valid PropertyImageURLForm propertyImageURLForm) {
-        log.info("Http request, POST /api/property/imageurls, body: " + propertyImageURLForm.toString());
-        PropertyImageURLInfo propertyImageURLInfo = propertyService.createListOfImageURLs(id, propertyImageURLForm);
-        log.info("POST data from repository/api/property/imageurls, body: " + propertyImageURLForm);
-        return new ResponseEntity<>(propertyImageURLInfo, HttpStatus.CREATED);
+    public ResponseEntity<List<PropertyImageURLInfo>> createListOfImageURLs(@PathVariable("propertyId") Long id, @RequestBody @Valid List<PropertyImageURLForm> propertyImageURLForms) {
+        log.info("Http request, POST /api/property/imageurls, body: " + propertyImageURLForms.toString());
+        List<PropertyImageURLInfo> propertyImageURLInfos = propertyService.createListOfImageURLs(id, propertyImageURLForms);
+        log.info("POST data from repository/api/property/imageurls, body: " + propertyImageURLForms);
+        return new ResponseEntity<>(propertyImageURLInfos, HttpStatus.CREATED);
     }
 
 }
