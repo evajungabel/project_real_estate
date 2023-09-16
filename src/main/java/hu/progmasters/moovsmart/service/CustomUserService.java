@@ -40,7 +40,7 @@ public class CustomUserService implements UserDetailsService {
 
     private CustomUserEmailService customUserEmailService;
 
-    private Timer activationTimer = new Timer("Timer");
+    private Timer timer;
 
     @Autowired
     public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService) {
@@ -83,6 +83,7 @@ public class CustomUserService implements UserDetailsService {
                     .isAgent(customUserForm.getIsAgent())
                     .build();
             confirmationToken.setCustomUser(customUser);
+            CustomUser savedUser = customUserRepository.save(customUser);
             if (customUser.isAgent()) {
                 customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
                 estateAgentService.save(customUser);
@@ -94,11 +95,10 @@ public class CustomUserService implements UserDetailsService {
             if (customUser.isHasNewsletter()) {
                 customUserEmailService.save(customUserEmail);
             }
-            CustomUser savedUser = customUserRepository.save(customUser);
-            deleteIfItIsNotActivated(savedUser);
             CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
             customUserInfo.setCustomUserRoles(customUser.getRoles());
             sendingActivationEmail(customUserForm.getName(), customUserForm.getEmail());
+            deleteIfItIsNotActivated(savedUser);
             return customUserInfo;
         }
     }
@@ -121,8 +121,11 @@ public class CustomUserService implements UserDetailsService {
                 }
             }
         };
+
+        Timer timer = new Timer("Timer");
+
         long delay = 60000L;
-        activationTimer.schedule(task, delay);
+        timer.schedule(task, delay);
     }
 
 
@@ -139,7 +142,6 @@ public class CustomUserService implements UserDetailsService {
             CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
             if ((LocalDateTime.now()).isBefore(customUser.getConfirmationToken().getExpiredDate())) {
                 customUser.setEnable(true);
-                activationTimer.cancel();
                 return "Activation is successful!";
             } else {
                 customUserRepository.delete(customUser);
@@ -324,7 +326,8 @@ public class CustomUserService implements UserDetailsService {
     }
 
     public String userUnsubscribeNewsletter(String confirmationToken) {
-        try {CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
+        try {
+            CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
             customUserEmailService.delete(customUser.getCustomUserEmail());
             return "Sikeresen leíratkozott a hírlevélről!";
         } catch (TokenCannotBeUsedException e) {

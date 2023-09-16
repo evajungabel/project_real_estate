@@ -77,7 +77,7 @@ public class CustomUser implements UserDetails {
     private EstateAgent estateAgent;
 
 
-    @OneToOne(mappedBy = "customUser")
+    @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private CustomUserEmail customUserEmail;
 
     @Override
