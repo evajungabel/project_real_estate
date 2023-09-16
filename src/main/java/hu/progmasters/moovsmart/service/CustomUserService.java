@@ -40,8 +40,6 @@ public class CustomUserService implements UserDetailsService {
 
     private CustomUserEmailService customUserEmailService;
 
-    private Timer timer;
-
     @Autowired
     public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService) {
         this.customUserRepository = customUserRepository;
