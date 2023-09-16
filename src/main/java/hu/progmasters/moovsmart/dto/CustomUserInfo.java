@@ -19,6 +19,7 @@ public class CustomUserInfo {
     private String username;
     private String email;
     private String phoneNumber;
+
     private List<CustomUserRole> customUserRoles;
-    private List<CustomUserRole> roles;
+
 }

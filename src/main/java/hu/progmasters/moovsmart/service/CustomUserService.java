@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -41,7 +44,7 @@ public class CustomUserService implements UserDetailsService {
     private CustomUserEmailService customUserEmailService;
 
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService, AgentCommentRepository agentCommentRepository) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
@@ -96,7 +99,7 @@ public class CustomUserService implements UserDetailsService {
             CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
             customUserInfo.setCustomUserRoles(customUser.getRoles());
             sendingActivationEmail(customUserForm.getName(), customUserForm.getEmail());
-            deleteIfItIsNotActivated(savedUser);
+            deleteIfItIsNotActivated(customUser.getUsername());
             return customUserInfo;
         }
     }
@@ -111,27 +114,28 @@ public class CustomUserService implements UserDetailsService {
         sendingEmailService.sendEmail(email, subject, text);
     }
 
-    public void deleteIfItIsNotActivated(CustomUser customUser) {
-        TimerTask task = new TimerTask() {
-            public void run() {
-                if (!(customUser.isEnabled())) {
-                    customUserRepository.delete(customUser);
-                }
+
+    public void deleteIfItIsNotActivated(String username) {
+
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+        Runnable task = () -> {
+            CustomUser customUser = findCustomUserByUsername(username);
+            if (!(customUser.isEnabled())) {
+                customUserRepository.delete(customUser);
             }
         };
 
-        Timer timer = new Timer("Timer");
+        scheduledExecutorService.schedule(task, 30, TimeUnit.SECONDS);
 
-        long delay = 60000L;
-        timer.schedule(task, delay);
-    }
+}
 
 
     public ConfirmationToken createConfirmationToken() {
         ConfirmationToken confirmationToken = new ConfirmationToken();
         confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
         confirmationToken.setCreatedDate(LocalDateTime.now());
-        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(2));
+        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(1));
         return confirmationTokenService.save(confirmationToken);
     }
 
