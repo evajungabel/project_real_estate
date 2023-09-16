@@ -1,13 +1,12 @@
 package hu.progmasters.moovsmart.domain;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import java.util.Map;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,11 +27,9 @@ public class EstateAgent {
     @Column(name = "sell_point")
     private Integer sellPoint;
 
-    @ElementCollection
-    @CollectionTable(name = "agent_ratings", joinColumns = @JoinColumn(name = "estate_agent_id"))
-    @MapKeyJoinColumn(name = "custom_user_id")
-    @Column(name = "comment")
-    private Map<Long, String> ratings;
+    @OneToMany(mappedBy = "estateAgent")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private List<AgentComment> comments;
 
     @OneToOne
     @JoinColumn(name = "custom_user_id")

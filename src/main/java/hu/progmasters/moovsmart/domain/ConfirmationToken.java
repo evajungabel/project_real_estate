@@ -34,7 +34,4 @@ public class ConfirmationToken {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "custom_user_username")
     private CustomUser customUser;
-
-
-
 }

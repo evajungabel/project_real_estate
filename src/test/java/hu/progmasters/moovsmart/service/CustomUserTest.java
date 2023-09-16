@@ -125,8 +125,8 @@ public class CustomUserTest {
                 .name("Kis Pistike")
                 .username("pistike")
                 .email("pistike@gmail.com")
-                .password("Pistike1*")
-                .customUserRole(CustomUserRole.ROLE_USER)
+//                .password("Pistike1*")
+//                .customUserRole(CustomUserRole.ROLE_USER)
                 .build();
 
         confirmationToken2 = new ConfirmationToken().builder()
@@ -171,8 +171,8 @@ public class CustomUserTest {
                 .username("moricka")
                 .name("Rosszcsont Móricka")
                 .email("rosszcsont.moricka@gmail.com")
-                .password("Moricka1*")
-                .customUserRole(CustomUserRole.ROLE_AGENT)
+//                .password("Moricka1*")
+//                .customUserRole(CustomUserRole.ROLE_AGENT)
                 .build();
 
         customUserLoggedIn1 = (User) User

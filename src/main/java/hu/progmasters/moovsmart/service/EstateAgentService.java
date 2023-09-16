@@ -3,15 +3,12 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.domain.AgentRank;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.EstateAgent;
-import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.dto.EstateAgentInfo;
-import hu.progmasters.moovsmart.dto.UserComment;
 import hu.progmasters.moovsmart.repository.EstateAgentRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 @Transactional

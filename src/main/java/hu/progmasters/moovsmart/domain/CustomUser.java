@@ -57,7 +57,7 @@ public class CustomUser implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @JoinTable(name = "custom_user_role")
-    private List<CustomUserRole> roles; //miért List?
+    private List<CustomUserRole> roles;
 
     @OneToMany(mappedBy = "customUser")
     private List<Property> propertyList;
