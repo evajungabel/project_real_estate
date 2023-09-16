@@ -60,18 +60,6 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
-//    public SimplePage<PropertyDetails> getPropertyListPaginated(final Pageable pageable) {
-//        if (pageable.getPageSize()*(pageable.getPageNumber()) < propertyRepository.findAll().size()) {
-//            final Page<Property> page = propertyRepository.findAll(pageable);
-//            return new SimplePage<>(page.getContent()
-//                    .stream()
-//                    .map(property -> modelMapper.map(property, PropertyDetails.class))
-//                    .collect(Collectors.toList()),
-//                    page.getTotalElements(), pageable);
-//        } else {
-//            throw new PropertyNotFoundException((long) pageable.getPageSize());
-//        }
-//    }
 
     public List<PropertyDetails> getPropertyListPaginated(int page, int size, String sortDir, String sort) {
 
