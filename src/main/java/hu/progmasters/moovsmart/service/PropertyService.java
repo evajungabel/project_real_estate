@@ -3,7 +3,9 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.SimplePage;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.exception.NoResourceFoundException;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.modelmapper.ModelMapper;
@@ -11,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +40,11 @@ public class PropertyService {
     }
 
 
-    public List<PropertyDetails> getProperties() {
+    public List<PropertyDetails<Serializable>> getProperties() {
         List<Property> properties = propertyRepository.findAll();
-        List<PropertyDetails> propertyDetailsList = new ArrayList<>();
+        List<PropertyDetails<Serializable>> propertyDetailsList = new ArrayList<>();
         for (Property property : properties) {
-            PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
+            PropertyDetails<Serializable> propertyDetails = modelMapper.map(property, PropertyDetails.class);
             AddressInfoForProperty addressInfoForProperties = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
             propertyDetails.setAddressInfoForProperty(addressInfoForProperties);
             propertyDetailsList.add(propertyDetails);
@@ -56,22 +60,31 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
-    public List<PropertyInfo> findPaginated(int pageNo, int pageSize) {
-        Pageable paging = PageRequest.of(pageNo, pageSize);
-        Page<Property> pagedResult = propertyRepository.findAll(paging);
-        return pagedResult.stream()
-                .map(property -> modelMapper.map(property, PropertyInfo.class))
+
+    public List<PropertyDetails> getPropertyListPaginated(int page, int size, String sortDir, String sort) {
+
+        PageRequest pageReq
+                = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
+
+        Page<Property> properties = propertyRepository.findAll(pageReq);
+        if (page > properties.getTotalPages()) {
+            throw new NoResourceFoundException(properties.getTotalPages());
+        }
+        return properties.getContent().stream()
+                .map(property -> modelMapper.map(property, PropertyDetails.class))
                 .collect(Collectors.toList());
     }
 
 
-    public PropertyDetails getPropertyDetails(Long id) {
+
+
+    public PropertyDetails<Serializable> getPropertyDetails(Long id) {
         Property property = findPropertyById(id);
-        PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
+        PropertyDetails<Serializable> propertyDetails = modelMapper.map(property, PropertyDetails.class);
         AddressInfoForProperty addressInfoForProperty = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
         propertyDetails.setAddressInfoForProperty(addressInfoForProperty);
         return propertyDetails;
-}
+    }
 
     public Property findPropertyById(Long propertyId) {
         Optional<Property> propertyOptional = propertyRepository.findById(propertyId);

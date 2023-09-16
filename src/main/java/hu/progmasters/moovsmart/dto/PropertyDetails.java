@@ -7,11 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class PropertyDetails {
+public class PropertyDetails<T extends Serializable> implements Serializable {
     private String name;
     private PropertyType type;
     private PropertyPurpose purpose;
