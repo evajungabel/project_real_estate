@@ -3,9 +3,7 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
-import hu.progmasters.moovsmart.dto.PropertyDetails;
-import hu.progmasters.moovsmart.dto.PropertyForm;
-import hu.progmasters.moovsmart.dto.PropertyInfo;
+import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.modelmapper.ModelMapper;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,21 +25,34 @@ import java.util.stream.Collectors;
 public class PropertyService {
 
     private PropertyRepository propertyRepository;
-
     private CustomUserService customUserService;
     private ModelMapper modelMapper;
 
     @Autowired
-    public PropertyService(PropertyRepository propertyRepository, CustomUserService customUserService, ModelMapper modelMapper) {
+    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService) {
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
         this.customUserService = customUserService;
     }
 
-    public List<PropertyInfo> getProperties() {
+
+    public List<PropertyDetails> getProperties() {
+        List<Property> properties = propertyRepository.findAll();
+        List<PropertyDetails> propertyDetailsList = new ArrayList<>();
+        for (Property property : properties) {
+            PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
+            AddressInfoForProperty addressInfoForProperties = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
+            propertyDetails.setAddressInfoForProperty(addressInfoForProperties);
+            propertyDetailsList.add(propertyDetails);
+        }
+        return propertyDetailsList;
+    }
+
+    public List<PropertyDetails> getProperties24() {
         List<Property> properties = propertyRepository.findAll();
         return properties.stream()
-                .map(property -> modelMapper.map(property, PropertyInfo.class))
+                .filter(property -> property.getDateOfCreation().isAfter(LocalDateTime.now().minusMinutes(1)))
+                .map(property -> modelMapper.map(property, PropertyDetails.class))
                 .collect(Collectors.toList());
     }
 
@@ -55,8 +67,11 @@ public class PropertyService {
 
     public PropertyDetails getPropertyDetails(Long id) {
         Property property = findPropertyById(id);
-        return modelMapper.map(property, PropertyDetails.class);
-    }
+        PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
+        AddressInfoForProperty addressInfoForProperty = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
+        propertyDetails.setAddressInfoForProperty(addressInfoForProperty);
+        return propertyDetails;
+}
 
     public Property findPropertyById(Long propertyId) {
         Optional<Property> propertyOptional = propertyRepository.findById(propertyId);

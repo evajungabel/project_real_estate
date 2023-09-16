@@ -4,7 +4,9 @@ import hu.progmasters.moovsmart.config.CustomUserRole;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -35,6 +37,9 @@ public class CustomUser implements UserDetails {
     @Column(name = "e_mail")
     private String email;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @Column(name = "enable")
     private boolean enable;
 
@@ -53,6 +58,9 @@ public class CustomUser implements UserDetails {
     @Column(name = "is_agent")
     private boolean isAgent;
 
+    @Column(name = "has_newsletter")
+    private boolean hasNewsletter;
+
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
@@ -68,6 +76,9 @@ public class CustomUser implements UserDetails {
     @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private EstateAgent estateAgent;
 
+
+    @OneToOne(mappedBy = "customUser")
+    private CustomUserEmail customUserEmail;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -98,4 +109,6 @@ public class CustomUser implements UserDetails {
     public boolean isEnabled() {
         return enable;
     }
+
+
 }

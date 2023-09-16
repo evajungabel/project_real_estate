@@ -41,9 +41,9 @@ public class PropertyController {
     @GetMapping
     @Operation(summary = "Get all properties")
     @ApiResponse(responseCode = "200", description = "List of properties")
-    public ResponseEntity<List<PropertyInfo>> getAllProperties() {
+    public ResponseEntity<List<PropertyDetails>> getAllProperties() {
         log.info("Http request, GET /api/list of all properties");
-        List<PropertyInfo> propertyList = propertyService.getProperties();
+        List<PropertyDetails> propertyList = propertyService.getProperties();
         log.info("GET data from repository/api/list of all properties");
         return new ResponseEntity<>(propertyList, HttpStatus.OK);
     }

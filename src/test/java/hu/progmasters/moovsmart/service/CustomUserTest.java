@@ -1,17 +1,13 @@
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
-import hu.progmasters.moovsmart.domain.ConfirmationToken;
-import hu.progmasters.moovsmart.domain.CustomUser;
-import hu.progmasters.moovsmart.domain.Property;
-import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
 import hu.progmasters.moovsmart.exception.UsernameExistsException;
 import hu.progmasters.moovsmart.exception.UsernameNotFoundExceptionImp;
-import hu.progmasters.moovsmart.repository.ConfirmationTokenRepository;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,11 +49,17 @@ public class CustomUserTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+
     @Mock
     private EstateAgentService estateAgentService;
 
     @Mock
-    private ConfirmationTokenRepository confirmationTokenRepository;
+    private CustomUserEmailService customUserEmailService;
+
+    @Mock
+    private SendingEmailService sendingEmailService;
+
+
     @InjectMocks
     private CustomUserService customUserService;
     private CustomUser customUser1;
@@ -76,8 +79,14 @@ public class CustomUserTest {
 
     private User customUserLoggedIn1;
 
+    private CustomUserEmail customUserEmail1;
+    private CustomUserEmail customUserEmail2;
+
     private List<String> listOfUsernames = new ArrayList<>();
     private List<String> listOfEmails = new ArrayList<>();
+
+    private Timer activationTimer;
+
     @BeforeEach
     void init() {
         confirmationToken1 = new ConfirmationToken().builder()
@@ -100,12 +109,14 @@ public class CustomUserTest {
                 .name("Kis Pistike")
                 .email("pistike@gmail.com")
                 .password("Pistike1*")
+                .phoneNumber("+36303333333")
                 .roles(List.of(CustomUserRole.ROLE_USER))
                 .enable(true)
                 .activation("123456")
                 .confirmationToken(confirmationToken1)
                 .propertyList(List.of(property1))
                 .isAgent(false)
+                .hasNewsletter(false)
                 .build();
 
         customUserDeleted = new CustomUser().builder()
@@ -114,26 +125,28 @@ public class CustomUserTest {
                 .name(null)
                 .email(null)
                 .password(null)
+                .phoneNumber(null)
                 .roles(List.of())
                 .enable(false)
                 .activation(null)
                 .confirmationToken(null)
                 .propertyList(List.of())
+                .hasNewsletter(false)
                 .build();
 
         customUserInfo1 = new CustomUserInfo().builder()
                 .name("Kis Pistike")
                 .username("pistike")
                 .email("pistike@gmail.com")
-//                .password("Pistike1*")
-//                .customUserRole(CustomUserRole.ROLE_USER)
+                .customUserRoles(List.of(CustomUserRole.ROLE_USER))
+                .phoneNumber("+36303333333")
                 .build();
 
         confirmationToken2 = new ConfirmationToken().builder()
                 .tokenId(2L)
                 .confirmationToken("654321")
                 .createdDate(LocalDateTime.now())
-                .expiredDate(LocalDateTime.now().plusNanos(1))
+                .expiredDate(LocalDateTime.now().plusNanos((long) 0.001))
                 .customUser(customUser2)
                 .build();
 
@@ -143,20 +156,23 @@ public class CustomUserTest {
                 .name("Rosszcsont Móricka")
                 .email("rosszcsont.moricka@gmail.com")
                 .password("Moricka1*")
+                .phoneNumber("+36303333334")
                 .roles(List.of(CustomUserRole.ROLE_AGENT))
                 .activation("654321")
                 .confirmationToken(confirmationToken2)
-                .enable(true)
+                .enable(false)
                 .isAgent(true)
-                .activation("987654321")
+                .hasNewsletter(true)
                 .build();
 
         customUserForm1 = new CustomUserForm().builder()
                 .username("pistike")
                 .name("Kis Pistike")
                 .email("pistike@gmail.com")
+                .phoneNumber("+36303333333")
                 .password("Pistike1*")
                 .isAgent(false)
+                .hasNewsletter(false)
                 .build();
 
         customUserForm2 = new CustomUserForm().builder()
@@ -165,14 +181,27 @@ public class CustomUserTest {
                 .email("rosszcsont.moricka@gmail.com")
                 .password("Moricka1*")
                 .isAgent(true)
+                .hasNewsletter(true)
                 .build();
 
         customUserInfo2 = new CustomUserInfo().builder()
                 .username("moricka")
                 .name("Rosszcsont Móricka")
+                .phoneNumber("+36303333333")
                 .email("rosszcsont.moricka@gmail.com")
-//                .password("Moricka1*")
-//                .customUserRole(CustomUserRole.ROLE_AGENT)
+                .customUserRoles(List.of(CustomUserRole.ROLE_AGENT))
+                .build();
+
+        customUserEmail1 = new CustomUserEmail().builder()
+                .customUserEmailId(1L)
+                .customUser(customUser1)
+                .email("pistike@gmail.com")
+                .build();
+
+        customUserEmail2 = new CustomUserEmail().builder()
+                .customUserEmailId(2L)
+                .customUser(customUser2)
+                .email("rosszcsont.moricka@gmail.com")
                 .build();
 
         customUserLoggedIn1 = (User) User
@@ -184,6 +213,8 @@ public class CustomUserTest {
         listOfUsernames = List.of("bob");
 
         listOfEmails = List.of("bob@gmail.com");
+
+        activationTimer = new Timer("Timer");
     }
 
 
@@ -200,15 +231,16 @@ public class CustomUserTest {
     void test_Register_CustomUserAsUser() {
         when(confirmationTokenService.save(any())).thenReturn(confirmationToken1);
         when(passwordEncoder.encode(any())).thenReturn("Pistike1*");
-        when(customUserRepository.findByEmail(customUserForm1.getEmail())).thenReturn(null);
+        when(customUserRepository.findByEmail(customUserForm1.getEmail())).thenReturn(null).thenReturn(customUser1);
         when(customUserRepository.findByUsername(customUserForm1.getUsername())).thenReturn(null);
 
         when(customUserRepository.save(any(CustomUser.class))).thenReturn(customUser1);
         when(modelMapper.map(customUser1, CustomUserInfo.class)).thenReturn(customUserInfo1);
 
+
         assertEquals(customUserInfo1, customUserService.register(customUserForm1));
 
-        verify(customUserRepository, times(1)).findByEmail(any());
+        verify(customUserRepository, times(2)).findByEmail(any());
         verify(customUserRepository, times(1)).findByUsername(any());
         verify(customUserRepository, times(1)).save(any());
         verifyNoMoreInteractions(customUserRepository);
@@ -218,22 +250,46 @@ public class CustomUserTest {
     void test_Register_CustomUserAsAgent() {
         when(confirmationTokenService.save(any())).thenReturn(confirmationToken1);
         when(passwordEncoder.encode(any())).thenReturn("Moricka1*");
-        when(customUserRepository.findByEmail(customUserForm2.getEmail())).thenReturn(null);
+        when(customUserRepository.findByEmail(customUserForm2.getEmail())).thenReturn(null).thenReturn(customUser2);
         when(customUserRepository.findByUsername(customUserForm2.getUsername())).thenReturn(null);
+        when(estateAgentService.save(customUser2)).thenReturn(customUserInfo2);
 
         when(customUserRepository.save(any(CustomUser.class))).thenReturn(customUser2);
+        when(customUserEmailService.save(any(CustomUserEmail.class))).thenReturn(customUserEmail1);
         when(modelMapper.map(customUser2, CustomUserInfo.class)).thenReturn(customUserInfo2);
 
         assertEquals(customUserInfo2, customUserService.register(customUserForm2));
 
-        verify(customUserRepository, times(1)).findByEmail(any());
+        verify(customUserRepository, times(2)).findByEmail(any());
         verify(customUserRepository, times(1)).findByUsername(any());
         verify(customUserRepository, times(1)).save(any());
         verifyNoMoreInteractions(customUserRepository);
     }
 
     @Test
-    void test_CustomUser_update() {
+    void test_SendingActivationEmail_CustomUser() {
+        when(customUserRepository.findByEmail("pistike@gmail.com")).thenReturn(customUser1);
+
+        customUserService.sendingActivationEmail("Pistike", "pistike@gmail.com");
+
+        verify(sendingEmailService).sendEmail("pistike@gmail.com", "Felhasználói fiók aktivalása",
+                "Kedves Pistike" +
+                        "! \n \n Köszönjük, hogy regisztrált az oldalunkra! " +
+                        "\n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját," +
+                        " amire 30 perce van! \n \n http://localhost:8080/api/customusers/activation/"
+                        + "123456");
+
+        verify(sendingEmailService, times(0)).sendEmail("pisitke@gmail.com", "Felhasználói fiók aktivalása", "Kedves Pistike" +
+                "! \n \n Köszönjük, hogy regisztrált az oldalunkra! " +
+                "\n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját," +
+                " amire 30 perce van! \n \n http://localhost:8080/api/customusers/activation/"
+                + "123456");
+
+    }
+
+
+    @Test
+    void test_Update_CustomUser() {
         when(passwordEncoder.encode(any())).thenReturn("Pistike1*");
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
@@ -272,15 +328,6 @@ public class CustomUserTest {
         }
     }
 
-//    @Test
-//    void test_Create_ConfirmationToken() {
-//        when(confirmationTokenService.save(confirmationToken)).thenReturn(confirmationToken);
-//
-//        assertEquals(confirmationToken, customUserService.createConfirmationToken());
-//
-////        verify(confirmationTokenService, times(1)).save(confirmationToken);
-////        verifyNoMoreInteractions(confirmationTokenService);
-//    }
 
     @Test
     void test_CustomUserActivationIsTRue() {
@@ -374,13 +421,13 @@ public class CustomUserTest {
 
     @Test
     void test_FindCustomUserByEmail_withNoEmailAddress() {
-        when(customUserRepository.findByUsername("pistike@gmail.com")).thenReturn(null);
+        when(customUserRepository.findByEmail("pistike@gmail.com")).thenReturn(null);
 
         try {
             customUserService.findCustomUserByEmail("pistike@gmail.com");
             fail("Expected EmailAddressNotFoundException, but no exception was thrown.");
         } catch (EmailAddressNotFoundException e) {
-            assertEquals("Email address was not found with: pistike@gmail.com", e.getMessage());
+            assertEquals("CustomUser was not found with: pistike@gmail.com", e.getMessage());
         }
     }
 
@@ -454,6 +501,35 @@ public class CustomUserTest {
         verifyNoMoreInteractions(customUserRepository);
     }
 
+    @Test
+    void test_SendingEmailForUpdate_CustomUser() {
+
+        customUserService.sendingEmailForUpdate("Pistike", "pistike@gmail.com");
+
+        verify(sendingEmailService).sendEmail("pistike@gmail.com", "Felhasználói fiók adatainak megváltoztatása",
+                "Kedves Pistike" +
+                        "! \n \n Felhasználói fiókjának adatai megváltoztak! " +
+                        "Ha nem Ön tette, mielőbb lépjen kapcsolatba velünk!");
+
+        verify(sendingEmailService, times(0)).sendEmail("pisitke@gmail.com", "Felhasználói fiók adatainak megváltoztatása",
+                "Kedves Pistike" +
+                        "! \n \n Felhasználói fiókjának adatai megváltoztak! " +
+                        "Ha nem Ön tette, mielőbb lépjen kapcsolatba velünk!");
+
+    }
+
+
+    @Test
+    void test_UserUnsubscribeNewsletter_CustomUser() {
+        when(customUserRepository.findByActivation("123456")).thenReturn(customUser1);
+
+        assertEquals("Sikeresen leíratkozott a hírlevélről!", customUserService.userUnsubscribeNewsletter("123456"));
+
+        verify(customUserEmailService).delete(customUser1.getCustomUserEmail());
+
+        verify(customUserEmailService, times(1)).delete(customUser1.getCustomUserEmail());
+        verify(customUserRepository, times(1)).findByActivation("123456");
+    }
 
 
 }

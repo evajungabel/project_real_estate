@@ -8,6 +8,7 @@ import hu.progmasters.moovsmart.repository.AgentCommentRepository;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,59 +34,95 @@ public class CustomUserService implements UserDetailsService {
     private EstateAgentService estateAgentService;
     private AgentCommentRepository agentCommentRepository;
 
-    private List<String> listOfEmails = new ArrayList<>();
-    private List<String> listOfUsernames = new ArrayList<>();
+    private SendingEmailService sendingEmailService;
+
+    private PropertyService propertyService;
+
+    private CustomUserEmailService customUserEmailService;
+
+    private Timer activationTimer = new Timer("Timer");
 
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, AgentCommentRepository agentCommentRepository) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.confirmationTokenService = confirmationTokenService;
         this.estateAgentService = estateAgentService;
         this.agentCommentRepository = agentCommentRepository;
+        this.sendingEmailService = sendingEmailService;
+        this.customUserEmailService = customUserEmailService;
     }
 
-    public CustomUserInfo register(CustomUserForm command) {
-        if (customUserRepository.findByEmail(command.getEmail()) != null) {
-            throw new EmailAddressExistsException(command.getEmail());
-        } else if (customUserRepository.findByUsername(command.getUsername()) != null) {
-            throw new UsernameExistsException(command.getUsername());
+
+    @Autowired
+    public CustomUserService setPropertyService(PropertyService propertyService) {
+        this.propertyService = propertyService;
+        return this;
+    }
+
+
+    public CustomUserInfo register(CustomUserForm customUserForm) {
+        if (customUserRepository.findByEmail(customUserForm.getEmail()) != null) {
+            throw new EmailAddressExistsException(customUserForm.getEmail());
+        } else if (customUserRepository.findByUsername(customUserForm.getUsername()) != null) {
+            throw new UsernameExistsException(customUserForm.getUsername());
         } else {
             ConfirmationToken confirmationToken = createConfirmationToken();
             CustomUser customUser = new CustomUser().builder()
-                    .username(command.getUsername())
-                    .name(command.getName())
-                    .email(command.getEmail())
-                    .password(passwordEncoder.encode(command.getPassword()))
+                    .username(customUserForm.getUsername())
+                    .name(customUserForm.getName())
+                    .email(customUserForm.getEmail())
+                    .phoneNumber(customUserForm.getPhoneNumber())
+                    .password(passwordEncoder.encode(customUserForm.getPassword()))
                     .roles(List.of(CustomUserRole.ROLE_USER))
                     .enable(false)
+                    .hasNewsletter(customUserForm.getHasNewsletter())
                     .activation(confirmationToken.getConfirmationToken())
                     .confirmationToken(confirmationToken)
-                    .isAgent(command.getIsAgent())
+                    .isAgent(customUserForm.getIsAgent())
                     .build();
             confirmationToken.setCustomUser(customUser);
-            deleteIfItIsNotActivated(customUser);
-            customUserRepository.save(customUser);
             if (customUser.isAgent()) {
                 customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
                 estateAgentService.save(customUser);
             }
-            return modelMapper.map(customUser, CustomUserInfo.class);
+            CustomUserEmail customUserEmail = CustomUserEmail.builder()
+                    .email(customUserForm.getEmail())
+                    .customUser(customUser)
+                    .build();
+            if (customUser.isHasNewsletter()) {
+                customUserEmailService.save(customUserEmail);
+            }
+            CustomUser savedUser = customUserRepository.save(customUser);
+            deleteIfItIsNotActivated(savedUser);
+            CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
+            customUserInfo.setCustomUserRoles(customUser.getRoles());
+            sendingActivationEmail(customUserForm.getName(), customUserForm.getEmail());
+            return customUserInfo;
         }
+    }
+
+    public void sendingActivationEmail(String name, String email) {
+        String subject = "Felhasználói fiók aktivalása";
+        String text = "Kedves " + name +
+                "! \n \n Köszönjük, hogy regisztrált az oldalunkra! " +
+                "\n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját," +
+                " amire 30 perce van! \n \n http://localhost:8080/api/customusers/activation/"
+                + findCustomUserByEmail(email).getActivation();
+        sendingEmailService.sendEmail(email, subject, text);
     }
 
     public void deleteIfItIsNotActivated(CustomUser customUser) {
         TimerTask task = new TimerTask() {
             public void run() {
-                if (!customUser.isEnabled()) {
+                if (!(customUser.isEnabled())) {
                     customUserRepository.delete(customUser);
                 }
             }
         };
-        Timer timer = new Timer("Timer");
-        long delay = 1000000L;
-        timer.schedule(task, delay);
+        long delay = 60000L;
+        activationTimer.schedule(task, delay);
     }
 
 
@@ -102,7 +139,7 @@ public class CustomUserService implements UserDetailsService {
             CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
             if ((LocalDateTime.now()).isBefore(customUser.getConfirmationToken().getExpiredDate())) {
                 customUser.setEnable(true);
-                customUser.setActivation("");
+                activationTimer.cancel();
                 return "Activation is successful!";
             } else {
                 customUserRepository.delete(customUser);
@@ -158,6 +195,11 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
+    public CustomUserInfo getCustomUserDetails(String username) {
+        CustomUser customUser = findCustomUserByUsername(username);
+        return modelMapper.map(customUser, CustomUserInfo.class);
+    }
+
     public String userSale(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
@@ -204,21 +246,41 @@ public class CustomUserService implements UserDetailsService {
                 !(customUserForm.getEmail().equals(customUser.getEmail()))) {
             throw new EmailAddressExistsException(customUserForm.getEmail());
         } else {
+            String emailOld = customUser.getEmail();
+            String nameOld = customUser.getName();
             modelMapper.map(customUserForm, customUser);
             customUser.setPassword(passwordEncoder.encode(customUserForm.getPassword()));
-            return modelMapper.map(customUser, CustomUserInfo.class);
+            CustomUserInfo customUserInfo = modelMapper.map(customUser, CustomUserInfo.class);
+            customUserInfo.setCustomUserRoles(customUser.getRoles());
+            sendingEmailForUpdate(nameOld, emailOld);
+            return customUserInfo;
         }
     }
 
+    public void sendingEmailForUpdate(String name, String email) {
+        String subject = "Felhasználói fiók adatainak megváltoztatása";
+        String text = "Kedves " + name +
+                "! \n \n Felhasználói fiókjának adatai megváltoztak! " +
+                "Ha nem Ön tette, mielőbb lépjen kapcsolatba velünk!";
+        sendingEmailService.sendEmail(email, subject, text);
+    }
+
+
+    //Email listából hírlevélhez vegyük ki?
     public String makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
         userDelete(toDelete.getUsername(), toDelete.getCustomUserId());
+        toDelete.setUsername(null);
+        toDelete.setName(null);
+        toDelete.setEmail(null);
+        toDelete.setPassword(null);
+        toDelete.setPhoneNumber(null);
+        toDelete.setRoles(null);
+        toDelete.setEnable(false);
+        toDelete.setActivation(null);
+        toDelete.setConfirmationToken(null);
         toDelete.setDeleteDate(LocalDateTime.now());
         toDelete.setDeleted(true);
-        toDelete.setEmail(null);
-        toDelete.setName(null);
-        toDelete.setPassword(null);
-        toDelete.setUsername(null);
         return "You deleted your profile!";
     }
 
@@ -244,5 +306,30 @@ public class CustomUserService implements UserDetailsService {
         EstateAgentInfo info = modelMapper.map(agent, EstateAgentInfo.class);
         info.setCommentInfo(commentInfos);
         return info;
+    }
+
+
+    @Scheduled(cron = "0 * * ? * *")
+    public void sendingNewsletter() {
+        for (CustomUserEmail customUserEmail : customUserEmailService.getCustomUserEmails()) {
+            String subject = "Hírlevél az újdonságokról!";
+            String text = "Kedves " + findCustomUserByEmail(customUserEmail.getEmail()).getName() +
+                    "! \n \n Ezennel küldjük a 24 óra alatt regisztrált új ingatlanokat!"
+                    + "\n \n" + propertyService.getProperties24().toString()
+                    + "\n \n Ha le szeretne íratkozni, kérem kattintson a következő linkre: "
+                    + "http://localhost:8080/api/customusers/unsubscribenewsletter/"
+                    + customUserEmail.getCustomUser().getConfirmationToken().getConfirmationToken();
+            sendingEmailService.sendEmail(customUserEmail.getEmail(), subject, text);
+        }
+    }
+
+    public String userUnsubscribeNewsletter(String confirmationToken) {
+        try {CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
+            customUserEmailService.delete(customUser.getCustomUserEmail());
+            return "Sikeresen leíratkozott a hírlevélről!";
+        } catch (TokenCannotBeUsedException e) {
+            throw new TokenCannotBeUsedException(confirmationToken);
+        }
+
     }
 }

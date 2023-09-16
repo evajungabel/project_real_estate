@@ -38,9 +38,11 @@ public class Property {
     private String name;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "type")
     private PropertyType type;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "purpose")
     private PropertyPurpose purpose;
 
     @Column(name = "area")
@@ -59,6 +61,7 @@ public class Property {
     private String imageUrl;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "status")
     private PropertyStatus status;
 
     @OneToOne(mappedBy = "property")

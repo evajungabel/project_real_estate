@@ -1,6 +1,7 @@
 package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.domain.Property;
+import hu.progmasters.moovsmart.domain.PropertyPurpose;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
 import hu.progmasters.moovsmart.domain.PropertyType;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ public class PropertyControllerTestIT {
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Eladó Balatoni Ház")))
-                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.purpose", is("TO_RENT")))
                 .andExpect(jsonPath("$.description", is("Eladó családi ház a Balton partján")))
                 .andExpect(jsonPath("$.imageUrl", is("www.kep-url/122324gfg/kep.hu")))
                 .andExpect(jsonPath("$.numberOfRooms", is(4)))
@@ -92,6 +93,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -114,6 +116,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"    \",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -135,6 +138,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -152,9 +156,10 @@ public class PropertyControllerTestIT {
     }
 
     @Test
-    void IT_test_saveProperty_typeNotValid() throws Exception {
+    void IT_test_saveProperty_purposeNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
+                "    \"type\": \"HOUSE\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -167,16 +172,32 @@ public class PropertyControllerTestIT {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.fieldErrors[0].field", is("type")))
-                .andExpect(jsonPath("$.fieldErrors[0].message", is("Property type cannot be empty!")));
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("purpose")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Property purpose cannot be empty!")));
     }
 
 
     @Test
+    void IT_test_saveProperty_typeNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Eladó Ház\",\n" +
+                "    \"area\": 120,\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
+                "    \"numberOfRooms\": 6,\n" +
+                "    \"price\": 75000000,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
+                "    \"customUsername\": \"aprandia\"\n" +
+                "}";
+    }
+
+        @Test
     void IT_test_saveProperty_areaMinNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 0,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -199,6 +220,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 20000,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -220,6 +242,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 0,\n" +
                 "    \"price\": 75000000,\n" +
@@ -241,6 +264,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 41,\n" +
                 "    \"price\": 75000000,\n" +
@@ -262,6 +286,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"description\": \"Kényelmes családi ház\",\n" +
@@ -282,6 +307,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -304,6 +330,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"FLAT\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -328,6 +355,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"    \",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -349,6 +377,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -369,6 +398,7 @@ public class PropertyControllerTestIT {
     void IT_test_updateProperty_typeNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -385,12 +415,33 @@ public class PropertyControllerTestIT {
                 .andExpect(jsonPath("$.fieldErrors[0].message", is("Property type cannot be empty!")));
     }
 
+    @Test
+    void IT_test_updateProperty_purposeNotValid() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Eladó Ház\",\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"area\": 120,\n" +
+                "    \"numberOfRooms\": 6,\n" +
+                "    \"price\": 75000000,\n" +
+                "    \"description\": \"Kényelmes családi ház\",\n" +
+                "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\",\n" +
+                "    \"customUsername\": \"aprandia\"\n" +
+                "}";
+
+        mockMvc.perform(put("/api/properties/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("purpose")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Property purpose cannot be empty!")));
+    }
 
     @Test
     void IT_test_updateProperty_areaMinNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 0,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -413,6 +464,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 20000,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
@@ -434,6 +486,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 0,\n" +
                 "    \"price\": 75000000,\n" +
@@ -455,6 +508,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 41,\n" +
                 "    \"price\": 75000000,\n" +
@@ -476,6 +530,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"description\": \"Kényelmes családi ház\",\n" +
@@ -496,6 +551,7 @@ public class PropertyControllerTestIT {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
                 "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
                 "    \"area\": 120,\n" +
                 "    \"numberOfRooms\": 6,\n" +
                 "    \"price\": 75000000,\n" +
