@@ -19,9 +19,9 @@ public class PropertyData {
     @Column(name = "property_data_id")
     private Long id;
 
-//    @Enumerated(value = EnumType.STRING)
-//    @Column(name = "condition")
-//    private PropertyCondition condition;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "property_condition")
+    private PropertyCondition condition;
 
     @Column(name = "year_built")
     private Integer yearBuilt;

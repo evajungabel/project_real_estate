@@ -4,6 +4,9 @@ import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyImageURL;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.SimplePage;
+import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.exception.NoResourceFoundException;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
@@ -12,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,20 +44,40 @@ public class PropertyService {
     }
 
 
+
+
     public List<PropertyInfo> getProperties() {
         List<Property> properties = propertyRepository.findAll();
-        return properties.stream()
-                .map(property -> modelMapper.map(property, PropertyInfo.class))
-                .collect(Collectors.toList());
+        List<PropertyDetails> propertyDetailsList = new ArrayList<>();
+        for (Property property : properties) {
+            PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
+            AddressInfoForProperty addressInfoForProperties = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
+            propertyDetails.setAddressInfoForProperty(addressInfoForProperties);
+            propertyDetailsList.add(propertyDetails);
+        }
+        return propertyDetailsList;
     }
 
-    public List<PropertyInfo> getProperties24() {
+    public List<PropertyDetails> getProperties24() {
         List<Property> properties = propertyRepository.findAll();
         return properties.stream()
                 .filter(property -> property.getDateOfCreation().isAfter(LocalDateTime.now().minusMinutes(1)))
-                .map(property -> modelMapper.map(property, PropertyInfo.class))
+                .map(property -> modelMapper.map(property, PropertyDetails.class))
                 .collect(Collectors.toList());
     }
+
+
+    public List<PropertyDetails> getPropertyListPaginated(int page, int size, String sortDir, String sort) {
+
+        PageRequest pageReq
+                = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
+
+        Page<Property> properties = propertyRepository.findAll(pageReq);
+        if (page > properties.getTotalPages()) {
+            throw new NoResourceFoundException(properties.getTotalPages());
+        }
+        return properties.getContent().stream()
+                .map(property -> modelMapper.map(property, PropertyDetails.class))
 
     public List<PropertyInfo> findPaginated(int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);

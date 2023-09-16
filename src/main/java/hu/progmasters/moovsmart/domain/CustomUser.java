@@ -2,6 +2,7 @@ package hu.progmasters.moovsmart.domain;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -62,6 +63,7 @@ public class CustomUser implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @JoinTable(name = "custom_user_role")
     private List<CustomUserRole> roles;
 
@@ -75,7 +77,7 @@ public class CustomUser implements UserDetails {
     private EstateAgent estateAgent;
 
 
-    @OneToOne(mappedBy = "customUser")
+    @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private CustomUserEmail customUserEmail;
 
 

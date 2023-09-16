@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.modelmapper.ModelMapper;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
@@ -55,8 +56,8 @@ public class PropertyServiceTest {
 
     private PropertyInfo propertyInfo1Update;
 
-    private PropertyDetails propertyDetails1;
-    private PropertyDetails propertyDetails2;
+    private PropertyDetails<Serializable> propertyDetails1;
+    private PropertyDetails<Serializable> propertyDetails2;
     private CustomUser customUser1;
     private EstateAgent estateAgent1;
 
@@ -161,7 +162,7 @@ public class PropertyServiceTest {
                 .imageUrl("image/jpeg;base64,/2555879j/4AAQSk")
                 .build();
 
-        propertyDetails1 = new PropertyDetails().builder()
+        propertyDetails1 = new PropertyDetails<Serializable>().builder()
                 .name("Kuckó")
                 .price(400000000)
                 .numberOfRooms(5)
@@ -169,7 +170,7 @@ public class PropertyServiceTest {
                 .imageUrl("image/jpeg;base64,/2579j/4AAQSk")
                 .build();
 
-        propertyDetails2 = new PropertyDetails().builder()
+        propertyDetails2 = new PropertyDetails<Serializable>().builder()
                 .name("Kulipintyó")
                 .price(35000000)
                 .numberOfRooms(4)
@@ -203,12 +204,12 @@ public class PropertyServiceTest {
 
     @Test
     void testList_allPropertiesWithOneProperty() {
-        when(modelMapper.map(property1, PropertyInfo.class)).thenReturn(propertyInfo1);
+        when(modelMapper.map(property1, PropertyDetails.class)).thenReturn(propertyDetails1);
         when(propertyRepository.findAll()).thenReturn(List.of(property1));
 
         assertThat(propertyService.getProperties())
                 .hasSize(1)
-                .containsExactly(propertyInfo1);
+                .containsExactly(propertyDetails1);
 
         verify(propertyRepository, times(1)).findAll();
         verifyNoMoreInteractions(propertyRepository);
@@ -217,9 +218,9 @@ public class PropertyServiceTest {
     @Test
     void testList_allPropertiesWithTwoProperty() {
         when(propertyRepository.findAll()).thenReturn(List.of(property1, property2));
-        when(modelMapper.map(property1, PropertyInfo.class)).thenReturn(propertyInfo1);
-        when(modelMapper.map(property2, PropertyInfo.class)).thenReturn(propertyInfo2);
-        assertEquals(List.of(propertyInfo1, propertyInfo2), propertyService.getProperties());
+        when(modelMapper.map(property1, PropertyDetails.class)).thenReturn(propertyDetails1);
+        when(modelMapper.map(property2, PropertyDetails.class)).thenReturn(propertyDetails2);
+        assertEquals(List.of(propertyDetails1, propertyDetails2), propertyService.getProperties());
 
         verify(propertyRepository, times(1)).findAll();
         verifyNoMoreInteractions(propertyRepository);

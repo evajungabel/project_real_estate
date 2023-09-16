@@ -2,10 +2,9 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.*;
-import hu.progmasters.moovsmart.dto.CustomUserForm;
-import hu.progmasters.moovsmart.dto.CustomUserInfo;
-import hu.progmasters.moovsmart.dto.UserComment;
+import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.*;
+import hu.progmasters.moovsmart.repository.AgentCommentRepository;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -33,6 +35,7 @@ public class CustomUserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private ConfirmationTokenService confirmationTokenService;
     private EstateAgentService estateAgentService;
+    private AgentCommentRepository agentCommentRepository;
 
     private SendingEmailService sendingEmailService;
 
@@ -40,15 +43,14 @@ public class CustomUserService implements UserDetailsService {
 
     private CustomUserEmailService customUserEmailService;
 
-    private Timer activationTimer = new Timer("Timer");
-
     @Autowired
-    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService) {
+    public CustomUserService(CustomUserRepository customUserRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ConfirmationTokenService confirmationTokenService, EstateAgentService estateAgentService, SendingEmailService sendingEmailService, CustomUserEmailService customUserEmailService, AgentCommentRepository agentCommentRepository) {
         this.customUserRepository = customUserRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.confirmationTokenService = confirmationTokenService;
         this.estateAgentService = estateAgentService;
+        this.agentCommentRepository = agentCommentRepository;
         this.sendingEmailService = sendingEmailService;
         this.customUserEmailService = customUserEmailService;
     }
@@ -82,6 +84,7 @@ public class CustomUserService implements UserDetailsService {
                     .isAgent(customUserForm.getIsAgent())
                     .build();
             confirmationToken.setCustomUser(customUser);
+            CustomUser savedUser = customUserRepository.save(customUser);
             if (customUser.isAgent()) {
                 customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
                 estateAgentService.save(customUser);
@@ -93,11 +96,10 @@ public class CustomUserService implements UserDetailsService {
             if (customUser.isHasNewsletter()) {
                 customUserEmailService.save(customUserEmail);
             }
-            CustomUser savedUser = customUserRepository.save(customUser);
-            deleteIfItIsNotActivated(savedUser);
             CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
             customUserInfo.setCustomUserRoles(customUser.getRoles());
             sendingActivationEmail(customUserForm.getName(), customUserForm.getEmail());
+            deleteIfItIsNotActivated(customUser.getUsername());
             return customUserInfo;
         }
     }
@@ -112,24 +114,28 @@ public class CustomUserService implements UserDetailsService {
         sendingEmailService.sendEmail(email, subject, text);
     }
 
-    public void deleteIfItIsNotActivated(CustomUser customUser) {
-        TimerTask task = new TimerTask() {
-            public void run() {
-                if (!(customUser.isEnabled())) {
-                    customUserRepository.delete(customUser);
-                }
+
+    public void deleteIfItIsNotActivated(String username) {
+
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+        Runnable task = () -> {
+            CustomUser customUser = findCustomUserByUsername(username);
+            if (!(customUser.isEnabled())) {
+                customUserRepository.delete(customUser);
             }
         };
-        long delay = 60000L;
-        activationTimer.schedule(task, delay);
-    }
+
+        scheduledExecutorService.schedule(task, 30, TimeUnit.SECONDS);
+
+}
 
 
     public ConfirmationToken createConfirmationToken() {
         ConfirmationToken confirmationToken = new ConfirmationToken();
         confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
         confirmationToken.setCreatedDate(LocalDateTime.now());
-        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(2));
+        confirmationToken.setExpiredDate(LocalDateTime.now().plusMinutes(1));
         return confirmationTokenService.save(confirmationToken);
     }
 
@@ -138,7 +144,6 @@ public class CustomUserService implements UserDetailsService {
             CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
             if ((LocalDateTime.now()).isBefore(customUser.getConfirmationToken().getExpiredDate())) {
                 customUser.setEnable(true);
-                activationTimer.cancel();
                 return "Activation is successful!";
             } else {
                 customUserRepository.delete(customUser);
@@ -283,12 +288,28 @@ public class CustomUserService implements UserDetailsService {
         return "You deleted your profile!";
     }
 
-    public void comment(UserComment comment) {
-        CustomUser commenter = findCustomUserByUsername(comment.getUserName());
+    public AgentCommentInfo comment(CommentForm comment) {
         CustomUser agent = findCustomUserByUsername(comment.getAgentName());
-        Map<Long, String> ratings = agent.getEstateAgent().getRatings();
-        ratings.put(commenter.getCustomUserId(), comment.getComment());
-        agent.getEstateAgent().setRatings(ratings);
+        CustomUser user = findCustomUserByUsername(comment.getUserName());
+        AgentComment agentComment = new AgentComment();
+        agentComment.setComment(comment.getComment());
+        agentComment.setCustomUsername(user.getUsername());
+        agentComment.setEstateAgent(agent.getEstateAgent());
+        agentCommentRepository.save(agentComment);
+        return modelMapper.map(agentComment, AgentCommentInfo.class);
+    }
+
+    public EstateAgentInfo getAgentInfo(String userName) {
+        CustomUser customUser = findCustomUserByUsername(userName);
+        EstateAgent agent = customUser.getEstateAgent();
+        List<AgentComment> comments = agent.getComments();
+        List<AgentCommentInfo> commentInfos = new ArrayList<>();
+        for (AgentComment comment : comments) {
+            commentInfos.add(modelMapper.map(comment, AgentCommentInfo.class));
+        }
+        EstateAgentInfo info = modelMapper.map(agent, EstateAgentInfo.class);
+        info.setCommentInfo(commentInfos);
+        return info;
     }
 
 
@@ -307,7 +328,8 @@ public class CustomUserService implements UserDetailsService {
     }
 
     public String userUnsubscribeNewsletter(String confirmationToken) {
-        try {CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
+        try {
+            CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
             customUserEmailService.delete(customUser.getCustomUserEmail());
             return "Sikeresen leíratkozott a hírlevélről!";
         } catch (TokenCannotBeUsedException e) {

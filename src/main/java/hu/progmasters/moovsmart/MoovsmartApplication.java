@@ -9,6 +9,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Timer;
+
 @SpringBootApplication
 public class MoovsmartApplication {
 	public static void main(String[] args) {
@@ -23,13 +25,15 @@ public class MoovsmartApplication {
 		return modelMapper;
 	}
 
+
+
 	@Bean
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
 				.info(new Info()
-						.title("Estate trade API")
+						.title("Estate trade APP")
 						.version("1.0.1")
-						.description("This is a Estate trade application."));
+						.description("This is the backand of an Estate trade application."));
 	}
 
 

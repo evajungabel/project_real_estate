@@ -119,6 +119,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiError> handleNoResourcesFoundException(NoResourceFoundException ex) {
+        log.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "No resource not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(EmailAddressExistsException.class)
     public ResponseEntity<ApiError> handleEmailAddressExistsException(EmailAddressExistsException ex) {
         log.error("Email address exists error: ", ex);

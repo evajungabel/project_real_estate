@@ -1,6 +1,7 @@
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.Address;
+import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.dto.AddressForm;
 import hu.progmasters.moovsmart.dto.weather.Coordinate;
 import hu.progmasters.moovsmart.dto.AddressInfo;
@@ -25,15 +26,20 @@ public class AddressService {
     private ModelMapper modelMapper;
     private WeatherService weatherService;
 
+    private PropertyService propertyService;
+
     @Autowired
-    public AddressService(AddressRepository addressRepository, ModelMapper modelMapper, WeatherService weatherService) {
+    public AddressService(AddressRepository addressRepository, ModelMapper modelMapper, WeatherService weatherService, PropertyService propertyService) {
         this.addressRepository = addressRepository;
         this.modelMapper = modelMapper;
         this.weatherService = weatherService;
+        this.propertyService = propertyService;
     }
 
     public void saveAddress(AddressForm form) {
         Address toSave = modelMapper.map(form, Address.class);
+        Property property = propertyService.findPropertyById(form.getPropertyId());
+        toSave.setProperty(property);
         addressRepository.save(toSave);
     }
 

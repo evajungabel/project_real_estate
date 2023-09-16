@@ -9,11 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.Serializable;
 import java.util.List;
 
 @RestController
@@ -36,33 +36,37 @@ public class PropertyController {
         binder.addValidators(propertyFormValidator);
     }
 
-    @GetMapping
+    @GetMapping("/allproperties")
     @Operation(summary = "Get all properties")
     @ApiResponse(responseCode = "200", description = "List of properties")
-    public ResponseEntity<List<PropertyInfo>> getAllProperties() {
+    public ResponseEntity<List<PropertyDetails<Serializable>>> getAllProperties() {
         log.info("Http request, GET /api/list of all properties");
-        List<PropertyInfo> propertyList = propertyService.getProperties();
+        List<PropertyDetails<Serializable>> propertyList = propertyService.getProperties();
         log.info("GET data from repository/api/list of all properties");
         return new ResponseEntity<>(propertyList, HttpStatus.OK);
     }
 
-    @GetMapping("/{pageNo}/{pageSize}")
-    @Operation(summary = "Get properties on one page {pageSize} number")
-    @ApiResponse(responseCode = "200", description = "Property saved")
-    public List<PropertyInfo> getPaginatedProperties(@PathVariable int pageNo,
-                                                     @PathVariable int pageSize) {
-        log.info("Http request, GET /api/list of properties with " + pageSize + " number on " + pageNo + " pages");
-        List<PropertyInfo> propertyInfos = propertyService.findPaginated(pageNo, pageSize);
-        log.info("GET data from repository/api/list of properties with " + pageSize + " number on " + pageNo + " pages");
-        return propertyInfos;
+
+
+
+    @GetMapping(params = {"page", "size", "sortDir", "sort"})
+    public List<PropertyDetails> findPaginated(
+             @RequestParam("sortDir") String sortDir,
+             @RequestParam("sort") String sort,
+             @RequestParam("page") int page,
+             @RequestParam("size") int size) {
+        List<PropertyDetails> propertyDetailsList = propertyService.getPropertyListPaginated(page, size, sortDir, sort);
+
+        return propertyDetailsList;
     }
+
 
     @GetMapping("/{propertyId}")
     @Operation(summary = "Get property with {propertyId}")
     @ApiResponse(responseCode = "200", description = "Property details")
-    public ResponseEntity<PropertyDetails> getPropertyDetails(@PathVariable("propertyId") Long id) {
+    public ResponseEntity<PropertyDetails<Serializable>> getPropertyDetails(@PathVariable("propertyId") Long id) {
         log.info("Http request, GET /api/property/{propertyId} with variable: " + id);
-        PropertyDetails propertyDetails = propertyService.getPropertyDetails(id);
+        PropertyDetails<Serializable> propertyDetails = propertyService.getPropertyDetails(id);
         log.info("GET data from repository/property/{propertyId} with variable: " + id);
         return new ResponseEntity<>(propertyDetails, HttpStatus.OK);
     }
