@@ -14,5 +14,5 @@ import java.util.List;
 @Builder
 public class PropertyImageURLInfo {
 
-    private PropertyImageURL propertyImageURL;
+    private String propertyImageURL;
 }

@@ -14,5 +14,5 @@ import java.util.List;
 @Data
 public class PropertyImageURLForm {
 
-    private PropertyImageURL propertyImageURL;
+    private String propertyImageURL;
 }
