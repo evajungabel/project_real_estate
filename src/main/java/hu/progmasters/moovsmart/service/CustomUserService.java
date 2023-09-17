@@ -126,7 +126,7 @@ public class CustomUserService implements UserDetailsService {
             }
         };
 
-        scheduledExecutorService.schedule(task, 30, TimeUnit.SECONDS);
+        scheduledExecutorService.schedule(task, 60, TimeUnit.SECONDS);
 
 }
 
