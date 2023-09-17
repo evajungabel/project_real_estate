@@ -19,7 +19,9 @@ public class CustomUserInfo {
     private String username;
     private String email;
     private String phoneNumber;
+    private Boolean enable;
 
+    private Boolean hasNewsletter;
     private List<CustomUserRole> customUserRoles;
 
 }

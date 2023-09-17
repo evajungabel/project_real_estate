@@ -109,7 +109,7 @@ public class CustomUserService implements UserDetailsService {
         String text = "Kedves " + name +
                 "! \n \n Köszönjük, hogy regisztrált az oldalunkra! " +
                 "\n \n Kérem, kattintson a linkre, hogy visszaigazolja a regisztrációját," +
-                " amire 30 perce van! \n \n http://localhost:8080/api/customusers/activation/"
+                " amire 1 perce van! \n \n http://localhost:8080/api/customusers/activation/"
                 + findCustomUserByEmail(email).getActivation();
         sendingEmailService.sendEmail(email, subject, text);
     }
@@ -126,7 +126,7 @@ public class CustomUserService implements UserDetailsService {
             }
         };
 
-        scheduledExecutorService.schedule(task, 30, TimeUnit.SECONDS);
+        scheduledExecutorService.schedule(task, 60, TimeUnit.SECONDS);
 
 }
 
@@ -313,12 +313,12 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-    @Scheduled(cron = "0 * * ? * *")
+    @Scheduled(cron = "* * * ? * *")
     public void sendingNewsletter() {
         for (CustomUserEmail customUserEmail : customUserEmailService.getCustomUserEmails()) {
             String subject = "Hírlevél az újdonságokról!";
             String text = "Kedves " + findCustomUserByEmail(customUserEmail.getEmail()).getName() +
-                    "! \n \n Ezennel küldjük a 24 óra alatt regisztrált új ingatlanokat!"
+                    "! \n \n Ezennel küldjük az 1 másodperc alatt regisztrált új ingatlanokat!"
                     + "\n \n" + propertyService.getProperties24().toString()
                     + "\n \n Ha le szeretne íratkozni, kérem kattintson a következő linkre: "
                     + "http://localhost:8080/api/customusers/unsubscribenewsletter/"

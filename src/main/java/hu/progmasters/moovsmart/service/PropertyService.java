@@ -59,7 +59,7 @@ public class PropertyService {
     public List<PropertyDetails> getProperties24() {
         List<Property> properties = propertyRepository.findAll();
         return properties.stream()
-                .filter(property -> property.getDateOfCreation().isAfter(LocalDateTime.now().minusMinutes(1)))
+                .filter(property -> property.getDateOfCreation().isAfter(LocalDateTime.now().minusSeconds(10)))
                 .map(property -> modelMapper.map(property, PropertyDetails.class))
                 .collect(Collectors.toList());
     }
