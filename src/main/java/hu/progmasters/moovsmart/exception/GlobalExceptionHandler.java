@@ -119,6 +119,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CustomUserEmailNotFoundException.class)
+    public ResponseEntity<ApiError> handleCustomUserEmailNotFoundException(CustomUserEmailNotFoundException ex) {
+        log.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "CustomUserEmail not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiError> handleNoResourcesFoundException(NoResourceFoundException ex) {
         log.error("Not found error: ", ex);
@@ -151,6 +160,15 @@ public class GlobalExceptionHandler {
         log.error("Username exists error: ", ex);
 
         ApiError body = new ApiError("USERNAME_EXISTS_ERROR", "Username exists error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RoleAdminExistsException.class)
+    public ResponseEntity<ApiError> handleRoleAdminExistsException(RoleAdminExistsException ex) {
+        log.error("ROLE_ADMIN exists error: ", ex);
+
+        ApiError body = new ApiError("ROLE_ADMIN_EXISTS_ERROR", "ROLE_ADMIN exists error.", ex.getLocalizedMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }

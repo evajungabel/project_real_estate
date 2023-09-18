@@ -4,17 +4,14 @@ import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyImageURL;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
-import hu.progmasters.moovsmart.domain.SimplePage;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.NoResourceFoundException;
-import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

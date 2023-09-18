@@ -178,6 +178,15 @@ INSERT INTO moovsmartTest.property (property_id, area, date_of_activation, date_
 VALUES (15, 120, null, '2023-08-20', null, null, 'Egyedi tervezésű ház csendes környéken',
         'image/jpeg;base64,/9j/4AAQSk...', 'Eladó ház', 6, 580000000, 'FOR_SALE', 'VIP', 'HOUSE', 13);
 
+INSERT INTO moovsmartTest.property_image_url (property_image_url_id, property_image_url, property_id)
+VALUES (1, 'image/jpeg;base64,/9j/4AAQSk...', 1);
+INSERT INTO moovsmartTest.property_image_url (property_image_url_id, property_image_url, property_id)
+VALUES (2, 'image/jpeg;base64,/9j/1AAQSk...', 1);
+INSERT INTO moovsmartTest.property_image_url (property_image_url_id, property_image_url, property_id)
+VALUES (3, 'image/jpeg;base64,/9j/2AAQSk...', 2);
+INSERT INTO moovsmartTest.property_image_url (property_image_url_id, property_image_url, property_id)
+VALUES (4, 'image/jpeg;base64,/9j/4AAQSk...', 3);
+
 INSERT INTO moovsmartTest.address (address_id, city, country, deleted, door_number, house_number, street, zipcode,
                                    property_id)
 VALUES (1, 'Monor', 'Magyarország', false, null, '14', 'Mikes Kelemen utca', 2200, 2);
