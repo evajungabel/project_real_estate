@@ -164,6 +164,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RoleAdminExistsException.class)
+    public ResponseEntity<ApiError> handleRoleAdminExistsException(RoleAdminExistsException ex) {
+        log.error("ROLE_ADMIN exists error: ", ex);
+
+        ApiError body = new ApiError("ROLE_ADMIN_EXISTS_ERROR", "ROLE_ADMIN exists error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(TokenCannotBeUsedException.class)
     public ResponseEntity<ApiError> handleTokenCannotBeUsedException(TokenCannotBeUsedException ex) {
         log.error("The link is invalid or broken error: ", ex);

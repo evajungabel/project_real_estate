@@ -19,7 +19,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -70,38 +73,56 @@ public class CustomUserService implements UserDetailsService {
             throw new UsernameExistsException(customUserForm.getUsername());
         } else {
             ConfirmationToken confirmationToken = createConfirmationToken();
-            CustomUser customUser = new CustomUser().builder()
-                    .username(customUserForm.getUsername())
-                    .name(customUserForm.getName())
-                    .email(customUserForm.getEmail())
-                    .phoneNumber(customUserForm.getPhoneNumber())
-                    .password(passwordEncoder.encode(customUserForm.getPassword()))
-                    .roles(List.of(CustomUserRole.ROLE_USER))
-                    .enable(false)
-                    .hasNewsletter(customUserForm.getHasNewsletter())
-                    .activation(confirmationToken.getConfirmationToken())
-                    .confirmationToken(confirmationToken)
-                    .isAgent(customUserForm.getIsAgent())
-                    .build();
+            CustomUser customUser = buildCustomUserForRegistration(customUserForm, confirmationToken);
             confirmationToken.setCustomUser(customUser);
             CustomUser savedUser = customUserRepository.save(customUser);
-            if (customUser.isAgent()) {
-                customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
-                estateAgentService.save(customUser);
-            }
-            CustomUserEmail customUserEmail = CustomUserEmail.builder()
-                    .email(customUserForm.getEmail())
-                    .customUser(customUser)
-                    .build();
-            if (customUser.isHasNewsletter()) {
-                customUserEmailService.save(customUserEmail);
-            }
+            isAgent(customUser);
+            addToEmailList(customUserForm, customUser);
             CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
             customUserInfo.setCustomUserRoles(customUser.getRoles());
             sendingActivationEmail(customUserForm.getName(), customUserForm.getEmail());
             deleteIfItIsNotActivated(customUser.getUsername());
             return customUserInfo;
         }
+    }
+
+
+    public CustomUser buildCustomUserForRegistration(CustomUserForm customUserForm, ConfirmationToken confirmationToken) {
+        return new CustomUser().builder()
+                .username(customUserForm.getUsername())
+                .name(customUserForm.getName())
+                .email(customUserForm.getEmail())
+                .phoneNumber(customUserForm.getPhoneNumber())
+                .password(passwordEncoder.encode(customUserForm.getPassword()))
+                .roles(List.of(CustomUserRole.ROLE_USER))
+                .enable(false)
+                .hasNewsletter(customUserForm.getHasNewsletter())
+                .activation(confirmationToken.getConfirmationToken())
+                .confirmationToken(confirmationToken)
+                .isAgent(customUserForm.getIsAgent())
+                .build();
+    }
+
+    public int countByIsAdminTrue() {
+        int count = 0;
+        for (CustomUserInfo customUserInfo : getCustomUsers()) {
+            for (CustomUserRole customUserRole : customUserInfo.getCustomUserRoles()) {
+                if (customUserRole.equals(CustomUserRole.ROLE_ADMIN)) {
+                    count = +1;
+                }
+            }
+        }
+        return count;
+    }
+
+
+    public boolean isAgent(CustomUser customUser) {
+        if (customUser.isAgent()) {
+            customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
+            estateAgentService.save(customUser);
+            return true;
+        }
+        return false;
     }
 
     public void sendingActivationEmail(String name, String email) {
@@ -112,6 +133,16 @@ public class CustomUserService implements UserDetailsService {
                 " amire 30 perce van! \n \n http://localhost:8080/api/customusers/activation/"
                 + findCustomUserByEmail(email).getActivation();
         sendingEmailService.sendEmail(email, subject, text);
+    }
+
+    public void addToEmailList(CustomUserForm customUserForm, CustomUser customUser) {
+        if (customUser.isHasNewsletter()) {
+            CustomUserEmail customUserEmail = CustomUserEmail.builder()
+                    .email(customUserForm.getEmail())
+                    .customUser(customUser)
+                    .build();
+            customUserEmailService.save(customUserEmail);
+        }
     }
 
 
@@ -176,7 +207,11 @@ public class CustomUserService implements UserDetailsService {
     public List<CustomUserInfo> getCustomUsers() {
         List<CustomUser> customUsers = customUserRepository.findAll();
         List<CustomUserInfo> customUserInfos = customUsers.stream()
-                .map(customUser -> modelMapper.map(customUser, CustomUserInfo.class))
+                .map(customUser -> {
+                    CustomUserInfo customUserInfo = modelMapper.map(customUser, CustomUserInfo.class);
+                    customUserInfo.setCustomUserRoles(customUser.getRoles());
+                    return customUserInfo;
+                })
                 .collect(Collectors.toList());
         return customUserInfos;
     }
@@ -200,10 +235,12 @@ public class CustomUserService implements UserDetailsService {
 
     public CustomUserInfo getCustomUserDetails(String username) {
         CustomUser customUser = findCustomUserByUsername(username);
-        return modelMapper.map(customUser, CustomUserInfo.class);
+        CustomUserInfo customUserInfo = modelMapper.map(customUser, CustomUserInfo.class);
+        customUserInfo.setCustomUserRoles(customUser.getRoles());
+        return customUserInfo;
     }
 
-    public String userSale(String username, Long pId) {
+    public String deleteSale(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
@@ -227,7 +264,7 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-    public String userDelete(String username, Long pId) {
+    public String deleteProperty(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
         for (Property property : customUser.getPropertyList()) {
             if (property.getId().equals(pId)) {
@@ -272,7 +309,7 @@ public class CustomUserService implements UserDetailsService {
     //Email listából hírlevélhez vegyük ki?
     public String makeInactive(String customUsername) {
         CustomUser toDelete = findCustomUserByUsername(customUsername);
-        userDelete(toDelete.getUsername(), toDelete.getCustomUserId());
+        deleteProperty(toDelete.getUsername(), toDelete.getCustomUserId());
         toDelete.setUsername(null);
         toDelete.setName(null);
         toDelete.setEmail(null);
@@ -335,10 +372,9 @@ public class CustomUserService implements UserDetailsService {
         } catch (TokenCannotBeUsedException e) {
             throw new TokenCannotBeUsedException(confirmationToken);
         }
-
     }
 
-    //Hírlevél, aktivációs link, ilyesmi
+
     public CustomUserInfo registerAdmin(CustomUserFormAdmin customUserFormAdmin) {
         if (customUserRepository.findByEmail(customUserFormAdmin.getEmail()) != null) {
             throw new EmailAddressExistsException(customUserFormAdmin.getEmail());
@@ -346,29 +382,11 @@ public class CustomUserService implements UserDetailsService {
             throw new UsernameExistsException(customUserFormAdmin.getUsername());
         } else {
             ConfirmationToken confirmationToken = createConfirmationToken();
-            CustomUser customUser = new CustomUser().builder()
-                    .username(customUserFormAdmin.getUsername())
-                    .name(customUserFormAdmin.getName())
-                    .email(customUserFormAdmin.getEmail())
-                    .phoneNumber(customUserFormAdmin.getPhoneNumber())
-                    .password(passwordEncoder.encode(customUserFormAdmin.getPassword()))
-                    .roles(List.of(CustomUserRole.ROLE_ADMIN))
-                    .enable(false)
-                    .hasNewsletter(customUserFormAdmin.getHasNewsletter())
-                    .activation(confirmationToken.getConfirmationToken())
-                    .confirmationToken(confirmationToken)
-                    .isAgent(customUserFormAdmin.getIsAgent())
-                    .isAdmin(true)
-                    .build();
+            CustomUser customUser = buildCustomUserForRegistration(modelMapper.map(customUserFormAdmin, CustomUserForm.class), confirmationToken);
+            customUser.setRoles(List.of(CustomUserRole.ROLE_ADMIN, CustomUserRole.ROLE_USER));
             confirmationToken.setCustomUser(customUser);
             CustomUser savedUser = customUserRepository.save(customUser);
-            CustomUserEmail customUserEmail = CustomUserEmail.builder()
-                    .email(customUserFormAdmin.getEmail())
-                    .customUser(customUser)
-                    .build();
-            if (customUser.isHasNewsletter()) {
-                customUserEmailService.save(customUserEmail);
-            }
+            addToEmailList(modelMapper.map(customUserFormAdmin, CustomUserForm.class), customUser);
             CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
             customUserInfo.setCustomUserRoles(customUser.getRoles());
             sendingActivationEmail(customUserFormAdmin.getName(), customUserFormAdmin.getEmail());
@@ -377,7 +395,16 @@ public class CustomUserService implements UserDetailsService {
         }
     }
 
-    public int countByIsAdminTrue() {
-       return customUserRepository.countByIsAdminTrue();
+    public CustomUserInfo giveRoleAdmin(String username) {
+        CustomUser customUser = findCustomUserByUsername(username);
+        if (!customUser.getRoles().contains(CustomUserRole.ROLE_ADMIN)) {
+            customUser.getRoles().add(CustomUserRole.ROLE_ADMIN);
+            CustomUserInfo customUserInfo = modelMapper.map(customUser, CustomUserInfo.class);
+            customUserInfo.setCustomUserRoles(customUser.getRoles());
+            return customUserInfo;
+        } else {
+            throw new RoleAdminExistsException(username);
+        }
+
     }
 }

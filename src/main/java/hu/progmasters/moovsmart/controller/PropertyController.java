@@ -74,7 +74,7 @@ public class PropertyController {
     @PostMapping
     @Operation(summary = "Save property")
     @ApiResponse(responseCode = "201", description = "Property saved")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     public ResponseEntity<PropertyInfo> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
         log.info("Http request, POST /api/property, body: " + propertyForm.toString());
         PropertyInfo propertyInfo = propertyService.createProperty(propertyForm);
@@ -85,7 +85,7 @@ public class PropertyController {
     @PutMapping("/{propertyId}")
     @Operation(summary = "Update property")
     @ApiResponse(responseCode = "200", description = "Property is updated")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     public ResponseEntity<PropertyInfo> update(@PathVariable("propertyId") Long id,
                                                @Valid @RequestBody PropertyForm propertyForm) {
         log.info("Http request, PUT /api/property/{propertyId} body: " + propertyForm.toString() +
@@ -108,10 +108,10 @@ public class PropertyController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/{propertyId}/imageurls")
+    @PostMapping("/imageurls/{propertyId}")
     @Operation(summary = "Save property's list of image URLs")
     @ApiResponse(responseCode = "201", description = "Property's list of image URLs is saved")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     public ResponseEntity<List<PropertyImageURLInfo>> createListOfImageURLs(@PathVariable("propertyId") Long id, @RequestBody @Valid List<PropertyImageURLForm> propertyImageURLForms) {
         log.info("Http request, POST /api/property/imageurls, body: " + propertyImageURLForms.toString());
         List<PropertyImageURLInfo> propertyImageURLInfos = propertyService.createListOfImageURLs(id, propertyImageURLForms);

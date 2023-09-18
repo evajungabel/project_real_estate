@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart.controller;
 
+import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.service.CustomUserService;
 import hu.progmasters.moovsmart.service.SendingEmailService;
@@ -105,7 +106,7 @@ public class CustomUserController {
     }
 
     @GetMapping("/{username}")
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Get a customer with username")
     @ApiResponse(responseCode = "200", description = "Get a customer with username")
     public ResponseEntity<CustomUserInfo> getCustomUserDetails(@PathVariable("username") String username) {
@@ -132,7 +133,7 @@ public class CustomUserController {
     @ApiResponse(responseCode = "200", description = "Property is sold and deleted by costumer")
     public ResponseEntity<String> deleteSale(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
         log.info("Http request, DELETE /api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
-        String message = customUserService.userSale(username, pId);
+        String message = customUserService.deleteSale(username, pId);
         log.info("DELETE data from repository/api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -143,7 +144,7 @@ public class CustomUserController {
     @ApiResponse(responseCode = "200", description = "Property is deleted by costumer")
     public ResponseEntity<String> delete(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
         log.info("Http request, DELETE /api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
-        String message = customUserService.userDelete(username, pId);
+        String message = customUserService.deleteProperty(username, pId);
         log.info("DELETE data from repository/api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -184,6 +185,17 @@ public class CustomUserController {
         }
     }
 
+    @PutMapping("/roleadmin/{username}")
+    @Secured({"ROLE_ADMIN"})
+    @Operation(summary = "Giving ROLE_ADMIN")
+    @ApiResponse(responseCode = "200", description = "The ROLE_ADMIN was given.")
+    public ResponseEntity<CustomUserInfo> giveRoleAdmin(@PathVariable("username") String username) {
+        log.info("Http request, PUT /api/customusers, body : giving ROLE_ADMIN");
+        CustomUserInfo customUserInfo = customUserService.giveRoleAdmin(username);
+        log.info("PUT data from repository/api/customusers : the ROLE_ADMIN was given");
+        return new ResponseEntity<>(customUserInfo, HttpStatus.OK);
+    }
 }
+
 
 

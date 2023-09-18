@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.CustomUserForm;
+import hu.progmasters.moovsmart.dto.CustomUserFormAdmin;
 import hu.progmasters.moovsmart.dto.CustomUserInfo;
 import hu.progmasters.moovsmart.exception.EmailAddressExistsException;
 import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
@@ -64,11 +65,16 @@ public class CustomUserTest {
     private CustomUserService customUserService;
     private CustomUser customUser1;
     private CustomUserInfo customUserInfo1;
+    private CustomUserInfo customUserInfo1A;
+    private CustomUserInfo customUserInfo3;
 
     private CustomUserForm customUserForm1;
     private CustomUserForm customUserForm2;
+    private CustomUserFormAdmin customUserFormAdmin;
+    private CustomUserForm customUserFormA;
 
     private CustomUser customUser2;
+    private CustomUser customUser3;
     private CustomUserInfo customUserInfo2;
 
     private CustomUser customUserDeleted;
@@ -76,11 +82,13 @@ public class CustomUserTest {
 
     private ConfirmationToken confirmationToken1;
     private ConfirmationToken confirmationToken2;
+    private ConfirmationToken confirmationToken3;
 
     private User customUserLoggedIn1;
 
     private CustomUserEmail customUserEmail1;
     private CustomUserEmail customUserEmail2;
+    private CustomUserEmail customUserEmail3;
 
     private List<String> listOfUsernames = new ArrayList<>();
     private List<String> listOfEmails = new ArrayList<>();
@@ -95,6 +103,14 @@ public class CustomUserTest {
                 .createdDate(LocalDateTime.now())
                 .expiredDate(LocalDateTime.now().plusMinutes(1))
                 .customUser(customUser1)
+                .build();
+
+        confirmationToken3 = new ConfirmationToken().builder()
+                .tokenId(1L)
+                .confirmationToken("111111")
+                .createdDate(LocalDateTime.now())
+                .expiredDate(LocalDateTime.now().plusMinutes(1))
+                .customUser(customUser3)
                 .build();
 
         property1 = new Property().builder()
@@ -142,6 +158,14 @@ public class CustomUserTest {
                 .phoneNumber("+36303333333")
                 .build();
 
+        customUserInfo1A = new CustomUserInfo().builder()
+                .name("Kis Pistike")
+                .username("pistike")
+                .email("pistike@gmail.com")
+                .customUserRoles(List.of(CustomUserRole.ROLE_USER, CustomUserRole.ROLE_ADMIN))
+                .phoneNumber("+36303333333")
+                .build();
+
         confirmationToken2 = new ConfirmationToken().builder()
                 .tokenId(2L)
                 .confirmationToken("654321")
@@ -162,6 +186,42 @@ public class CustomUserTest {
                 .confirmationToken(confirmationToken2)
                 .enable(false)
                 .isAgent(true)
+                .hasNewsletter(true)
+                .build();
+
+        customUser3 = new CustomUser().builder()
+                .customUserId(2L)
+                .username("erzsike")
+                .name("Szoknyás Erzsike")
+                .email("szoknyas.erzsike@gmail.com")
+                .password("Erzsike1*")
+                .phoneNumber("+36303333338")
+                .roles(List.of(CustomUserRole.ROLE_ADMIN))
+                .activation("111111")
+                .confirmationToken(confirmationToken3)
+                .enable(false)
+                .isAgent(false)
+                .hasNewsletter(true)
+                .build();
+
+        customUserFormAdmin = new CustomUserFormAdmin().builder()
+                .username("erzsike")
+                .name("Szoknyás Erzsike")
+                .email("szoknyas.erzsike@gmail.com")
+                .password("Erzsike1*")
+                .phoneNumber("+36303333338")
+                .isAgent(false)
+                .hasNewsletter(true)
+                .question("tetőcserép")
+                .build();
+
+        customUserFormA = new CustomUserForm().builder()
+                .username("erzsike")
+                .name("Szoknyás Erzsike")
+                .email("szoknyas.erzsike@gmail.com")
+                .password("Erzsike1*")
+                .phoneNumber("+36303333338")
+                .isAgent(false)
                 .hasNewsletter(true)
                 .build();
 
@@ -192,6 +252,15 @@ public class CustomUserTest {
                 .customUserRoles(List.of(CustomUserRole.ROLE_AGENT))
                 .build();
 
+        customUserInfo3 = new CustomUserInfo().builder()
+                .username("erzsike")
+                .name("Szoknyás Erzsike")
+                .email("szoknyas.erzsike@gmail.com")
+                .phoneNumber("+36303333338")
+                .customUserRoles(List.of(CustomUserRole.ROLE_ADMIN))
+                .build();
+
+
         customUserEmail1 = new CustomUserEmail().builder()
                 .customUserEmailId(1L)
                 .customUser(customUser1)
@@ -202,6 +271,12 @@ public class CustomUserTest {
                 .customUserEmailId(2L)
                 .customUser(customUser2)
                 .email("rosszcsont.moricka@gmail.com")
+                .build();
+
+        customUserEmail3 = new CustomUserEmail().builder()
+                .customUserEmailId(3L)
+                .customUser(customUser3)
+                .email("szoknyas.erzsike@gmail.com")
                 .build();
 
         customUserLoggedIn1 = (User) User
@@ -259,6 +334,26 @@ public class CustomUserTest {
         when(modelMapper.map(customUser2, CustomUserInfo.class)).thenReturn(customUserInfo2);
 
         assertEquals(customUserInfo2, customUserService.register(customUserForm2));
+
+        verify(customUserRepository, times(2)).findByEmail(any());
+        verify(customUserRepository, times(1)).findByUsername(any());
+        verify(customUserRepository, times(1)).save(any());
+        verifyNoMoreInteractions(customUserRepository);
+    }
+
+    @Test
+    void test_Register_CustomUserFirstAdmin() {
+        when(confirmationTokenService.save(any())).thenReturn(confirmationToken3);
+        when(passwordEncoder.encode(any())).thenReturn("Erzsike1*");
+        when(customUserRepository.findByEmail(customUserFormAdmin.getEmail())).thenReturn(null).thenReturn(customUser2);
+        when(customUserRepository.findByUsername(customUserFormAdmin.getUsername())).thenReturn(null);
+
+        when(customUserRepository.save(any(CustomUser.class))).thenReturn(customUser3);
+        when(customUserEmailService.save(any(CustomUserEmail.class))).thenReturn(customUserEmail3);
+        when(modelMapper.map(customUser3, CustomUserInfo.class)).thenReturn(customUserInfo3);
+        when(modelMapper.map(customUserFormAdmin, CustomUserForm.class)).thenReturn(customUserFormA);
+
+        assertEquals(customUserInfo3, customUserService.registerAdmin(customUserFormAdmin));
 
         verify(customUserRepository, times(2)).findByEmail(any());
         verify(customUserRepository, times(1)).findByUsername(any());
@@ -454,7 +549,7 @@ public class CustomUserTest {
     void test_CustomUser_saleWithExistingId() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
-        assertEquals("Congratulate! You sold your property!", customUserService.userSale("pistike", 1L));
+        assertEquals("Congratulate! You sold your property!", customUserService.deleteSale("pistike", 1L));
 
         verify(customUserRepository, times(1)).findByUsername("pistike");
         verifyNoMoreInteractions(customUserRepository);
@@ -464,7 +559,7 @@ public class CustomUserTest {
     void test_CustomUser_saleWithWrongPropertyId() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
-        assertEquals("There is no property with that id.", customUserService.userSale("pistike", 3L));
+        assertEquals("There is no property with that id.", customUserService.deleteSale("pistike", 3L));
 
         verify(customUserRepository, times(1)).findByUsername("pistike");
         verifyNoMoreInteractions(customUserRepository);
@@ -474,7 +569,7 @@ public class CustomUserTest {
     void test_CustomUser_deleteWithExistingId() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
-        assertEquals("You deleted your property!", customUserService.userDelete("pistike", 1L));
+        assertEquals("You deleted your property!", customUserService.deleteProperty("pistike", 1L));
 
         verify(customUserRepository, times(1)).findByUsername("pistike");
         verifyNoMoreInteractions(customUserRepository);
@@ -484,7 +579,7 @@ public class CustomUserTest {
     void test_CustomUser_deleteWithWrongPropertyId() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
-        assertEquals("There is no property with that id.", customUserService.userDelete("pistike", 3L));
+        assertEquals("There is no property with that id.", customUserService.deleteProperty("pistike", 3L));
 
         verify(customUserRepository, times(1)).findByUsername("pistike");
         verifyNoMoreInteractions(customUserRepository);
@@ -494,7 +589,7 @@ public class CustomUserTest {
     void test_CustomUser_makeInactive() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
-        assertEquals("You deleted your property!", customUserService.userDelete("pistike", 1L));
+        assertEquals("You deleted your property!", customUserService.deleteProperty("pistike", 1L));
         assertEquals("You deleted your profile!", customUserService.makeInactive("pistike"));
 
         verify(customUserRepository, times(3)).findByUsername("pistike");
@@ -530,6 +625,7 @@ public class CustomUserTest {
         verify(customUserEmailService, times(1)).delete(customUser1.getCustomUserEmail());
         verify(customUserRepository, times(1)).findByActivation("123456");
     }
+
 
 
 }

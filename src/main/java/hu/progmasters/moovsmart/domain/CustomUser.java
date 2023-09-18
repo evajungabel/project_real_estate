@@ -61,9 +61,6 @@ public class CustomUser implements UserDetails {
     @Column(name = "has_newsletter")
     private boolean hasNewsletter;
 
-   @Column(name = "isAdmin")
-    private boolean isAdmin;
-
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
