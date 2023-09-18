@@ -80,7 +80,7 @@ public class CustomUserController {
     @ApiResponse(responseCode = "200", description = "Customer is updated")
     @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     public ResponseEntity<CustomUserInfo> update(@PathVariable("username") String username,
-                                               @Valid @RequestBody CustomUserForm customUserForm) {
+                                                 @Valid @RequestBody CustomUserForm customUserForm) {
         log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm +
                 " with variable: " + username);
         CustomUserInfo updated = customUserService.update(username, customUserForm);
@@ -162,10 +162,28 @@ public class CustomUserController {
     @GetMapping("/comment/{userName}")
     @Operation(summary = "List comments from agent")
     @ApiResponse(responseCode = "200", description = "Comment listed")
-    public ResponseEntity<EstateAgentInfo> listComments (@PathVariable("userName") String userName){
+    public ResponseEntity<EstateAgentInfo> listComments(@PathVariable("userName") String userName) {
         log.info("Http request, GET /api/customusers/comment/ " + userName);
         EstateAgentInfo estateAgentInfo = customUserService.getAgentInfo(userName);
         log.info("GET data from repository/api/customusers/comment/{userName} " + userName);
         return new ResponseEntity<>(estateAgentInfo, HttpStatus.OK);
     }
+
+
+    @PostMapping("/register-admin")
+    @Operation(summary = "Register first admin")
+    @ApiResponse(responseCode = "201", description = "First admin is saved")
+    public ResponseEntity<String> registerAdmin(@Valid @RequestBody CustomUserFormAdmin customUserFormAdmin) {
+        log.info("Http request, POST /api/customusers, body: " + customUserFormAdmin.toString());
+        if (customUserService.countByIsAdminTrue() == 0 && customUserFormAdmin.getQuestion().equals("tetőcserép")) {
+            customUserService.registerAdmin(customUserFormAdmin);
+            log.info("POST data from repository/api/customusers, body: " + customUserFormAdmin);
+            return new ResponseEntity<>("Admin registration was successful!", HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("The admin registration is closed!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
+
+

@@ -119,6 +119,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CustomUserEmailNotFoundException.class)
+    public ResponseEntity<ApiError> handleCustomUserEmailNotFoundException(CustomUserEmailNotFoundException ex) {
+        log.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "CustomUserEmail not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiError> handleNoResourcesFoundException(NoResourceFoundException ex) {
         log.error("Not found error: ", ex);

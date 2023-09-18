@@ -21,4 +21,5 @@ public interface CustomUserRepository extends JpaRepository<CustomUser, Long> {
 
     CustomUser findByUsername(String username);
 
+    int countByIsAdminTrue();
 }

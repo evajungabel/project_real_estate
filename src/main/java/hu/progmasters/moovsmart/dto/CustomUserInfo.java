@@ -20,6 +20,8 @@ public class CustomUserInfo {
     private String email;
     private String phoneNumber;
 
+    private Boolean enable;
+
     private List<CustomUserRole> customUserRoles;
 
 }

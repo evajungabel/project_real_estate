@@ -126,9 +126,9 @@ public class CustomUserService implements UserDetailsService {
             }
         };
 
-        scheduledExecutorService.schedule(task, 30, TimeUnit.SECONDS);
+        scheduledExecutorService.schedule(task, 120, TimeUnit.SECONDS);
 
-}
+    }
 
 
     public ConfirmationToken createConfirmationToken() {
@@ -157,22 +157,21 @@ public class CustomUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        try {
-            CustomUser customUser = customUserRepository.findByUsername(username);
-            String[] roles = customUser.getRoles().stream()
-                    .map(Enum::toString)
-                    .toArray(String[]::new);
-
+        CustomUser customUser = findCustomUserByUsername(username);
+        String[] roles = customUser.getRoles().stream()
+                .map(Enum::toString)
+                .toArray(String[]::new);
+        if (customUser.isEnabled()) {
             return User
                     .withUsername(customUser.getUsername())
                     .authorities(AuthorityUtils.createAuthorityList(roles))
                     .password(customUser.getPassword())
                     .build();
-        } catch (UsernameNotFoundException e) {
-            throw new UsernameNotFoundException("username not found");
-
+        } else {
+            throw new UsernameNotFoundExceptionImp(username);
         }
     }
+
 
     public List<CustomUserInfo> getCustomUsers() {
         List<CustomUser> customUsers = customUserRepository.findAll();
@@ -330,11 +329,55 @@ public class CustomUserService implements UserDetailsService {
     public String userUnsubscribeNewsletter(String confirmationToken) {
         try {
             CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
-            customUserEmailService.delete(customUser.getCustomUserEmail());
+            CustomUserEmail customUserEmail = customUserEmailService.findCustomUserEmailByEmail(customUser.getEmail());
+            customUserEmailService.delete(customUserEmail);
             return "Sikeresen leíratkozott a hírlevélről!";
         } catch (TokenCannotBeUsedException e) {
             throw new TokenCannotBeUsedException(confirmationToken);
         }
 
+    }
+
+    //Hírlevél, aktivációs link, ilyesmi
+    public CustomUserInfo registerAdmin(CustomUserFormAdmin customUserFormAdmin) {
+        if (customUserRepository.findByEmail(customUserFormAdmin.getEmail()) != null) {
+            throw new EmailAddressExistsException(customUserFormAdmin.getEmail());
+        } else if (customUserRepository.findByUsername(customUserFormAdmin.getUsername()) != null) {
+            throw new UsernameExistsException(customUserFormAdmin.getUsername());
+        } else {
+            ConfirmationToken confirmationToken = createConfirmationToken();
+            CustomUser customUser = new CustomUser().builder()
+                    .username(customUserFormAdmin.getUsername())
+                    .name(customUserFormAdmin.getName())
+                    .email(customUserFormAdmin.getEmail())
+                    .phoneNumber(customUserFormAdmin.getPhoneNumber())
+                    .password(passwordEncoder.encode(customUserFormAdmin.getPassword()))
+                    .roles(List.of(CustomUserRole.ROLE_ADMIN))
+                    .enable(false)
+                    .hasNewsletter(customUserFormAdmin.getHasNewsletter())
+                    .activation(confirmationToken.getConfirmationToken())
+                    .confirmationToken(confirmationToken)
+                    .isAgent(customUserFormAdmin.getIsAgent())
+                    .isAdmin(true)
+                    .build();
+            confirmationToken.setCustomUser(customUser);
+            CustomUser savedUser = customUserRepository.save(customUser);
+            CustomUserEmail customUserEmail = CustomUserEmail.builder()
+                    .email(customUserFormAdmin.getEmail())
+                    .customUser(customUser)
+                    .build();
+            if (customUser.isHasNewsletter()) {
+                customUserEmailService.save(customUserEmail);
+            }
+            CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
+            customUserInfo.setCustomUserRoles(customUser.getRoles());
+            sendingActivationEmail(customUserFormAdmin.getName(), customUserFormAdmin.getEmail());
+            deleteIfItIsNotActivated(customUser.getUsername());
+            return customUserInfo;
+        }
+    }
+
+    public int countByIsAdminTrue() {
+       return customUserRepository.countByIsAdminTrue();
     }
 }
