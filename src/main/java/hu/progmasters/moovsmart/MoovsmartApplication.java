@@ -17,24 +17,5 @@ public class MoovsmartApplication {
 		SpringApplication.run(MoovsmartApplication.class, args);
 	}
 
-	@Bean
-	public ModelMapper modelMapper() {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration()
-				.setMatchingStrategy(MatchingStrategies.STRICT);
-		return modelMapper;
-	}
-
-
-
-	@Bean
-	public OpenAPI customOpenAPI() {
-		return new OpenAPI()
-				.info(new Info()
-						.title("Estate trade APP")
-						.version("1.0.1")
-						.description("This is the backand of an Estate trade application."));
-	}
-
 
 }
