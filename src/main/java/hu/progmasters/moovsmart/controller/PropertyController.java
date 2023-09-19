@@ -47,8 +47,6 @@ public class PropertyController {
     }
 
 
-
-
     @GetMapping(params = {"page", "size", "sortDir", "sort"})
     public List<PropertyDetails> findPaginated(
              @RequestParam("sortDir") String sortDir,
@@ -60,6 +58,18 @@ public class PropertyController {
         return propertyDetailsList;
     }
 
+
+    @GetMapping(params = {"page", "size", "sortDir", "sort"})("/requests")
+    public List<PropertyDetails> findByRequestedValues(
+            @RequestParam("sortDir") String sortDir,
+            @RequestParam("sort") String sort,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+    @Valid @RequestBody PropertyRequests propertyRequests) {
+        List<PropertyDetails> propertyDetailsList = propertyService.getPropertyRequests(page, size, sortDir, sort, propertyRequests);
+
+        return propertyDetailsList;
+    }
 
     @GetMapping("/{propertyId}")
     @Operation(summary = "Get property with {propertyId}")

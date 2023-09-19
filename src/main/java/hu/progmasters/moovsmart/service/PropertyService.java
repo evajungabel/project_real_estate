@@ -77,6 +77,19 @@ public class PropertyService {
     }
 
 
+    public List<PropertyDetails> getPropertyRequests(int page, int size, String sortDir, String sort, PropertyRequests propertyRequests) {
+        PageRequest pageReq
+                = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
+
+        Page<Property> properties = propertyRepository.findAll(pageReq);
+        if (page > properties.getTotalPages()) {
+            throw new NoResourceFoundException(properties.getTotalPages());
+        }
+        return properties.getContent().stream()
+                .map(property -> modelMapper.map(property, PropertyDetails.class))
+                .collect(Collectors.toList());
+    }
+
 
 
     public PropertyDetails getPropertyDetails(Long id) {
