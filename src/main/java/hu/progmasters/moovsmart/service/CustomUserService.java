@@ -306,21 +306,25 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-    //Email listából hírlevélhez vegyük ki?
     public String makeInactive(String customUsername) {
-        CustomUser toDelete = findCustomUserByUsername(customUsername);
-        deleteProperty(toDelete.getUsername(), toDelete.getCustomUserId());
-        toDelete.setUsername(null);
-        toDelete.setName(null);
-        toDelete.setEmail(null);
-        toDelete.setPassword(null);
-        toDelete.setPhoneNumber(null);
-        toDelete.setRoles(null);
-        toDelete.setEnable(false);
-        toDelete.setActivation(null);
-        toDelete.setConfirmationToken(null);
-        toDelete.setDeleteDate(LocalDateTime.now());
-        toDelete.setDeleted(true);
+        CustomUser customUser = findCustomUserByUsername(customUsername);
+        deleteProperty(customUser.getUsername(), customUser.getCustomUserId());
+        CustomUserEmail customUserEmail = customUserEmailService.findCustomUserEmailByEmail(customUser.getEmail());
+        customUser.setCustomUserEmail(null);
+        customUserEmailService.delete(customUserEmail);
+        customUser.setHasNewsletter(false);
+        customUser.setUsername(null);
+        customUser.setName(null);
+        customUser.setEmail(null);
+        customUser.setPassword(null);
+        customUser.setPhoneNumber(null);
+        customUser.setRoles(null);
+        customUser.setEnable(false);
+        customUser.setActivation(null);
+        customUser.setConfirmationToken(null);
+        customUser.setDeleteDate(LocalDateTime.now());
+        customUser.setDeleted(true);
+        customUser.setCustomUserEmail(null);
         return "You deleted your profile!";
     }
 
@@ -367,6 +371,8 @@ public class CustomUserService implements UserDetailsService {
         try {
             CustomUser customUser = customUserRepository.findByActivation(confirmationToken);
             CustomUserEmail customUserEmail = customUserEmailService.findCustomUserEmailByEmail(customUser.getEmail());
+            customUser.setCustomUserEmail(null);
+            customUser.setHasNewsletter(false);
             customUserEmailService.delete(customUserEmail);
             return "Sikeresen leíratkozott a hírlevélről!";
         } catch (TokenCannotBeUsedException e) {
