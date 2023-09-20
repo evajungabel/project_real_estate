@@ -1,0 +1,209 @@
+2023-09-20 07:14:03 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.0.Final
+2023-09-20 07:14:03 [main] INFO  h.p.moovsmart.MoovsmartApplication - Starting MoovsmartApplication using Java 17.0.7 on DESKTOP-33BLCVC with PID 2288 (C:\Alap\Java\project_moovsmart\target\classes started by Kucsera in C:\Alap\Java\project_moovsmart)
+2023-09-20 07:14:03 [main] INFO  h.p.moovsmart.MoovsmartApplication - No active profile set, falling back to default profiles: default
+2023-09-20 07:14:04 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-09-20 07:14:04 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 113 ms. Found 9 JPA repository interfaces.
+2023-09-20 07:14:04 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@36aa52d2' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2023-09-20 07:14:04 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityConfig' of type [hu.progmasters.moovsmart.config.MethodSecurityConfig$$EnhancerBySpringCGLIB$$a267e6e4] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2023-09-20 07:14:04 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2023-09-20 07:14:05 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2023-09-20 07:14:05 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2023-09-20 07:14:05 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2023-09-20 07:14:05 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.54]
+2023-09-20 07:14:05 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-09-20 07:14:05 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2251 ms
+2023-09-20 07:14:05 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-09-20 07:14:05 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.4.32.Final
+2023-09-20 07:14:05 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2023-09-20 07:14:06 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2023-09-20 07:14:06 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2023-09-20 07:14:06 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2023-09-20 07:14:08 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-09-20 07:14:08 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-09-20 07:14:09 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-09-20 07:14:10 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6a577564, org.springframework.security.web.context.SecurityContextPersistenceFilter@34dda1b4, org.springframework.security.web.header.HeaderWriterFilter@52a23575, org.springframework.web.filter.CorsFilter@67915454, org.springframework.security.web.authentication.logout.LogoutFilter@1bb3e150, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@7f0b2bf1, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5cb4ba80, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@10b0dd3a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@18876fa9, org.springframework.security.web.session.SessionManagementFilter@397f9672, org.springframework.security.web.access.ExceptionTranslationFilter@42a89cef, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7308d133]
+2023-09-20 07:14:11 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2023-09-20 07:14:11 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2023-09-20 07:14:11 [main] INFO  h.p.moovsmart.MoovsmartApplication - Started MoovsmartApplication in 8.807 seconds (JVM running for 9.852)
+2023-09-20 07:14:18 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-09-20 07:14:18 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2023-09-20 07:14:18 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2023-09-20 07:14:19 [http-nio-8080-exec-1] INFO  h.p.m.c.CustomUserController - Http request, POST /api/customusers/comment, body: CommentForm(agentName=Agent077, userName=Kucsera007, comment=Nagyon elégedetmég egy teszzt))
+2023-09-20 07:14:19 [http-nio-8080-exec-1] INFO  h.p.m.c.CustomUserController - POST data from repository/api/customusers/comment, body: CommentForm(agentName=Agent077, userName=Kucsera007, comment=Nagyon elégedetmég egy teszzt))
+2023-09-20 07:14:24 [http-nio-8080-exec-3] INFO  h.p.m.c.CustomUserController - Http request, POST /api/customusers/comment, body: CommentForm(agentName=Agent077, userName=Béla002, comment=Ez egy kiváló fejlesztő csapat munkája. Fel vagytok véve!)
+2023-09-20 07:14:24 [http-nio-8080-exec-3] INFO  h.p.m.c.CustomUserController - POST data from repository/api/customusers/comment, body: CommentForm(agentName=Agent077, userName=Béla002, comment=Ez egy kiváló fejlesztő csapat munkája. Fel vagytok véve!)
+2023-09-20 07:14:27 [http-nio-8080-exec-4] INFO  h.p.m.controller.AddressController - Http request, GET /api/addressesAddressForm(zipcode=2200, country=Magyarország, city=Monor, street=Széles utca, houseNumber=3/B, doorNumber=0, propertyId=1)
+2023-09-20 07:14:27 [http-nio-8080-exec-4] ERROR h.p.m.e.GlobalExceptionHandler - Not found error: 
+hu.progmasters.moovsmart.exception.PropertyNotFoundException: No property found with id: 1
+	at hu.progmasters.moovsmart.service.PropertyService.findPropertyById(PropertyService.java:93)
+	at hu.progmasters.moovsmart.service.PropertyService$$FastClassBySpringCGLIB$$bf0794a1.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:783)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:753)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:753)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:698)
+	at hu.progmasters.moovsmart.service.PropertyService$$EnhancerBySpringCGLIB$$b8e6f451.findPropertyById(<generated>)
+	at hu.progmasters.moovsmart.service.AddressService.saveAddress(AddressService.java:41)
+	at hu.progmasters.moovsmart.service.AddressService$$FastClassBySpringCGLIB$$bb7b9680.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:783)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:753)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:753)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:698)
+	at hu.progmasters.moovsmart.service.AddressService$$EnhancerBySpringCGLIB$$c6c79d4e.saveAddress(<generated>)
+	at hu.progmasters.moovsmart.controller.AddressController.createAddress(AddressController.java:34)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1067)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:681)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:327)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:115)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:81)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:121)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:115)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:126)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:81)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:149)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilterInternal(BasicAuthenticationFilter.java:178)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:103)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:89)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:110)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:80)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:55)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:211)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:183)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:358)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:271)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:540)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:382)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:895)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1722)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+2023-09-20 07:14:34 [http-nio-8080-exec-6] INFO  h.p.m.controller.PropertyController - Http request, POST /api/property, body: PropertyForm(name=Eladó ingatlan vidéken, type=HOUSE, purpose=FOR_SALE, area=95, numberOfRooms=4, price=65000000, description=Csendes környezetben eladó ingatlan., customUsername=Kucsera007)
+2023-09-20 07:14:34 [http-nio-8080-exec-6] INFO  h.p.m.controller.PropertyController - POST data from repository/api/property, body: PropertyForm(name=Eladó ingatlan vidéken, type=HOUSE, purpose=FOR_SALE, area=95, numberOfRooms=4, price=65000000, description=Csendes környezetben eladó ingatlan., customUsername=Kucsera007)
+2023-09-20 07:14:37 [http-nio-8080-exec-7] INFO  h.p.m.controller.AddressController - Http request, GET /api/addressesAddressForm(zipcode=2200, country=Magyarország, city=Monor, street=Széles utca, houseNumber=3/B, doorNumber=0, propertyId=1)
+2023-09-20 07:14:37 [http-nio-8080-exec-7] INFO  h.p.m.controller.AddressController - POST data from repository/api/addresses, body: AddressForm(zipcode=2200, country=Magyarország, city=Monor, street=Széles utca, houseNumber=3/B, doorNumber=0, propertyId=1)
+2023-09-20 07:14:42 [http-nio-8080-exec-8] INFO  h.p.m.controller.AddressController - Http request, GET /api/addresses/{value} with variableor
+2023-09-20 07:14:42 [http-nio-8080-exec-8] INFO  h.p.m.controller.AddressController - GET data from repository/api/list addresses by value
+2023-09-20 07:14:44 [http-nio-8080-exec-9] INFO  h.p.m.controller.AddressController - Http request, GET /api/weather/addresses/{id} with variable1
+2023-09-20 07:14:44 [http-nio-8080-exec-9] INFO  h.p.moovsmart.service.WeatherService - RestTemplate GET coordinate
+2023-09-20 07:14:44 [http-nio-8080-exec-9] INFO  h.p.moovsmart.service.WeatherService - RestTemplate response OK
+2023-09-20 07:14:44 [http-nio-8080-exec-9] INFO  h.p.moovsmart.service.WeatherService - RestTemplate GET WeatherData
+2023-09-20 07:14:45 [http-nio-8080-exec-9] INFO  h.p.moovsmart.service.WeatherService - RestTemplate response OK
+2023-09-20 07:14:45 [http-nio-8080-exec-9] INFO  h.p.m.controller.AddressController - GET data from repository/api/weather/list Weather info for the Address
+2023-09-20 07:15:05 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-09-20 07:15:05 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2023-09-20 07:15:05 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2023-09-20 07:15:31 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.0.Final
+2023-09-20 07:15:31 [main] INFO  h.p.moovsmart.MoovsmartApplication - Starting MoovsmartApplication using Java 17.0.7 on DESKTOP-33BLCVC with PID 16712 (C:\Alap\Java\project_moovsmart\target\classes started by Kucsera in C:\Alap\Java\project_moovsmart)
+2023-09-20 07:15:31 [main] INFO  h.p.moovsmart.MoovsmartApplication - No active profile set, falling back to default profiles: default
+2023-09-20 07:15:32 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-09-20 07:15:32 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 120 ms. Found 9 JPA repository interfaces.
+2023-09-20 07:15:32 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@280d4882' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2023-09-20 07:15:32 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityConfig' of type [hu.progmasters.moovsmart.config.MethodSecurityConfig$$EnhancerBySpringCGLIB$$72e3a0fe] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2023-09-20 07:15:32 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2023-09-20 07:15:33 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2023-09-20 07:15:33 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2023-09-20 07:15:33 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2023-09-20 07:15:33 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.54]
+2023-09-20 07:15:33 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-09-20 07:15:33 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2183 ms
+2023-09-20 07:15:33 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-09-20 07:15:33 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.4.32.Final
+2023-09-20 07:15:33 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2023-09-20 07:15:34 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2023-09-20 07:15:34 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2023-09-20 07:15:34 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2023-09-20 07:15:36 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-09-20 07:15:36 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-09-20 07:15:37 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-09-20 07:15:38 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6ccfce5a, org.springframework.security.web.context.SecurityContextPersistenceFilter@1267f832, org.springframework.security.web.header.HeaderWriterFilter@7f38545a, org.springframework.web.filter.CorsFilter@68a7bc12, org.springframework.security.web.authentication.logout.LogoutFilter@4c231f62, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@361d169a, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@73eaae1e, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@42a89cef, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@14f03f2, org.springframework.security.web.session.SessionManagementFilter@23243bc0, org.springframework.security.web.access.ExceptionTranslationFilter@3b6c55b6, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@4349389d]
+2023-09-20 07:15:39 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2023-09-20 07:15:39 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2023-09-20 07:15:39 [main] INFO  h.p.moovsmart.MoovsmartApplication - Started MoovsmartApplication in 8.564 seconds (JVM running for 9.627)
+2023-09-20 07:16:08 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-09-20 07:16:08 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2023-09-20 07:16:08 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2023-09-20 07:16:09 [http-nio-8080-exec-1] INFO  h.p.m.controller.AddressController - Http request, GET /api/weather/addresses/{id} with variable1
+2023-09-20 07:16:09 [http-nio-8080-exec-1] INFO  h.p.moovsmart.service.WeatherService - RestTemplate GET coordinate
+2023-09-20 07:16:09 [http-nio-8080-exec-1] INFO  h.p.moovsmart.service.WeatherService - RestTemplate response OK
+2023-09-20 07:16:09 [http-nio-8080-exec-1] INFO  h.p.moovsmart.service.WeatherService - RestTemplate GET WeatherData
+2023-09-20 07:16:09 [http-nio-8080-exec-1] INFO  h.p.moovsmart.service.WeatherService - RestTemplate response OK
+2023-09-20 07:16:09 [http-nio-8080-exec-1] INFO  h.p.m.controller.AddressController - GET data from repository/api/weather/list Weather info for the Address
+2023-09-20 07:16:19 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-09-20 07:16:19 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2023-09-20 07:16:19 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
