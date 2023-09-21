@@ -1,5 +1,6 @@
-package hu.progmasters.moovsmart.domain;
+package hu.progmasters.moovsmart.specifications;
 
+import hu.progmasters.moovsmart.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;
