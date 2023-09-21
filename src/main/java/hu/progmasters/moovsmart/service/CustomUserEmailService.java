@@ -1,9 +1,7 @@
 package hu.progmasters.moovsmart.service;
 
-import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.CustomUserEmail;
 import hu.progmasters.moovsmart.exception.CustomUserEmailNotFoundException;
-import hu.progmasters.moovsmart.exception.EmailAddressNotFoundException;
 import hu.progmasters.moovsmart.repository.CustomUserEmailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

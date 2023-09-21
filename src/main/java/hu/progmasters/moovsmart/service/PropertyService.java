@@ -84,7 +84,6 @@ public class PropertyService {
                 = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
 
         Specification<Property> spec = Specification.where(null);
-        Specification<Address> specA = Specification.where(null);
 
         if (propertyFilterRequestForm.getType() != null) {
             spec = spec.and(PropertySpecifications.hasType(propertyFilterRequestForm.getType()));

@@ -1,12 +1,9 @@
 package hu.progmasters.moovsmart.domain;
 
-import hu.progmasters.moovsmart.domain.CustomUser;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.UUID;
 
 
 @AllArgsConstructor
@@ -15,7 +12,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Builder
-@Table(name = "confirmationToken")
+@Table(name = "confirmation_token")
 public class ConfirmationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

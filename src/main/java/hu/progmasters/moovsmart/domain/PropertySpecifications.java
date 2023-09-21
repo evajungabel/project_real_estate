@@ -57,7 +57,7 @@ public final class PropertySpecifications {
     public static Specification<Property> hasPropertyCity(String city) {
         return (root, query, criteriaBuilder) -> {
             Join<Property, Address> addressJoin = root.join("address", JoinType.INNER);
-            return criteriaBuilder.equal(root.join("address", JoinType.INNER).get("city"), city);
+            return criteriaBuilder.equal(addressJoin.get("city"), city);
         };
     }
 

@@ -932,15 +932,15 @@ public class CustomUserControllerTestIT {
     @WithMockUser(authorities = "ROLE_USER")
     void IT_test_deleteCustomUser() throws Exception {
         CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(2));
-        assertTrue(customUser != null);
+        assertNotNull(customUser);
         assertFalse(customUser.isDeleted());
         List<Property> propertyList = customUser.getPropertyList();
         mockMvc.perform(delete("/api/customusers/glockley5")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
         assertTrue(customUser.isDeleted());
-        assertEquals(propertyList.size(), 1);
-        assertEquals(propertyList.get(0).getName(), "Eladó ház");
+        assertEquals(1, propertyList.size());
+        assertEquals("Eladó ház", propertyList.get(0).getName());
     }
 
 
@@ -948,11 +948,11 @@ public class CustomUserControllerTestIT {
     @WithMockUser(authorities = "ROLE_USER")
     void IT_test_customUserSaleProperty() throws Exception {
         CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(2));
-        assertTrue(customUser != null);
+        assertNotNull(customUser);
 
         Property property = entityManager.find(Property.class, Long.valueOf(2));
-        assertTrue(property != null);
-        assertFalse(property.getDateOfSale() != null);
+        assertNotNull(property);
+        assertNull(property.getDateOfSale());
 
         assertEquals(customUser.getPropertyList().get(0), property);
 

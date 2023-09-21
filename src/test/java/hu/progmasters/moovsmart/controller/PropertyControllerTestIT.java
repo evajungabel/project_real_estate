@@ -589,12 +589,12 @@ public class PropertyControllerTestIT {
     @WithMockUser(authorities = "ROLE_ADMIN")
     void IT_test_deleteProperty() throws Exception {
         Property property = entityManager.find(Property.class, Long.valueOf(1));
-        assertTrue(property != null);
-        assertNotEquals(property.getStatus(), PropertyStatus.INACTIVE);
+        assertNotNull(property);
+        assertNotEquals(PropertyStatus.INACTIVE, property.getStatus());
         mockMvc.perform(delete("/api/properties/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
-        assertEquals(property.getStatus(), PropertyStatus.INACTIVE);
+        assertEquals(PropertyStatus.INACTIVE, property.getStatus());
     }
 
     @Test
