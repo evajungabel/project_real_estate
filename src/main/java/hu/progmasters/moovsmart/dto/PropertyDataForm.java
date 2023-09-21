@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Future;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -13,29 +14,29 @@ import javax.validation.constraints.Min;
 @Data
 public class PropertyDataForm {
 
-    private PropertyCondition condition;
+    private PropertyCondition propertyCondition;
     @Min(value = 1700, message = "Year of building can not be earlier than 1700")
-    @Max(value = 2023, message = "Year of building can not be in the future")
-    private int yearBuilt;
+    @Future(message = "Year of building can not be in the future")
+    private Integer yearBuilt;
 
-    private PropertyParking parking;
+    private PropertyParking propertyParking;
 
-    private PropertyOrientation orientation;
+    private PropertyOrientation propertyOrientation;
 
-    private PropertyHeatingType heating;
+    private PropertyHeatingType propertyHeatingType;
 
     private PropertyEnergyPerformanceCertificate energyCertificate;
 
-    private boolean hasBalcony;
+    private Boolean hasBalcony;
 
-    private boolean hasLift;
+    private Boolean hasLift;
 
-    private boolean isAccessible;
+    private Boolean isAccessible;
 
-    private boolean isInsulated;
+    private Boolean isInsulated;
 
-    private boolean hasAirCondition;
+    private Boolean hasAirCondition;
 
-    private boolean hasGarden;
+    private Boolean hasGarden;
 
 }

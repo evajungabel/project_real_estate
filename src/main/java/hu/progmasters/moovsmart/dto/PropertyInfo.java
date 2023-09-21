@@ -20,9 +20,9 @@ public class PropertyInfo {
     private String name;
     private PropertyType type;
     private PropertyPurpose purpose;
-    private Integer area;
+    private Double area;
     private Integer numberOfRooms;
-    private Integer price;
+    private Double price;
     private AddressInfoForProperty addressInfoForProperty;
     private List<PropertyImageURL> propertyImageURLS;
 }

@@ -6,20 +6,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class PropertyRequests {
+public class PropertyFilterRequestInfo {
+
+    private String name;
     private PropertyType type;
     private PropertyPurpose purpose;
-    private Integer area;
+    private Double area;
     private Integer numberOfRooms;
-    private Integer price;
-    private String description;
-    private PropertyStatus status;
-    private PropertyData propertyData;
-    private Address address;
-
+    private Double price;
+    private AddressInfoForProperty addressInfoForProperty;
+    private PropertyDataInfo propertyDataInfo;
 }

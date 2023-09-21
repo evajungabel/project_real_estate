@@ -10,19 +10,19 @@ import lombok.NoArgsConstructor;
 @Data
 public class PropertyDataInfo {
 
-    private PropertyCondition condition;
+    private PropertyCondition propertyCondition;
 
-    private int yearBuilt;
+    private Integer yearBuilt;
 
-    private PropertyParking parking;
+    private PropertyParking propertyParking;
 
-    private PropertyOrientation orientation;
+    private PropertyOrientation propertyOrientation;
 
-    private PropertyHeatingType heating;
+    private PropertyHeatingType propertyHeatingType;
 
     private PropertyEnergyPerformanceCertificate energyCertificate;
 
-    private boolean hasBalcony;
+    private Boolean hasBalcony;
 
     private boolean hasLift;
 

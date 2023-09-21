@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,12 +58,12 @@ public class CustomUserControllerTestIT {
 
 
     //TODO logintest
-//    @WithUserDetails("aprandia")
-//    @Test
-//    void IT_test_succsessfulLoginCustomUser() throws Exception {
-//        mockMvc.perform(get("/api/customusers/login/me").contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(status().isOk());
-//        }
+    @WithUserDetails("aprandia")
+    @Test
+    void IT_test_successfulLoginCustomUser() throws Exception {
+        mockMvc.perform(get("/api/customusers/login/me").contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
 
 
     @Test
