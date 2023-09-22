@@ -1,14 +1,13 @@
 package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.domain.Property;
-import hu.progmasters.moovsmart.domain.PropertyPurpose;
 import hu.progmasters.moovsmart.domain.PropertyStatus;
-import hu.progmasters.moovsmart.domain.PropertyType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +16,6 @@ import javax.persistence.EntityManager;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,43 +35,64 @@ public class PropertyControllerTestIT {
 
     @Test
     void IT_test_atStart_emptyList() throws Exception {
-        mockMvc.perform(get("/api/properties"))
+        mockMvc.perform(get("/api/properties?page=0&size=1&sort=area&sortDir=asc"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void IT_test_findAllProperties() throws Exception {
-        mockMvc.perform(get("/api/properties")
+    void IT_test_findAllPropertiesPaginatedAndSorted() throws Exception {
+        mockMvc.perform(get("/api/properties?page=0&size=15&sort=area&sortDir=ASC")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name", is("Eladó Balatoni Ház")))
-                .andExpect(jsonPath("$[1].name", is("Eladó ház")))
-                .andExpect(jsonPath("$[2].name", is("Eladó lakás Pécsett")))
-                .andExpect(jsonPath("$[3].name", is("Eladó lakás a városban")))
-                .andExpect(jsonPath("$[4].name", is("Eladó ház")))
-                .andExpect(jsonPath("$[5].name", is("Kiadó lakás")))
-                .andExpect(jsonPath("$[6].name", is("Eladó irodaház")))
-                .andExpect(jsonPath("$[7].name", is("Eladó lakás")))
-                .andExpect(jsonPath("$[8].name", is("Eladó villa")))
-                .andExpect(jsonPath("$[9].name", is("Eladó lakás")))
-                .andExpect(jsonPath("$[10].name", is("Eladó ház")))
-                .andExpect(jsonPath("$[11].name", is("Eladó villa")))
-                .andExpect(jsonPath("$[12].name", is("Eladó lakás")))
-                .andExpect(jsonPath("$[13].name", is("Eladó ház")))
-                .andExpect(jsonPath("$[14].name", is("Eladó ház")));
+                .andExpect(jsonPath("$[0].name", is("Kiadó villa")))
+                .andExpect(jsonPath("$[1].name", is("Kiadó lakás")))
+                .andExpect(jsonPath("$[2].name", is("Kiadó lakás Pécsett")))
+                .andExpect(jsonPath("$[3].name", is("Kiadó lakás")))
+                .andExpect(jsonPath("$[4].name", is("Eladó lakás")))
+                .andExpect(jsonPath("$[5].name", is("Kiadó balatoni ház")))
+                .andExpect(jsonPath("$[6].name", is("Eladó ház")))
+                .andExpect(jsonPath("$[7].name", is("Kiadó ház")))
+                .andExpect(jsonPath("$[8].name", is("Eladó ház")))
+                .andExpect(jsonPath("$[9].name", is("Kiadó lakás")))
+                .andExpect(jsonPath("$[10].name", is("Kiadó ház")))
+                .andExpect(jsonPath("$[11].name", is("Eladó ház")))
+                .andExpect(jsonPath("$[12].name", is("Kiadó lakás a városban")))
+                .andExpect(jsonPath("$[13].name", is("Kiadó irodaház")))
+                .andExpect(jsonPath("$[14].name", is("Kiadó villa")));
     }
+
+    @Test
+    void IT_test_findAllPropertiesPaginatedAndSortedAndFiltered() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
+                "    \"minArea\": 120,\n" +
+                "    \"minNumberOfRooms\": 4,\n" +
+                "    \"maxPrice\": 580000000\n" +
+                "}";
+
+        mockMvc.perform(post("/api/properties/requests?page=0&size=15&sort=area&sortDir=ASC")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(inputCommand))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name", is("Kiadó balatoni ház")))
+                .andExpect(jsonPath("$[1].name", is("Kiadó ház")))
+                .andExpect(jsonPath("$[2].name", is("Kiadó ház")));
+    }
+
+
 
     @Test
     void IT_test_getPropertyDetails() throws Exception {
         mockMvc.perform(get("/api/properties/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("Eladó Balatoni Ház")))
+                .andExpect(jsonPath("$.name", is("Kiadó balatoni ház")))
                 .andExpect(jsonPath("$.purpose", is("TO_RENT")))
-                .andExpect(jsonPath("$.description", is("Eladó családi ház a Balton partján")))
-                .andExpect(jsonPath("$.imageUrl", is("www.kep-url/122324gfg/kep.hu")))
+                .andExpect(jsonPath("$.description", is("Kiadó családi ház a Balton partján")))
                 .andExpect(jsonPath("$.numberOfRooms", is(4)))
-                .andExpect(jsonPath("$.price", is(63000000)));
+                .andExpect(jsonPath("$.price", is(6.3E7)));
     }
 
 
@@ -88,6 +107,7 @@ public class PropertyControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty() throws Exception {
 
         String inputCommand = "{\n" +
@@ -107,11 +127,11 @@ public class PropertyControllerTestIT {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is("Eladó Ház")))
                 .andExpect(jsonPath("$.numberOfRooms", is(6)))
-                .andExpect(jsonPath("$.price", is(75000000)))
-                .andExpect(jsonPath("$.imageUrl", is("image/jpeg;base68,/9j783/4Adfhdk")));
+                .andExpect(jsonPath("$.price", is(7.5E7)));
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty_nameNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"    \",\n" +
@@ -134,6 +154,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty_nameSizeNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij\",\n" +
@@ -156,6 +177,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty_purposeNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -178,6 +200,7 @@ public class PropertyControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty_typeNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -191,7 +214,8 @@ public class PropertyControllerTestIT {
                 "}";
     }
 
-        @Test
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty_areaMinNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -216,6 +240,7 @@ public class PropertyControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty_areaMaxNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -238,6 +263,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty_numberOfRoomsMinNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -260,6 +286,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty_numberOfRoomsMaxNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -282,6 +309,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty_priceNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -303,6 +331,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_saveProperty_customUsernameNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -325,6 +354,7 @@ public class PropertyControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty() throws Exception {
 
         String inputCommand = "{\n" +
@@ -346,11 +376,11 @@ public class PropertyControllerTestIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Eladó Ház")))
                 .andExpect(jsonPath("$.numberOfRooms", is(6)))
-                .andExpect(jsonPath("$.price", is(75000000)))
-                .andExpect(jsonPath("$.imageUrl", is("image/jpeg;base68,/9j783/4Adfhdk")));
+                .andExpect(jsonPath("$.price", is(7.5E7)));
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty_nameNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"    \",\n" +
@@ -373,6 +403,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty_nameSizeNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij\",\n" +
@@ -395,6 +426,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty_typeNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -416,6 +448,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty_purposeNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -437,6 +470,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty_areaMinNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -460,6 +494,7 @@ public class PropertyControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty_areaMaxNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -482,6 +517,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty_numberOfRoomsMinNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -504,6 +540,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty_numberOfRoomsMaxNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -526,6 +563,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty_priceNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -547,6 +585,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateProperty_customUsernameNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -569,22 +608,45 @@ public class PropertyControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void IT_test_deleteProperty() throws Exception {
         Property property = entityManager.find(Property.class, Long.valueOf(1));
-        assertTrue(property != null);
-        assertNotEquals(property.getStatus(), PropertyStatus.INACTIVE);
+        assertNotNull(property);
+        assertNotEquals(PropertyStatus.INACTIVE, property.getStatus());
         mockMvc.perform(delete("/api/properties/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
-        assertEquals(property.getStatus(), PropertyStatus.INACTIVE);
+        assertEquals(PropertyStatus.INACTIVE, property.getStatus());
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void IT_test_propertyNotExists() throws Exception {
         mockMvc.perform(delete("/api/properties/16")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.details", is("No property found with id: 16")));
     }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void IT_test_savePropertyImageURLS() throws Exception {
+
+        String inputCommand = "[\n" +
+                "{\n" +
+                "    \"propertyImageURL\": \"image/jpeg;base64,/1j/4AAQSk...\"\n" +
+                "},\n" +
+                "{\n" +
+                "    \"propertyImageURL\": \"image/jpeg;base64,/2j/4AAQSk...\"\n" +
+                "}\n" +
+                "]";
+        mockMvc.perform(post("/api/properties/imageurls/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$[0].propertyImageURL", is("image/jpeg;base64,/1j/4AAQSk...")))
+                .andExpect(jsonPath("$[1].propertyImageURL", is("image/jpeg;base64,/2j/4AAQSk...")));
+                }
+
 
 }

@@ -2,7 +2,6 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.PropertyImageURL;
 import hu.progmasters.moovsmart.repository.PropertyImageURLRepository;
-import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

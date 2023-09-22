@@ -1,6 +1,5 @@
 package hu.progmasters.moovsmart.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +19,9 @@ public class CustomUserInfo {
     private String email;
     private String phoneNumber;
 
+    private Boolean enable;
+
+    private Boolean hasNewsletter;
     private List<CustomUserRole> customUserRoles;
 
 }

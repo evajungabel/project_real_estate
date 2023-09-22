@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @NoArgsConstructor
@@ -52,7 +53,7 @@ public class Property {
     private Integer numberOfRooms;
 
     @Column(name = "price")
-    private Integer price;
+    private Double price;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -65,11 +66,11 @@ public class Property {
     @OneToOne(mappedBy = "property")
     private PropertyData propertyData;
 
-    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private Address address;
 
-    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
-    private PropertyImageURL propertyImageURL;
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PropertyImageURL> propertyImageURLs;
 
     @ManyToOne
     @JoinColumn(name = "custom_user_id")

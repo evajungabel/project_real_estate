@@ -3,7 +3,10 @@ package hu.progmasters.moovsmart.controller;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.service.CustomUserService;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,15 +14,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -39,13 +50,23 @@ public class CustomUserControllerTestIT {
     private MockMvc mockMvc;
 
     @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @Autowired
     private EntityManager entityManager;
 
 
     @Autowired
     CustomUserService customUserService;
 
+    @BeforeEach
+    public void init(){
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext).apply(springSecurity())
+                .build();
+    }
     @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void IT_test_atStart_emptyList() throws Exception {
         mockMvc.perform(get("/api/customusers"))
                 .andExpect(status().isOk());
@@ -53,14 +74,12 @@ public class CustomUserControllerTestIT {
 
 
     //TODO logintest
-//    @WithUserDetails("aprandia")
-//    @Test
-//    void IT_test_succsessfulLoginCustomUser() throws Exception {
-//        mockMvc.perform(get("/api/customusers/login/me").contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(status().isOk());
-//        }
-
-
+    @WithUserDetails("aprandia")
+    @Test
+    void IT_test_successfulLoginCustomUser() throws Exception {
+        mockMvc.perform(get("/api/customusers/login/me").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 
 
     @Test
@@ -72,7 +91,6 @@ public class CustomUserControllerTestIT {
 
     @Test
     void IT_test_registerCustomUser() throws Exception {
-
         String inputCommand = "{\n" +
                 "    \"name\": \"Bogyó és Babóca\",\n" +
                 "    \"username\": \"bogyóésbabóca\",\n" +
@@ -94,7 +112,7 @@ public class CustomUserControllerTestIT {
                 .andExpect(status().isCreated());
     }
 
-    //TODO for email sending
+//    TODO for email sending
 
     @Test
     void IT_test_saveCustomUser_nameIsBlank() throws Exception {
@@ -426,7 +444,7 @@ public class CustomUserControllerTestIT {
                 "    \"hasNewsletter\": \"true\",\n" +
                 "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
-                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +"}";
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" + "}";
 
         mockMvc.perform(post("/api/customusers/registration")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -445,7 +463,7 @@ public class CustomUserControllerTestIT {
                 "    \"isAgent\": \"false\",\n" +
                 "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
-                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +"}";
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" + "}";
 
         mockMvc.perform(post("/api/customusers/registration")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -454,7 +472,6 @@ public class CustomUserControllerTestIT {
                 .andExpect(jsonPath("$.fieldErrors[0].field", is("hasNewsletter")))
                 .andExpect(jsonPath("$.fieldErrors[0].message", is("Choosing an option for sending newsletter cannot be empty!")));
     }
-
 
 
     @Test
@@ -473,6 +490,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser() throws Exception {
 
         String inputCommand = "{\n" +
@@ -498,8 +516,8 @@ public class CustomUserControllerTestIT {
     }
 
 
-
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_nameIsBlank() throws Exception {
 
         String inputCommand = "{\n" +
@@ -521,6 +539,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_nameMinSize() throws Exception {
 
         String inputCommand = "{\n" +
@@ -542,6 +561,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_nameMaxSize() throws Exception {
 
         String inputCommand = "{\n" +
@@ -563,6 +583,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_usernameNotBlank() throws Exception {
 
         String inputCommand = "{\n" +
@@ -585,6 +606,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_usernameSizeMinNotValid() throws Exception {
 
         String inputCommand = "{\n" +
@@ -607,6 +629,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_usernameSizeMaxNotValid() throws Exception {
 
         String inputCommand = "{\n" +
@@ -628,6 +651,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_passwordNotNull() throws Exception {
 
         String inputCommand = "{\n" +
@@ -649,6 +673,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_passwordSizeMinNotValid() throws Exception {
 
         String inputCommand = "{\n" +
@@ -671,6 +696,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_passwordSizeMaxNotValid() throws Exception {
 
         String inputCommand = "{\n" +
@@ -692,6 +718,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_passwordPatternNotValid() throws Exception {
 
         String inputCommand = "{\n" +
@@ -713,6 +740,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_emailNotNull() throws Exception {
 
         String inputCommand = "{\n" +
@@ -734,6 +762,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_emailSizeMinNotValid() throws Exception {
 
         String inputCommand = "{\n" +
@@ -756,6 +785,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_emailSizeMaxNotValid() throws Exception {
 
         String inputCommand = "{\n" +
@@ -777,6 +807,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_emailPatternNotValid() throws Exception {
 
         String inputCommand = "{\n" +
@@ -798,6 +829,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_phoneNumberPatternNotValid() throws Exception {
 
         String inputCommand = "{\n" +
@@ -819,6 +851,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_isAgentIsNull() throws Exception {
 
         String inputCommand = "{\n" +
@@ -828,7 +861,7 @@ public class CustomUserControllerTestIT {
                 "    \"hasNewsletter\": \"true\",\n" +
                 "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
-                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +"}";
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" + "}";
 
         mockMvc.perform(put("/api/customusers/aprandia")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -839,6 +872,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_updateCustomUser_hasNewsletterIsNull() throws Exception {
 
         String inputCommand = "{\n" +
@@ -847,7 +881,7 @@ public class CustomUserControllerTestIT {
                 "    \"isAgent\": \"false\",\n" +
                 "    \"phoneNumber\": \"+36306363634\",\n" +
                 "    \"password\": \"BesB1234*\",\n" +
-                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" +"}";
+                "    \"email\": \"bogyo.es.baboca@gmail.com\"\n" + "}";
 
         mockMvc.perform(put("/api/customusers/apradnia")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -859,6 +893,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void IT_test_findAllCustomUsers() throws Exception {
         mockMvc.perform(get("/api/customusers")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -886,8 +921,9 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+//    @WithMockUser(username = "aprandia")
     void IT_test_getCustomUser() throws Exception {
-        mockMvc.perform(get("/api/customusers/aprandia")
+        mockMvc.perform(get("/api/customusers/customer").with(user("aprandia"))
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("aprandia")))
@@ -898,6 +934,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_getCustomUsersWithNoUsername() throws Exception {
         mockMvc.perform(get("/api/customusers/bobobo")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -908,28 +945,30 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_deleteCustomUser() throws Exception {
         CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(2));
-        assertTrue(customUser != null);
+        assertNotNull(customUser);
         assertFalse(customUser.isDeleted());
         List<Property> propertyList = customUser.getPropertyList();
         mockMvc.perform(delete("/api/customusers/glockley5")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
         assertTrue(customUser.isDeleted());
-        assertEquals(propertyList.size(), 1);
-        assertEquals(propertyList.get(0).getName(), "Eladó ház");
+        assertEquals(1, propertyList.size());
+        assertEquals("Eladó ház", propertyList.get(0).getName());
     }
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_customUserSaleProperty() throws Exception {
         CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(2));
-        assertTrue(customUser != null);
+        assertNotNull(customUser);
 
         Property property = entityManager.find(Property.class, Long.valueOf(2));
-        assertTrue(property != null);
-        assertFalse(property.getDateOfSale() != null);
+        assertNotNull(property);
+        assertNull(property.getDateOfSale());
 
         assertEquals(customUser.getPropertyList().get(0), property);
 
@@ -940,6 +979,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_customUserSalePropertyCustomUserNotExists() throws Exception {
         mockMvc.perform(delete("/api/customusers/sale/anemletezo/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -950,6 +990,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_customUserDeleteProperty() throws Exception {
         CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(3));
         assertNotNull(customUser);
@@ -967,6 +1008,7 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_customUserDeletePropertyIfCustomUserNotExists() throws Exception {
         mockMvc.perform(delete("/api/customusers/holvan/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -976,6 +1018,54 @@ public class CustomUserControllerTestIT {
     }
 
     //TODO for comment
+
+    @Test
+    void IT_test_registerAdmin() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Admin\",\n" +
+                "    \"username\": \"admin\",\n" +
+                "    \"password\": \"AdminA1234*\",\n" +
+                "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
+                "    \"question\": \"tetőcserép\",\n" +
+                "    \"email\": \"admin@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/register-admin")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void IT_test_registerAdminWrongAnswer() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"name\": \"Admin\",\n" +
+                "    \"username\": \"admin\",\n" +
+                "    \"password\": \"AdminA1234*\",\n" +
+                "    \"isAgent\": \"false\",\n" +
+                "    \"hasNewsletter\": \"true\",\n" +
+                "    \"phoneNumber\": \"+36306363634\",\n" +
+                "    \"question\": \"igen\",\n" +
+                "    \"email\": \"admin@gmail.com\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/register-admin")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
+    void IT_test_giveRoleAdmin() throws Exception {
+
+        mockMvc.perform(put("/api/customusers/roleadmin/cgasking6")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
 
 }
 

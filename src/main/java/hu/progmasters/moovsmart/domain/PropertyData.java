@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,46 +20,46 @@ public class PropertyData {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "property_condition")
-    private PropertyCondition condition;
+    private PropertyCondition propertyCondition;
 
     @Column(name = "year_built")
     private Integer yearBuilt;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "parking")
-    private PropertyParking parking;
+    private PropertyParking propertyParking;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "orientation")
-    private PropertyOrientation orientation;
+    private PropertyOrientation propertyOrientation;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "heating")
-    private PropertyHeatingType heating;
+    private PropertyHeatingType propertyHeatingType;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "energy_certificate")
     private PropertyEnergyPerformanceCertificate energyCertificate;
 
     @Column(name = "has_balcony")
-    private boolean hasBalcony;
+    private Boolean hasBalcony;
 
     @Column(name = "has_lift")
-    private boolean hasLift;
+    private Boolean hasLift;
 
     @Column(name = "is_accessible")
-    private boolean isAccessible;
+    private Boolean isAccessible;
 
     @Column(name = "is_insulated")
-    private boolean isInsulated;
+    private Boolean isInsulated;
 
     @Column(name = "has_air_condition")
-    private boolean hasAirCondition;
+    private Boolean hasAirCondition;
 
     @Column(name = "has_garden")
-    private boolean hasGarden;
+    private Boolean hasGarden;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")
     private Property property;
 
