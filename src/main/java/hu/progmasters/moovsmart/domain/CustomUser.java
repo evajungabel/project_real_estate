@@ -67,7 +67,7 @@ public class CustomUser implements UserDetails {
     @JoinTable(name = "custom_user_role")
     private List<CustomUserRole> roles;
 
-    @OneToMany(mappedBy = "customUser")
+    @OneToMany(mappedBy = "customUser", cascade = CascadeType.ALL)
     private List<Property> propertyList;
 
     @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL)

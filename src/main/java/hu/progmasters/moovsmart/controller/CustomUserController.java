@@ -1,6 +1,5 @@
 package hu.progmasters.moovsmart.controller;
 
-import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.service.CustomUserService;
 import hu.progmasters.moovsmart.service.SendingEmailService;
@@ -34,6 +33,17 @@ public class CustomUserController {
         this.sendingEmailService = sendingEmailService;
     }
 
+
+    @PostMapping("/registration")
+    @Operation(summary = "Save customer")
+    @ApiResponse(responseCode = "201", description = "Customer is saved")
+    public ResponseEntity<CustomUserInfo> register(@Valid @RequestBody CustomUserForm customUserForm) {
+        log.info("Http request, POST /api/customusers, body: " + customUserForm.toString());
+        CustomUserInfo customUserInfo = customUserService.register(customUserForm);
+        log.info("POST data from repository/api/customusers, body: " + customUserForm);
+        return new ResponseEntity<>(customUserInfo, HttpStatus.CREATED);
+    }
+
     @GetMapping("/login/me")
     @Operation(summary = "Login customer")
     @ApiResponse(responseCode = "201", description = "Customer is logged in")
@@ -44,16 +54,6 @@ public class CustomUserController {
         UserDetails loggedInUser = (User) authentication.getPrincipal();
         log.info("GET data from repository/api/customusers, logged in");
         return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
-    }
-
-    @PostMapping("/registration")
-    @Operation(summary = "Save customer")
-    @ApiResponse(responseCode = "201", description = "Customer is saved")
-    public ResponseEntity<CustomUserInfo> register(@Valid @RequestBody CustomUserForm customUserForm) {
-        log.info("Http request, POST /api/customusers, body: " + customUserForm.toString());
-        CustomUserInfo customUserInfo = customUserService.register(customUserForm);
-        log.info("POST data from repository/api/customusers, body: " + customUserForm);
-        return new ResponseEntity<>(customUserInfo, HttpStatus.CREATED);
     }
 
     @GetMapping("/activation/{confirmationToken}")
@@ -76,24 +76,6 @@ public class CustomUserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PutMapping("/{username}")
-    @Operation(summary = "Update customer")
-    @ApiResponse(responseCode = "200", description = "Customer is updated")
-    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
-    public ResponseEntity<CustomUserInfo> update(@PathVariable("username") String username,
-                                                 @Valid @RequestBody CustomUserForm customUserForm) {
-        log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm +
-                " with variable: " + username);
-        CustomUserInfo updated = customUserService.update(username, customUserForm);
-        sendingEmailService.sendEmail(customUserService.findCustomUserByUsername(updated.getUsername()).getEmail(), "Felhasználói fiók adatainak megváltoztatása",
-                "Kedves " + customUserService.findCustomUserByUsername(updated.getUsername()).getName() +
-                        "! \n \n Felhasználói fiókjának adatai megváltoztak! Ha nem Ön tette, mielőbb lépjen kapcsolatba velünk!");
-        log.info("PUT data from repository/api/customusers/{customUserId} body: " + customUserForm +
-                " with variable: " + username);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
-    }
-
-
     @GetMapping
     @Secured({"ROLE_ADMIN"})
     @Operation(summary = "Get all customers")
@@ -105,21 +87,76 @@ public class CustomUserController {
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/customuser")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    @Operation(summary = "Get a customer with username")
-    @ApiResponse(responseCode = "200", description = "Get a customer with username")
-    public ResponseEntity<CustomUserInfo> getCustomUserDetails(@PathVariable("username") String username) {
-        log.info("Http request, GET /api/customusers get a customer with username: " + username);
-        CustomUserInfo customerInfoList = customUserService.getCustomUserDetails(username);
-        log.info("GET data from repository/api/customusers get a customer with username: " + username);
+    @Operation(summary = "Get a customer with username by customer")
+    @ApiResponse(responseCode = "200", description = "Get a customer with username by a customer")
+    public ResponseEntity<CustomUserInfo> getCustomUserDetails() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Http request, GET /api/customusers get a customer by customer with username: " + userDetails.getUsername());
+        CustomUserInfo customerInfoList = customUserService.getCustomUserDetails(userDetails.getUsername());
+        log.info("GET data from repository/api/customusers get a customer by customer with username: " + userDetails.getUsername());
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/{username}")
+    @Secured({"ROLE_ADMIN"})
+    @Operation(summary = "Get a customer with username by admin")
+    @ApiResponse(responseCode = "200", description = "Get a customer with username by admin.")
+    public ResponseEntity<CustomUserInfo> getCustomUserDetails(@PathVariable("username") String username) {
+        log.info("Http request, GET /api/customusers get a customer by admin with username: " + username);
+        CustomUserInfo customerInfoList = customUserService.getCustomUserDetails(username);
+        log.info("GET data from repository/api/customusers get a customer by admin with username: " + username);
+        return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
+    }
+
+
+    @PutMapping()
+    @Operation(summary = "Update customer")
+    @ApiResponse(responseCode = "200", description = "Customer is updated")
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
+    public ResponseEntity<CustomUserInfo> update(@Valid @RequestBody CustomUserForm customUserForm) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm +
+                " with variable: " + userDetails.getUsername());
+        CustomUserInfo updated = customUserService.update(userDetails.getUsername(), customUserForm);
+        log.info("PUT data from repository/api/customusers/{customUserId} body: " + customUserForm +
+                " with variable: " + userDetails.getUsername());
+        return new ResponseEntity<>(updated, HttpStatus.OK);
+    }
+
+
+    @PutMapping("/{username}")
+    @Operation(summary = "Update customer")
+    @ApiResponse(responseCode = "200", description = "Customer is updated")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<CustomUserInfo> update(@PathVariable("username") String username,
+                                                 @Valid @RequestBody CustomUserForm customUserForm) {
+        log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm +
+                " with variable: " + username);
+        CustomUserInfo updated = customUserService.update(username, customUserForm);
+        log.info("PUT data from repository/api/customusers/{customUserId} body: " + customUserForm +
+                " with variable: " + username);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
+    }
+
+
+    @DeleteMapping()
+    @Operation(summary = "Delete customer")
+    @ApiResponse(responseCode = "200", description = "Customer is deleted")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<String> deleteUser() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Http request, DELETE /api/customusers with variable: " + userDetails.getUsername());
+        String message = customUserService.makeInactive(userDetails.getUsername());
+        log.info("DELETE data from repository/api/customusers with variable: " + userDetails.getUsername());
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     @DeleteMapping("/{customUsername}")
     @Operation(summary = "Delete customer")
     @ApiResponse(responseCode = "200", description = "Customer is deleted")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<String> deleteUser(@PathVariable("customUsername") String customUsername) {
         log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + customUsername);
         String message = customUserService.makeInactive(customUsername);
@@ -127,25 +164,40 @@ public class CustomUserController {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    @DeleteMapping("/sale/{username}/{propertyId}")
+
+
+    @DeleteMapping("/sale/{propertyId}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer sales a property and it is deleted")
     @ApiResponse(responseCode = "200", description = "Property is sold and deleted by costumer")
-    public ResponseEntity<String> deleteSale(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
-        log.info("Http request, DELETE /api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
-        String message = customUserService.deleteSale(username, pId);
-        log.info("DELETE data from repository/api/customusers/sale/{customUserId}" + username + "{propertyId} with variable: " + pId);
+    public ResponseEntity<String> deleteSale(@PathVariable("propertyId") Long pId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Http request, DELETE /api/customusers/sale" + userDetails.getUsername() + "{propertyId} with variable: " + pId);
+        String message = customUserService.deleteSale(userDetails.getUsername(), pId);
+        log.info("DELETE data from repository/api/customusers/sale " + userDetails.getUsername() + "{propertyId} with variable: " + pId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{username}/{propertyId}")
+    @DeleteMapping("/sale/{username}/{propertyId}")
+    @Secured({"ROLE_ADMIN"})
+    @Operation(summary = "Customer sales a property and it is deleted")
+    @ApiResponse(responseCode = "200", description = "Property is sold and deleted by costumer")
+    public ResponseEntity<String> deleteSale(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
+        log.info("Http request, DELETE /api/customusers/sale" + username + "{propertyId} with variable: " + pId);
+        String message = customUserService.deleteSale(username, pId);
+        log.info("DELETE data from repository/api/customusers/sale " + username + "{propertyId} with variable: " + pId);
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{propertyId}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer deletes a property")
     @ApiResponse(responseCode = "200", description = "Property is deleted by costumer")
-    public ResponseEntity<String> delete(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
-        log.info("Http request, DELETE /api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
-        String message = customUserService.deleteProperty(username, pId);
-        log.info("DELETE data from repository/api/customusers/{customUserId}" + username + "{propertyId} with variable: " + pId);
+    public ResponseEntity<String> delete(@PathVariable("propertyId") Long pId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Http request, DELETE /api/customusers by" + userDetails.getUsername() + "{propertyId} with variable: " + pId);
+        String message = customUserService.deleteProperty(userDetails.getUsername(), pId);
+        log.info("DELETE data from repository/api/customusers by" + userDetails.getUsername() + "{propertyId} with variable: " + pId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -194,6 +246,16 @@ public class CustomUserController {
         CustomUserInfo customUserInfo = customUserService.giveRoleAdmin(username);
         log.info("PUT data from repository/api/customusers : the ROLE_ADMIN was given");
         return new ResponseEntity<>(customUserInfo, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/total/{customUsername}")
+    @Operation(summary = "Delete customer")
+    @ApiResponse(responseCode = "200", description = "Customer is deleted")
+    public ResponseEntity<String> deleteUserTotal(@PathVariable("customUsername") String customUsername) {
+        log.info("Http request, DELETE /api/customusers/{customUsername} with variable: " + customUsername);
+        String message = customUserService.deleteUser(customUsername);
+        log.info("DELETE data from repository/api/customusers/{customUsername} with variable: " + customUsername);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }
 

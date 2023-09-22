@@ -23,7 +23,7 @@ public class PropertyImageURL {
     @Column(name = "property_image_url")
     private String propertyImageURL;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")
     private Property property;
 

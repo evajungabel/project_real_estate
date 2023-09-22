@@ -6,10 +6,13 @@ import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.*;
 import hu.progmasters.moovsmart.repository.AgentCommentRepository;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -234,11 +237,12 @@ public class CustomUserService implements UserDetailsService {
 
 
     public CustomUserInfo getCustomUserDetails(String username) {
-        CustomUser customUser = findCustomUserByUsername(username);
-        CustomUserInfo customUserInfo = modelMapper.map(customUser, CustomUserInfo.class);
-        customUserInfo.setCustomUserRoles(customUser.getRoles());
-        return customUserInfo;
+                CustomUser customUser = findCustomUserByUsername(username);
+                CustomUserInfo customUserInfo = modelMapper.map(customUser, CustomUserInfo.class);
+                customUserInfo.setCustomUserRoles(customUser.getRoles());
+                return customUserInfo;
     }
+
 
     public String deleteSale(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
@@ -353,7 +357,7 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-    @Scheduled(cron = "0 * * ? * *")
+    @Scheduled(cron = "0/20 * * * * ?")
     public void sendingNewsletter() {
         for (CustomUserEmail customUserEmail : customUserEmailService.getCustomUserEmails()) {
             String subject = "Hírlevél az újdonságokról!";
@@ -412,5 +416,11 @@ public class CustomUserService implements UserDetailsService {
             throw new RoleAdminExistsException(username);
         }
 
+    }
+
+    public String deleteUser(String customUsername) {
+        CustomUser customUser = findCustomUserByUsername(customUsername);
+        customUserRepository.delete(customUser);
+        return "Customer is deleted!";
     }
 }

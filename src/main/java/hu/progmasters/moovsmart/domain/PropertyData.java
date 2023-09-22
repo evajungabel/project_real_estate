@@ -59,7 +59,7 @@ public class PropertyData {
     @Column(name = "has_garden")
     private Boolean hasGarden;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")
     private Property property;
 

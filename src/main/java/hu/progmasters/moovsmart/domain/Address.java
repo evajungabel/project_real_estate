@@ -39,7 +39,7 @@ public class Address {
     @Column(name = "deleted")
     private Boolean deleted;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")
     private Property property;
 }

@@ -59,7 +59,7 @@ public class PropertyService {
     public List<PropertyDetails> getProperties24() {
         List<Property> properties = propertyRepository.findAll();
         return properties.stream()
-                .filter(property -> property.getDateOfCreation().isAfter(LocalDateTime.now().minusSeconds(5)))
+                .filter(property -> property.getDateOfCreation().isAfter(LocalDateTime.now().minusSeconds(35)))
                 .map(property -> modelMapper.map(property, PropertyDetails.class))
                 .collect(Collectors.toList());
     }
@@ -117,7 +117,6 @@ public class PropertyService {
         if (propertyFilterRequestForm.getMaxPrice() != null) {
             spec = spec.and(PropertySpecifications.hasLessThanOrEqualTo(propertyFilterRequestForm.getMaxPrice()));
         }
-
 
         if (propertyFilterRequestForm.getAddressInfoForProperty() != null && propertyFilterRequestForm.getAddressInfoForProperty().getCountry() != null) {
             spec = spec.and(PropertySpecifications.hasPropertyCountry(propertyFilterRequestForm.getAddressInfoForProperty().getCountry()));
@@ -226,6 +225,7 @@ public class PropertyService {
     public void makeInactive(Long id) {
         Property toDelete = findPropertyById(id);
         toDelete.setStatus(PropertyStatus.INACTIVE);
+        toDelete.setDateOfInactivation(LocalDateTime.now());
     }
 
 
