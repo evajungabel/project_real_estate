@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,9 +58,9 @@ public class PropertyService {
     }
 
     public List<PropertyDetails> getProperties24() {
-        List<Property> properties = propertyRepository.findAll();
+        Date thresholdDate = new Date(System.currentTimeMillis() - 35_000);
+        List<Property> properties = propertyRepository.findPropertiesCreatedAfterThresholdDate(thresholdDate);
         return properties.stream()
-                .filter(property -> property.getDateOfCreation().isAfter(LocalDateTime.now().minusSeconds(35)))
                 .map(property -> modelMapper.map(property, PropertyDetails.class))
                 .collect(Collectors.toList());
     }
