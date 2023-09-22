@@ -27,14 +27,14 @@ public class PropertyForm {
 
     @Min(value = 1, message = "Space must be between 1 and 1000!")
     @Max(value = 1000, message = "Space must be between 1 and 1000!")
-    private Integer area;
+    private Double area;
 
     @Min(value = 1, message = "Number of rooms must be between 1 and 40!")
     @Max(value = 40, message = "Number of rooms must be between 1 and 40!")
     private Integer numberOfRooms;
 
     @NotNull(message = "Price must be added!")
-    private Integer price;
+    private Double price;
 
     private String description;
 

@@ -14,7 +14,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.Serializable;
 import java.util.List;
 
 @RestController
@@ -47,19 +46,37 @@ public class PropertyController {
     }
 
 
-
-
     @GetMapping(params = {"page", "size", "sortDir", "sort"})
-    public List<PropertyDetails> findPaginated(
+    @Operation(summary = "Get list of paginated and sorted property")
+    @ApiResponse(responseCode = "200", description = "Paginated and sorted list of property is got.")
+    public ResponseEntity<List<PropertyDetails>> findPaginated(
              @RequestParam("sortDir") String sortDir,
              @RequestParam("sort") String sort,
              @RequestParam("page") int page,
              @RequestParam("size") int size) {
+        log.info("Http request, GET /api/property with variables: " + page + size + sort + sortDir);
         List<PropertyDetails> propertyDetailsList = propertyService.getPropertyListPaginated(page, size, sortDir, sort);
-
-        return propertyDetailsList;
+        log.info("GET data from repository/property with variable: " + page + size + sort + sortDir);
+        return new ResponseEntity<>(propertyDetailsList, HttpStatus.OK);
     }
 
+
+    @PostMapping("/requests")
+    @Operation(summary = "Get filtered, paginated and sorted list of property")
+    @ApiResponse(responseCode = "200", description = "Paginated, sorted and filtered list of property is got.")
+    public ResponseEntity<List<PropertyFilterRequestInfo>> findByRequestedValues(
+            @RequestParam("sortDir") String sortDir,
+            @RequestParam("sort") String sort,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @Valid @RequestBody PropertyFilterRequestForm propertyFilterRequestForm
+    ) {
+        log.info("Http request, POST /api/property with variables: " + page + size + sort + sortDir + propertyFilterRequestForm);
+        List<PropertyFilterRequestInfo> propertyFilterRequestInfos = propertyService.getPropertyRequests(page, size, sortDir, sort, propertyFilterRequestForm);
+        log.info("POST data from repository/property with variable: " + page + size + sort + sortDir + propertyFilterRequestForm);
+
+        return new ResponseEntity<>(propertyFilterRequestInfos, HttpStatus.OK);
+    }
 
     @GetMapping("/{propertyId}")
     @Operation(summary = "Get property with {propertyId}")

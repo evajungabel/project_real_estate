@@ -1,6 +1,5 @@
 package hu.progmasters.moovsmart.exception;
 
-import hu.progmasters.moovsmart.config.CustomUserRole;
 
 public class RoleAdminExistsException extends RuntimeException {
 

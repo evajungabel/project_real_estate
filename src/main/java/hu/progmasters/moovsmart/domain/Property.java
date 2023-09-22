@@ -52,7 +52,7 @@ public class Property {
     private Integer numberOfRooms;
 
     @Column(name = "price")
-    private Integer price;
+    private Double price;
 
     @Column(columnDefinition = "TEXT")
     private String description;

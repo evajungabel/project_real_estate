@@ -17,10 +17,10 @@ import java.util.List;
 public class PropertyDetails {
     private String name;
     private Integer numberOfRooms;
-    private Integer price;
+    private Double price;
     private PropertyType type;
     private PropertyPurpose purpose;
-    private Integer area;
+    private Double area;
     private String description;
     private AddressInfoForProperty addressInfoForProperty;
     private List<PropertyImageURL> propertyImageURLS;
