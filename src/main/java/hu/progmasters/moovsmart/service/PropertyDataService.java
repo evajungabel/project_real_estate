@@ -4,14 +4,20 @@ import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyData;
 import hu.progmasters.moovsmart.dto.PropertyDataForm;
 import hu.progmasters.moovsmart.dto.PropertyDataInfo;
+import hu.progmasters.moovsmart.exception.NoResourceFoundException;
 import hu.progmasters.moovsmart.exception.PropertyDataNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyDataRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,14 +37,15 @@ public class PropertyDataService {
 
 
     public PropertyDataInfo getPropertyData(Long id) {
-        PropertyData propertyData = findPropertyDataByPropertyId(id);
+        Property property = propertyService.findPropertyById(id);
+        PropertyData propertyData = findPropertyDataByPropertyId(property.getPropertyData().getId());
         return modelMapper.map(propertyData, PropertyDataInfo.class);
     }
 
-    private PropertyData findPropertyDataByPropertyId(Long propertyId) {
-        Optional<PropertyData> propertyDataOptional = propertyDataRepository.findByPropertyId(propertyId);
+    private PropertyData findPropertyDataByPropertyId(Long propertyDataId) {
+        Optional<PropertyData> propertyDataOptional = propertyDataRepository.findById(propertyDataId);
         if (propertyDataOptional.isEmpty()) {
-            throw new PropertyDataNotFoundException(propertyId);
+            throw new PropertyDataNotFoundException(propertyDataId);
         }
         return propertyDataOptional.get();
     }
@@ -58,6 +65,21 @@ public class PropertyDataService {
     }
 
     public void deleteByPropertyId(Long id) {
-        propertyDataRepository.deleteByPropertyId(id);
+        Property property = propertyService.findPropertyById(id);
+        propertyDataRepository.delete(property.getPropertyData());
+    }
+
+    public List<PropertyDataInfo> getPropertyDataListPaginated(int page, int size, String sortDir, String sort) {
+
+        PageRequest pageReq
+                = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
+
+        Page<PropertyData> propertyDatas = propertyDataRepository.findAll(pageReq);
+        if (page > propertyDatas.getTotalPages()) {
+            throw new NoResourceFoundException(propertyDatas.getTotalPages());
+        }
+        return propertyDatas.getContent().stream()
+                .map(propertyData -> modelMapper.map(propertyData, PropertyDataInfo.class))
+                .collect(Collectors.toList());
     }
 }

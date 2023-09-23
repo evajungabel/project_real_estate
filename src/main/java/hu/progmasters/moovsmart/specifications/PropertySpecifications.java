@@ -5,6 +5,8 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import java.time.Year;
+import java.util.Date;
 
 public final class PropertySpecifications {
 

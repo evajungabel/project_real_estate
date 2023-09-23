@@ -2,6 +2,7 @@ package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.dto.PropertyDataForm;
 import hu.progmasters.moovsmart.dto.PropertyDataInfo;
+import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.service.PropertyDataService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/properties/data")
@@ -35,6 +37,19 @@ public class PropertyDataController {
     }
 
 
+    @GetMapping(value = "/paginatedlist", params = {"page", "size", "sortDir", "sort"})
+    @Operation(summary = "Get list of paginated and sorted property data")
+    @ApiResponse(responseCode = "200", description = "Paginated and sorted list of property data is got.")
+    public ResponseEntity<List<PropertyDataInfo>> findPaginated(
+            @RequestParam("sortDir") String sortDir,
+            @RequestParam("sort") String sort,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
+        log.info("Http request, GET /api/property/data with variables: " + page + size + sort + sortDir);
+        List<PropertyDataInfo> propertyDataInfos = propertyDataService.getPropertyDataListPaginated(page, size, sortDir, sort);
+        log.info("GET data from repository/property/data with variable: " + page + size + sort + sortDir);
+        return new ResponseEntity<>(propertyDataInfos, HttpStatus.OK);
+    }
     @PostMapping("/{propertyId}")
     @Operation(summary = "Save property data for property id {propertyId}")
     @ApiResponse(responseCode = "201", description = "Property data saved")
@@ -62,14 +77,14 @@ public class PropertyDataController {
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{propertyId}")
-    @Operation(summary = "Delete property data for property id {propertyId}")
-    @ApiResponse(responseCode = "200", description = "Property data deleted")
-//    @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<Void> deletePropertyData(@PathVariable("propertyId") Long id) {
-        log.info("Http request, DELETE /api/properties/data/{propertyId} with variable: " + id);
-        propertyDataService.deleteByPropertyId(id);
-        log.info("DELETE deleted data from repository propertyData for property id " + id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @DeleteMapping("/{propertyId}")
+//    @Operation(summary = "Delete property data for property id {propertyId}")
+//    @ApiResponse(responseCode = "200", description = "Property data deleted")
+////    @Secured({"ROLE_ADMIN"})
+//    public ResponseEntity<Void> deletePropertyData(@PathVariable("propertyId") Long id) {
+//        log.info("Http request, DELETE /api/properties/data/{propertyId} with variable: " + id);
+//        propertyDataService.deleteByPropertyId(id);
+//        log.info("DELETE deleted data from repository propertyData for property id " + id);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 }

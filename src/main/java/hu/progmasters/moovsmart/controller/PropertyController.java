@@ -93,6 +93,7 @@ public class PropertyController {
     @ApiResponse(responseCode = "201", description = "Property saved")
     @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     public ResponseEntity<PropertyInfo> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
+
         log.info("Http request, POST /api/property, body: " + propertyForm.toString());
         PropertyInfo propertyInfo = propertyService.createProperty(propertyForm);
         log.info("POST data from repository/api/property, body: " + propertyForm);

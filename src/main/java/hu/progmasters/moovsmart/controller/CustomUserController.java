@@ -88,7 +88,7 @@ public class CustomUserController {
     }
 
     @GetMapping("/customuser")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     @Operation(summary = "Get a customer with username by customer")
     @ApiResponse(responseCode = "200", description = "Get a customer with username by a customer")
     public ResponseEntity<CustomUserInfo> getCustomUserDetails() {
@@ -144,7 +144,7 @@ public class CustomUserController {
     @DeleteMapping()
     @Operation(summary = "Delete customer")
     @ApiResponse(responseCode = "200", description = "Customer is deleted")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     public ResponseEntity<String> deleteUser() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, DELETE /api/customusers with variable: " + userDetails.getUsername());
@@ -167,7 +167,7 @@ public class CustomUserController {
 
 
     @DeleteMapping("/sale/{propertyId}")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     @Operation(summary = "Customer sales a property and it is deleted")
     @ApiResponse(responseCode = "200", description = "Property is sold and deleted by costumer")
     public ResponseEntity<String> deleteSale(@PathVariable("propertyId") Long pId) {
@@ -190,7 +190,7 @@ public class CustomUserController {
     }
 
     @DeleteMapping("/delete/{propertyId}")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     @Operation(summary = "Customer deletes a property")
     @ApiResponse(responseCode = "200", description = "Property is deleted by costumer")
     public ResponseEntity<String> delete(@PathVariable("propertyId") Long pId) {
@@ -202,7 +202,7 @@ public class CustomUserController {
     }
 
     @PostMapping("/comment")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     @Operation(summary = "Comment estate agent")
     @ApiResponse(responseCode = "201", description = "Comment created")
     public ResponseEntity<Void> comment(@Valid @RequestBody CommentForm comment) {

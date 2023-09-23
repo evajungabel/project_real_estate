@@ -9,7 +9,4 @@ import java.util.Optional;
 @Repository
 public interface PropertyDataRepository extends JpaRepository<PropertyData, Long> {
 
-    Optional<PropertyData> findByPropertyId(Long propertyId);
-
-    void deleteByPropertyId(Long id);
 }
