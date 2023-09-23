@@ -107,7 +107,7 @@ public class PropertyControllerTestIT {
 
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
+    @WithMockUser(username = "aprandia", authorities = "ROLE_USER")
     void IT_test_saveProperty() throws Exception {
 
         String inputCommand = "{\n" +
@@ -348,13 +348,13 @@ public class PropertyControllerTestIT {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.fieldErrors[0].field", is("customUsername")))
-                .andExpect(jsonPath("$.fieldErrors[0].message", is("Username cannot be empty!")));
+                .andExpect(jsonPath("$.error", is("User not found error.")))
+                .andExpect(jsonPath("$.details", is("Username was not found with: user")));
     }
 
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
+    @WithMockUser(username = "aprandia", authorities = "ROLE_USER")
     void IT_test_updateProperty() throws Exception {
 
         String inputCommand = "{\n" +
@@ -585,7 +585,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
+    @WithMockUser(username = "aprandia", authorities = "ROLE_USER")
     void IT_test_updateProperty_customUsernameNotValid() throws Exception {
         String inputCommand = "{\n" +
                 "    \"name\": \"Eladó Ház\",\n" +
@@ -598,12 +598,11 @@ public class PropertyControllerTestIT {
                 "    \"imageUrl\": \"image/jpeg;base68,/9j783/4Adfhdk\"\n" +
                 "}";
 
-        mockMvc.perform(put("/api/properties/1")
+        mockMvc.perform(put("/api/properties/2")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.fieldErrors[0].field", is("customUsername")))
-                .andExpect(jsonPath("$.fieldErrors[0].message", is("Username cannot be empty!")));
+                .andExpect(jsonPath("$.details", is("User was denied with username: aprandia")));
     }
 
 
@@ -629,7 +628,7 @@ public class PropertyControllerTestIT {
     }
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
+    @WithMockUser(username = "aprandia", authorities = "ROLE_USER")
     void IT_test_savePropertyImageURLS() throws Exception {
 
         String inputCommand = "[\n" +
