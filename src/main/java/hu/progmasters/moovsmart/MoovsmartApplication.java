@@ -23,9 +23,6 @@ public class MoovsmartApplication {
 		return modelMapper;
 	}
 
-
-
-
 	@Bean
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
@@ -34,6 +31,4 @@ public class MoovsmartApplication {
 						.version("1.0.1")
 						.description("This is the backand of an Estate trade application."));
 	}
-
-
 }

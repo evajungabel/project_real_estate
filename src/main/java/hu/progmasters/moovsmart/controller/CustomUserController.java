@@ -222,7 +222,6 @@ public class CustomUserController {
         return new ResponseEntity<>(estateAgentInfo, HttpStatus.OK);
     }
 
-
     @PostMapping("/register-admin")
     @Operation(summary = "Register first admin")
     @ApiResponse(responseCode = "201", description = "First admin is saved")
