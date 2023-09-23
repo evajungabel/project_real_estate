@@ -490,7 +490,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
+    @WithMockUser(username = "aprandia", authorities = "ROLE_USER")
     void IT_test_updateCustomUser() throws Exception {
 
         String inputCommand = "{\n" +
@@ -504,7 +504,7 @@ public class CustomUserControllerTestIT {
                 "}";
 
 
-        mockMvc.perform(put("/api/customusers/aprandia")
+        mockMvc.perform(put("/api/customusers")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputCommand))
                 .andExpect(jsonPath("$.name", is("Bogyó és Babóca")))
@@ -921,9 +921,23 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
-//    @WithMockUser(username = "aprandia")
-    void IT_test_getCustomUser() throws Exception {
-        mockMvc.perform(get("/api/customusers/customer").with(user("aprandia"))
+    @WithMockUser(username = "aprandia", authorities = "ROLE_USER")
+    void IT_test_getCustomUserByUser() throws Exception {
+        mockMvc.perform(get("/api/customusers/customuser")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", is("aprandia")))
+                .andExpect(jsonPath("$.name", is("Avivah Prandi")))
+                .andExpect(jsonPath("$.email", is("aprandia@miitbeian.gov.cn")))
+                .andExpect(jsonPath("$.phoneNumber", is("+36306363631")));
+    }
+
+
+
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
+    void IT_test_getCustomUserByAdmin() throws Exception {
+        mockMvc.perform(get("/api/customusers/aprandia")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("aprandia")))
@@ -934,19 +948,35 @@ public class CustomUserControllerTestIT {
 
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
-    void IT_test_getCustomUsersWithNoUsername() throws Exception {
-        mockMvc.perform(get("/api/customusers/bobobo")
+    @WithMockUser(username = "anemletezo", authorities = "ROLE_USER")
+    void IT_test_getCustomUserByCustomUserNotExists() throws Exception {
+        mockMvc.perform(get("/api/customusers/customuser")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("User not found error.")))
-                .andExpect(jsonPath("$.details", is("Username was not found with: bobobo")));
+                .andExpect(jsonPath("$.details", is("Username was not found with: anemletezo")));
     }
 
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
-    void IT_test_deleteCustomUser() throws Exception {
+    @WithMockUser(username = "glockley5", authorities = "ROLE_USER")
+    void IT_test_deleteCustomUserByCustomUser() throws Exception {
+        CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(2));
+        assertNotNull(customUser);
+        assertFalse(customUser.isDeleted());
+        List<Property> propertyList = customUser.getPropertyList();
+        mockMvc.perform(delete("/api/customusers")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+        assertTrue(customUser.isDeleted());
+        assertEquals(1, propertyList.size());
+        assertEquals("Kiadó ház", propertyList.get(0).getName());
+    }
+
+
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
+    void IT_test_deleteCustomUserByAdmin() throws Exception {
         CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(2));
         assertNotNull(customUser);
         assertFalse(customUser.isDeleted());
@@ -956,13 +986,30 @@ public class CustomUserControllerTestIT {
                 .andExpect(status().isOk());
         assertTrue(customUser.isDeleted());
         assertEquals(1, propertyList.size());
-        assertEquals("Eladó ház", propertyList.get(0).getName());
+        assertEquals("Kiadó ház", propertyList.get(0).getName());
     }
 
+    @Test
+    @WithMockUser(username = "glockley5", authorities = "ROLE_USER")
+    void IT_test_customUserSalePropertyByCustomUser() throws Exception {
+        CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(2));
+        assertNotNull(customUser);
+
+        Property property = entityManager.find(Property.class, Long.valueOf(2));
+        assertNotNull(property);
+        assertNull(property.getDateOfSale());
+
+        assertEquals(customUser.getPropertyList().get(0), property);
+
+        mockMvc.perform(delete("/api/customusers/sale/2")
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+        assertNotNull(property.getDateOfSale());
+    }
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
-    void IT_test_customUserSaleProperty() throws Exception {
+    @WithMockUser(authorities = "ROLE_ADMIN")
+    void IT_test_customUserSalePropertyByAdmin() throws Exception {
         CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(2));
         assertNotNull(customUser);
 
@@ -979,9 +1026,9 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
+    @WithMockUser(username = "anemletezo", authorities = "ROLE_USER")
     void IT_test_customUserSalePropertyCustomUserNotExists() throws Exception {
-        mockMvc.perform(delete("/api/customusers/sale/anemletezo/1")
+        mockMvc.perform(delete("/api/customusers/sale/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("User not found error.")))
@@ -990,8 +1037,8 @@ public class CustomUserControllerTestIT {
 
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
-    void IT_test_customUserDeleteProperty() throws Exception {
+    @WithMockUser(username = "ikoubek4", authorities = "ROLE_USER")
+    void IT_test_customUserDeletePropertyByCustomUser() throws Exception {
         CustomUser customUser = entityManager.find(CustomUser.class, Long.valueOf(3));
         assertNotNull(customUser);
 
@@ -1001,16 +1048,16 @@ public class CustomUserControllerTestIT {
 
         assertEquals(customUser.getPropertyList().get(0), property);
 
-        mockMvc.perform(delete("/api/customusers/ikoubek4/6")
+        mockMvc.perform(delete("/api/customusers/delete/6")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
         assertNotNull(property.getDateOfInactivation());
     }
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
+    @WithMockUser(username = "holvan", authorities = "ROLE_USER")
     void IT_test_customUserDeletePropertyIfCustomUserNotExists() throws Exception {
-        mockMvc.perform(delete("/api/customusers/holvan/1")
+        mockMvc.perform(delete("/api/customusers/delete/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("User not found error.")))
