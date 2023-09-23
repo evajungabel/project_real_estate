@@ -25,4 +25,5 @@ public class PropertyInfo {
     private Double price;
     private AddressInfoForProperty addressInfoForProperty;
     private List<PropertyImageURL> propertyImageURLS;
+    private PropertyDataInfo propertyDataInfo;
 }
