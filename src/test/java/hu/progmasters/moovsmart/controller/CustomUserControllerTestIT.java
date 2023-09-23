@@ -3,6 +3,8 @@ package hu.progmasters.moovsmart.controller;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.service.CustomUserService;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +14,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,12 +50,21 @@ public class CustomUserControllerTestIT {
     private MockMvc mockMvc;
 
     @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @Autowired
     private EntityManager entityManager;
 
 
     @Autowired
     CustomUserService customUserService;
 
+    @BeforeEach
+    public void init(){
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext).apply(springSecurity())
+                .build();
+    }
     @Test
     @WithMockUser(authorities = "ROLE_ADMIN")
     void IT_test_atStart_emptyList() throws Exception {
@@ -62,8 +78,8 @@ public class CustomUserControllerTestIT {
     @Test
     void IT_test_successfulLoginCustomUser() throws Exception {
         mockMvc.perform(get("/api/customusers/login/me").contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-        }
+                .andExpect(status().isOk());
+    }
 
 
     @Test
@@ -96,7 +112,7 @@ public class CustomUserControllerTestIT {
                 .andExpect(status().isCreated());
     }
 
-    //TODO for email sending
+//    TODO for email sending
 
     @Test
     void IT_test_saveCustomUser_nameIsBlank() throws Exception {
@@ -905,9 +921,9 @@ public class CustomUserControllerTestIT {
     }
 
     @Test
-    @WithMockUser(authorities = "ROLE_ADMIN")
+//    @WithMockUser(username = "aprandia")
     void IT_test_getCustomUser() throws Exception {
-        mockMvc.perform(get("/api/customusers/aprandia")
+        mockMvc.perform(get("/api/customusers/customer").with(user("aprandia"))
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("aprandia")))
@@ -918,7 +934,7 @@ public class CustomUserControllerTestIT {
 
 
     @Test
-    @WithMockUser(authorities = "ROLE_ADMIN")
+    @WithMockUser(authorities = "ROLE_USER")
     void IT_test_getCustomUsersWithNoUsername() throws Exception {
         mockMvc.perform(get("/api/customusers/bobobo")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -1021,6 +1037,7 @@ public class CustomUserControllerTestIT {
                         .content(inputCommand))
                 .andExpect(status().isCreated());
     }
+
     @Test
     void IT_test_registerAdminWrongAnswer() throws Exception {
         String inputCommand = "{\n" +
@@ -1048,7 +1065,6 @@ public class CustomUserControllerTestIT {
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
-
 
 
 }

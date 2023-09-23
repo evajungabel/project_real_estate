@@ -35,42 +35,64 @@ public class PropertyControllerTestIT {
 
     @Test
     void IT_test_atStart_emptyList() throws Exception {
-        mockMvc.perform(get("/api/properties"))
+        mockMvc.perform(get("/api/properties?page=0&size=1&sort=area&sortDir=asc"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void IT_test_findAllProperties() throws Exception {
-        mockMvc.perform(get("/api/properties")
+    void IT_test_findAllPropertiesPaginatedAndSorted() throws Exception {
+        mockMvc.perform(get("/api/properties?page=0&size=15&sort=area&sortDir=ASC")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name", is("Eladó Balatoni Ház")))
-                .andExpect(jsonPath("$[1].name", is("Eladó ház")))
-                .andExpect(jsonPath("$[2].name", is("Eladó lakás Pécsett")))
-                .andExpect(jsonPath("$[3].name", is("Eladó lakás a városban")))
-                .andExpect(jsonPath("$[4].name", is("Eladó ház")))
-                .andExpect(jsonPath("$[5].name", is("Kiadó lakás")))
-                .andExpect(jsonPath("$[6].name", is("Eladó irodaház")))
-                .andExpect(jsonPath("$[7].name", is("Eladó lakás")))
-                .andExpect(jsonPath("$[8].name", is("Eladó villa")))
-                .andExpect(jsonPath("$[9].name", is("Eladó lakás")))
-                .andExpect(jsonPath("$[10].name", is("Eladó ház")))
-                .andExpect(jsonPath("$[11].name", is("Eladó villa")))
-                .andExpect(jsonPath("$[12].name", is("Eladó lakás")))
-                .andExpect(jsonPath("$[13].name", is("Eladó ház")))
-                .andExpect(jsonPath("$[14].name", is("Eladó ház")));
+                .andExpect(jsonPath("$[0].name", is("Kiadó villa")))
+                .andExpect(jsonPath("$[1].name", is("Kiadó lakás")))
+                .andExpect(jsonPath("$[2].name", is("Kiadó lakás Pécsett")))
+                .andExpect(jsonPath("$[3].name", is("Kiadó lakás")))
+                .andExpect(jsonPath("$[4].name", is("Eladó lakás")))
+                .andExpect(jsonPath("$[5].name", is("Kiadó balatoni ház")))
+                .andExpect(jsonPath("$[6].name", is("Eladó ház")))
+                .andExpect(jsonPath("$[7].name", is("Kiadó ház")))
+                .andExpect(jsonPath("$[8].name", is("Eladó ház")))
+                .andExpect(jsonPath("$[9].name", is("Kiadó lakás")))
+                .andExpect(jsonPath("$[10].name", is("Kiadó ház")))
+                .andExpect(jsonPath("$[11].name", is("Eladó ház")))
+                .andExpect(jsonPath("$[12].name", is("Kiadó lakás a városban")))
+                .andExpect(jsonPath("$[13].name", is("Kiadó irodaház")))
+                .andExpect(jsonPath("$[14].name", is("Kiadó villa")));
     }
+
+    @Test
+    void IT_test_findAllPropertiesPaginatedAndSortedAndFiltered() throws Exception {
+
+        String inputCommand = "{\n" +
+                "    \"type\": \"HOUSE\",\n" +
+                "    \"purpose\": \"TO_RENT\",\n" +
+                "    \"minArea\": 120,\n" +
+                "    \"minNumberOfRooms\": 4,\n" +
+                "    \"maxPrice\": 580000000\n" +
+                "}";
+
+        mockMvc.perform(post("/api/properties/requests?page=0&size=15&sort=area&sortDir=ASC")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(inputCommand))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name", is("Kiadó balatoni ház")))
+                .andExpect(jsonPath("$[1].name", is("Kiadó ház")))
+                .andExpect(jsonPath("$[2].name", is("Kiadó ház")));
+    }
+
+
 
     @Test
     void IT_test_getPropertyDetails() throws Exception {
         mockMvc.perform(get("/api/properties/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("Eladó Balatoni Ház")))
+                .andExpect(jsonPath("$.name", is("Kiadó balatoni ház")))
                 .andExpect(jsonPath("$.purpose", is("TO_RENT")))
-                .andExpect(jsonPath("$.description", is("Eladó családi ház a Balton partján")))
+                .andExpect(jsonPath("$.description", is("Kiadó családi ház a Balton partján")))
                 .andExpect(jsonPath("$.numberOfRooms", is(4)))
-                .andExpect(jsonPath("$.price", is(63000000)));
+                .andExpect(jsonPath("$.price", is(6.3E7)));
     }
 
 
@@ -105,7 +127,7 @@ public class PropertyControllerTestIT {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is("Eladó Ház")))
                 .andExpect(jsonPath("$.numberOfRooms", is(6)))
-                .andExpect(jsonPath("$.price", is(75000000)));
+                .andExpect(jsonPath("$.price", is(7.5E7)));
     }
 
     @Test
@@ -354,7 +376,7 @@ public class PropertyControllerTestIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Eladó Ház")))
                 .andExpect(jsonPath("$.numberOfRooms", is(6)))
-                .andExpect(jsonPath("$.price", is(75000000)));
+                .andExpect(jsonPath("$.price", is(7.5E7)));
     }
 
     @Test
