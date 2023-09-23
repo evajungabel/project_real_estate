@@ -33,6 +33,6 @@ public class CloudinaryImageUploadController {
 
     @GetMapping
     public ResponseEntity<String> notificationImage() {
-        return new ResponseEntity<>("Ok", HttpStatus.OK);
+        return new ResponseEntity<>("The file is uploaded!", HttpStatus.OK);
     }
 }

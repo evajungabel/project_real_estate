@@ -129,7 +129,7 @@ public class CustomUserController {
     @PutMapping("/{username}")
     @Operation(summary = "Update customer")
     @ApiResponse(responseCode = "200", description = "Customer is updated")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<CustomUserInfo> update(@PathVariable("username") String username,
                                                  @Valid @RequestBody CustomUserForm customUserForm) {
         log.info("Http request, PUT /api/customusers/{username} body: " + customUserForm +
@@ -189,7 +189,7 @@ public class CustomUserController {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{propertyId}")
+    @DeleteMapping("/delete/{propertyId}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Operation(summary = "Customer deletes a property")
     @ApiResponse(responseCode = "200", description = "Property is deleted by costumer")
