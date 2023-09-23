@@ -7,6 +7,7 @@ import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.AddressRepository;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import hu.progmasters.moovsmart.specifications.PropertySpecifications;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -20,10 +21,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.font.PDFont;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@Slf4j
 public class PropertyService {
 
     private PropertyRepository propertyRepository;
@@ -270,10 +273,18 @@ public class PropertyService {
         try {
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
+            Path desktopPath = FileSystems.getDefault().getPath(System.getProperty("user.home"), "Desktop");
+
+            // Most már használhatod az "desktopPath"-et a PDF fájl mentési helyeként
+            String filePath = desktopPath.toString() + "/property"+id+".pdf";
+
             // Adatok hozzáadása a PDF-hez (példa)
             contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 14);
             contentStream.beginText();
+            contentStream.newLine();
             contentStream.newLineAtOffset(100, 700);
+            contentStream.newLine();
+            contentStream.setCharacterSpacing(1.5f); // Karakterköz beállítása
             contentStream.showText("Property Name: " + propertyInfo.getName());
             contentStream.newLine();
             contentStream.showText("Property Type: " + propertyInfo.getType());
@@ -284,11 +295,11 @@ public class PropertyService {
             contentStream.close();
 
             // PDF dokumentum mentése fájlba
-//            document.save(filePath);
+            document.save(filePath);
             document.close();
         } catch (IOException e) {
             // Hiba kezelése
-//            log.error("Error while generating and saving PDF", e);
+            log.error("Error while generating and saving PDF", e);
             throw new RuntimeException("Error while generating and saving PDF", e);
         }
 

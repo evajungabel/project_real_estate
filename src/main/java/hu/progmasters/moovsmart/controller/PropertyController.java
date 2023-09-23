@@ -145,7 +145,7 @@ public class PropertyController {
         return new ResponseEntity<>(propertyImageURLInfos, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{propertyId}")
+    @GetMapping("/pdf/{propertyId}")
     @Operation(summary = "Get property with {propertyId}")
     @ApiResponse(responseCode = "200", description = "Property details")
     public ResponseEntity<byte[]> generatePropertyPDF(@PathVariable("propertyId") Long id) {
