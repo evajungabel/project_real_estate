@@ -1,0 +1,54 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <property name="LOG_FILE" value="logs/info/moovSmart.log"/>
+
+    <appender name="FILE_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+
+        <!-- A RollingPolicy konfigurációja -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/info/moovSmart-log-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>50</maxHistory>
+        </rollingPolicy>
+
+        <!-- A TriggeringPolicy konfigurációja -->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>1MB</MaxFileSize>
+        </triggeringPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="FILE_ROLLING"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/error/error.log</file>
+
+        <!-- A RollingPolicy konfigurációja -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/error-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Új logger az error üzenetekhez -->
+    <logger name="hu.progmasters.moovsmart" level="ERROR">
+        <appender-ref ref="ERROR_FILE"/>
+    </logger>
+
+</configuration>

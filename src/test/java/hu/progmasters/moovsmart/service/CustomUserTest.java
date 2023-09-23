@@ -625,7 +625,4 @@ public class CustomUserTest {
         verify(customUserEmailService, times(1)).delete(customUser1.getCustomUserEmail());
         verify(customUserRepository, times(1)).findByActivation("123456");
     }
-
-
-
 }
