@@ -22,8 +22,6 @@ public class ProjectConfig {
         return modelMapper;
     }
 
-
-
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()

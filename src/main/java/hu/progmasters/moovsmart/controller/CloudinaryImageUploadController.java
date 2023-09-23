@@ -5,10 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
@@ -26,8 +25,14 @@ public class CloudinaryImageUploadController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("image")MultipartFile file) {
-        Map<String, Object> data = this.cloudinaryImageService.upload(file);
+    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam("propertyId") Long propertyId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, Object> data = this.cloudinaryImageService.upload(file, userDetails.getUsername(), propertyId);
         return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<String> notificationImage() {
+        return new ResponseEntity<>("Ok", HttpStatus.OK);
     }
 }
