@@ -28,6 +28,7 @@ public class CloudinaryImageUploadController {
     public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam("propertyId") Long propertyId) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Map<String, Object> data = this.cloudinaryImageService.upload(file, userDetails.getUsername(), propertyId);
+        cloudinaryImageService.getURL(data);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 

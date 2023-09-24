@@ -1,6 +1,7 @@
 package hu.progmasters.moovsmart.config;
 
 import com.cloudinary.Cloudinary;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.modelmapper.ModelMapper;
@@ -41,4 +42,5 @@ public class ProjectConfig {
         config.put("secure", true);
         return new Cloudinary(config);
     }
+
 }
