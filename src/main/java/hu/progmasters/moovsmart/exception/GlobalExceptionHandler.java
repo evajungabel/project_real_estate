@@ -191,6 +191,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ImageUploadFailedException.class)
+    public ResponseEntity<ApiError> handleImageUploadFailedException(ImageUploadFailedException ex) {
+        log.error("Image upload failed error: ", ex);
+
+        ApiError body = new ApiError("IMAGE_UPLOAD_FAILED_ERROR", "Image upload is failed.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ApiError> defaultErrorHandler(Throwable t) {
         log.error("An unexpected error occurred: ", t);
