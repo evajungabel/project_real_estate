@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.Date;
 
@@ -17,7 +18,7 @@ public class PropertyDataInfo {
 
     private PropertyCondition propertyCondition;
 
-    private Integer yearBuilt;
+    private Year yearBuilt;
 
     private PropertyParking propertyParking;
 

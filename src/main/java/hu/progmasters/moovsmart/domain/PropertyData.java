@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.Date;
 
@@ -27,7 +28,7 @@ public class PropertyData {
     private PropertyCondition propertyCondition;
 
     @Column(name = "year_built")
-    private Integer yearBuilt;
+    private Year yearBuilt;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "parking")

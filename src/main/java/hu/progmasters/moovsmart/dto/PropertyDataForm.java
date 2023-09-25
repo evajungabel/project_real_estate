@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.tomcat.jni.Local;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.*;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.Date;
 
@@ -18,8 +20,8 @@ import java.util.Date;
 public class PropertyDataForm {
 
     private PropertyCondition propertyCondition;
-//    @Past(message = "Year of building can not be in the future")
-    private Integer yearBuilt;
+    @Past(message = "Year of building can not be in the future")
+    private Year yearBuilt;
 
     private PropertyParking propertyParking;
 

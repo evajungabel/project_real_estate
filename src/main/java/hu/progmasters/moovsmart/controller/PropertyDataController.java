@@ -37,7 +37,7 @@ public class PropertyDataController {
     }
 
 
-    @GetMapping(value = "/paginatedlist", params = {"page", "size", "sortDir", "sort"})
+    @GetMapping(value = "/paginatedandsortedlist", params = {"page", "size", "sortDir", "sort"})
     @Operation(summary = "Get list of paginated and sorted property data")
     @ApiResponse(responseCode = "200", description = "Paginated and sorted list of property data is got.")
     public ResponseEntity<List<PropertyDataInfo>> findPaginated(

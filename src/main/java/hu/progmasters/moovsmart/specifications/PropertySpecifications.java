@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.Date;
 
@@ -78,7 +79,7 @@ public final class PropertySpecifications {
         };
     }
 
-    public static Specification<Property> hasPropertyYearBuilt(Integer yearBuilt) {
+    public static Specification<Property> hasPropertyYearBuilt(Year yearBuilt) {
         return (root, query, criteriaBuilder) -> {
             Join<Property, PropertyData> propertyDataJoin = root.join("propertyData", JoinType.INNER);
             return criteriaBuilder.equal(propertyDataJoin.get("yearBuilt"), yearBuilt);

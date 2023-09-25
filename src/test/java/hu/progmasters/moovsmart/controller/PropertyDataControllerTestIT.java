@@ -39,12 +39,12 @@ public class PropertyDataControllerTestIT {
 
     @Test
     void IT_test_findAllPropertiesPaginatedAndSorted() throws Exception {
-        mockMvc.perform(get("/api/properties/data/paginatedlist?page=0&size=15&sort=yearBuilt&sortDir=ASC")
+        mockMvc.perform(get("/api/properties/data/paginatedandsortedlist?page=0&size=15&sort=yearBuilt&sortDir=ASC")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].yearBuilt", is(1987)))
-                .andExpect(jsonPath("$[1].yearBuilt", is(1999)))
-                .andExpect(jsonPath("$[2].yearBuilt", is(2003)));
+                .andExpect(jsonPath("$[0].yearBuilt", is("1987")))
+                .andExpect(jsonPath("$[1].yearBuilt", is("1999")))
+                .andExpect(jsonPath("$[2].yearBuilt", is("2003")));
     }
 
 
@@ -94,7 +94,7 @@ public class PropertyDataControllerTestIT {
                 "    \"propertyHeatingType\": \"CENTRAL_HEATING\",\n" +
                 "    \"propertyOrientation\": \"WEST\",\n" +
                 "    \"propertyParking\": \"UNDERGROUND_GARAGE_SPACE\",\n" +
-                "    \"yearBuilt\": 1963 \n" +
+                "    \"yearBuilt\": 1971 \n" +
                 "}";
 
         mockMvc.perform(post("/api/properties/data/4")
@@ -128,7 +128,7 @@ public class PropertyDataControllerTestIT {
                 "    \"propertyHeatingType\": \"CENTRAL_HEATING\",\n" +
                 "    \"propertyOrientation\": \"WEST\",\n" +
                 "    \"propertyParking\": \"UNDERGROUND_GARAGE_SPACE\",\n" +
-                "    \"yearBuilt\": 1963\n" +
+                "    \"yearBuilt\": 7800\n" +
                 "}";
         mockMvc.perform(post("/api/properties/data/4")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -153,7 +153,7 @@ public class PropertyDataControllerTestIT {
                 "    \"propertyHeatingType\": \"CENTRAL_HEATING\",\n" +
                 "    \"propertyOrientation\": \"WEST\",\n" +
                 "    \"propertyParking\": \"UNDERGROUND_GARAGE_SPACE\",\n" +
-                "    \"yearBuilt\": 1963\n" +
+                "    \"yearBuilt\": 1963 \n" +
                 "}";
 
         mockMvc.perform(put("/api/properties/data/1")
@@ -187,7 +187,7 @@ public class PropertyDataControllerTestIT {
                 "    \"propertyHeatingType\": \"CENTRAL_HEATING\",\n" +
                 "    \"propertyOrientation\": \"WEST\",\n" +
                 "    \"propertyParking\": \"UNDERGROUND_GARAGE_SPACE\",\n" +
-                "    \"yearBuilt\": 1963\n" +
+                "    \"yearBuilt\": 7800\n" +
                 "}";
 
         mockMvc.perform(put("/api/properties/1")

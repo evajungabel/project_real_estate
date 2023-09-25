@@ -2,8 +2,10 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.exception.PropertyDataNotFoundException;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyDataRepository;
+import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +16,11 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.modelmapper.ModelMapper;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.Year;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,9 +40,9 @@ public class PropertyDataServiceTest {
     @Mock
     private ModelMapper modelMapper;
 
-
     @Mock
     private PropertyService propertyService;
+
 
     @InjectMocks
     private PropertyDataService propertyDataService;
@@ -54,17 +59,6 @@ public class PropertyDataServiceTest {
     @BeforeEach
     void init() {
 
-        property1 = new Property().builder()
-                .id(1L)
-                .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
-                .name("Kuckó")
-                .type(PropertyType.HOUSE)
-                .price(400000000d)
-                .area(90)
-                .numberOfRooms(5)
-                .status(PropertyStatus.ACTIVE)
-                .description("Jó kis házikó")
-                .build();
 
         propertyData1 = new PropertyData().builder()
                 .id(1L)
@@ -78,7 +72,7 @@ public class PropertyDataServiceTest {
                 .hasGarden(false)
                 .isAccessible(true)
                 .isInsulated(true)
-                .yearBuilt(1952)
+                .yearBuilt(Year.of(1952))
                 .build();
 
         propertyDataInfo1 = new PropertyDataInfo().builder()
@@ -92,7 +86,7 @@ public class PropertyDataServiceTest {
                 .hasGarden(false)
                 .isAccessible(true)
                 .isInsulated(true)
-                .yearBuilt(1952)
+                .yearBuilt(Year.of(1952))
                 .build();
 
         propertyDataForm1 = new PropertyDataForm().builder()
@@ -106,7 +100,7 @@ public class PropertyDataServiceTest {
                 .hasGarden(false)
                 .isAccessible(true)
                 .isInsulated(true)
-                .yearBuilt(1952)
+                .yearBuilt(Year.of(1952))
                 .build();
 
         propertyData1Update = new PropertyData().builder()
@@ -121,7 +115,7 @@ public class PropertyDataServiceTest {
                 .hasGarden(false)
                 .isAccessible(true)
                 .isInsulated(true)
-                .yearBuilt(1952)
+                .yearBuilt(Year.of(1952))
                 .build();
 
         propertyDataInfo1Update = new PropertyDataInfo().builder()
@@ -135,7 +129,7 @@ public class PropertyDataServiceTest {
                 .hasGarden(false)
                 .isAccessible(true)
                 .isInsulated(true)
-                .yearBuilt(1952)
+                .yearBuilt(Year.of(1952))
                 .build();
 
         propertyDataForm1Update = new PropertyDataForm().builder()
@@ -149,7 +143,20 @@ public class PropertyDataServiceTest {
                 .hasGarden(false)
                 .isAccessible(true)
                 .isInsulated(true)
-                .yearBuilt(1952)
+                .yearBuilt(Year.of(1952))
+                .build();
+
+        property1 = new Property().builder()
+                .id(1L)
+                .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
+                .name("Kuckó")
+                .type(PropertyType.HOUSE)
+                .price(400000000d)
+                .area(90)
+                .numberOfRooms(5)
+                .status(PropertyStatus.ACTIVE)
+                .description("Jó kis házikó")
+                .propertyData(propertyData1)
                 .build();
 
     }
@@ -169,14 +176,15 @@ public class PropertyDataServiceTest {
 
 
     @Test
-    void testGetPropertyData_withNoId() {
-        when(propertyDataRepository.findById(3L)).thenReturn(Optional.empty());
+    void test_getPropertyData_withNoId() {
+        when(propertyDataRepository.findById(1L)).thenReturn(Optional.empty());
+        when(propertyService.findPropertyById(any())).thenReturn(property1);
 
         try {
-            propertyDataService.getPropertyData(3L);
+            propertyDataService.getPropertyData(1L);
             fail("Expected PropertyDataNotFoundException, but no exception was thrown.");
-        } catch (PropertyNotFoundException e) {
-            assertEquals("No property data found with property id: 3", e.getMessage());
+        } catch (PropertyDataNotFoundException e) {
+            assertEquals("No property data found with property id: 1", e.getMessage());
         }
     }
 
@@ -197,7 +205,7 @@ public class PropertyDataServiceTest {
 
     @Test
     void testUpdate() {
-        when(propertyDataRepository.findById(1L)).thenReturn(Optional.ofNullable(propertyData1));
+        when(propertyService.findPropertyById(1L)).thenReturn(property1);
         when(modelMapper.map(propertyDataForm1Update, PropertyData.class)).thenReturn(propertyData1Update);
         when(modelMapper.map(propertyData1Update, PropertyDataInfo.class)).thenReturn(propertyDataInfo1Update);
 

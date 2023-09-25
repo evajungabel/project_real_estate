@@ -55,13 +55,15 @@ public class PropertyDataService {
         Property property = propertyService.findPropertyById(propertyId);
         toSave.setProperty(property);
         PropertyData saved = propertyDataRepository.save(toSave);
-        return modelMapper.map(saved, PropertyDataInfo.class);
+        PropertyDataInfo propertyDataInfo = modelMapper.map(saved, PropertyDataInfo.class);
+        return propertyDataInfo;
     }
 
     public PropertyDataInfo update(PropertyDataForm propertyDataForm, Long id) {
-        PropertyData toUpdate = findPropertyDataByPropertyId(id);
-        modelMapper.map(propertyDataForm, toUpdate);
-        return modelMapper.map(toUpdate, PropertyDataInfo.class);
+        Property property = propertyService.findPropertyById(id);
+        PropertyData propertyData = property.getPropertyData();
+        modelMapper.map(propertyDataForm, propertyData);
+        return modelMapper.map(propertyData, PropertyDataInfo.class);
     }
 
     public void deleteByPropertyId(Long id) {

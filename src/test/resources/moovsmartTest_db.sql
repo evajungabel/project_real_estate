@@ -254,21 +254,19 @@ INSERT INTO moovsmartTest.address (address_id, city, country, deleted, door_numb
 VALUES (15, 'Péteri', 'Magyarország', true, null, '23/a', 'Kapisztrán utca', 8888, 15);
 
 
-INSERT INTO moovsmartTest.property_data(property_data_id, has_air_condition, has_balcony, has_garden, heating,
-                                        is_insulated, energy_certificate, parking, orientation,
-                                        has_lift, is_accessible, year_built, property_id)
-VALUES (1, true, true, true, 'GAS_CONVECTOR', false, 'AT_LEAST_AA_PLUS_PLUS', 'COURTYARD', 'NORTH_WEST',
-        true, true, 1987, 1);
-INSERT INTO moovsmartTest.property_data(property_data_id, has_air_condition, has_balcony, has_garden, heating,
-                                        is_insulated, energy_certificate, parking, orientation,
-                                        has_lift, is_accessible, year_built, property_id)
-VALUES (2, true, false, true, 'CENTRAL_HEATING', true, 'AT_LEAST_AA_PLUS', 'UNDERGROUND_GARAGE_SPACE',
-        'WEST', true, true, 1999, 3);
-INSERT INTO moovsmartTest.property_data(property_data_id, has_air_condition, has_balcony, has_garden, heating,
-                                        is_insulated, energy_certificate, parking, orientation,
-                                        has_lift, is_accessible, year_built, property_id)
-VALUES (3, false, true, false, 'DISTRICT_HEATING', false, 'AT_LEAST_AA', 'DETACHED_GARAGE',
-        'NORTH', true, true, 2003, 2);
+INSERT INTO moovsmartTest.property_data(property_data_id, energy_certificate, has_air_condition, has_balcony, has_garden,
+                                        has_lift, is_accessible, is_insulated, property_condition, heating, orientation,
+                                        parking, year_built, property_id)
+VALUES (1, 'AT_LEAST_AA_PLUS_PLUS', true, true, true, false, true, true, 'LIKE_NEW', 'GAS_CONVECTOR','NORTH_WEST', 'COURTYARD',
+        '1987', 1);
+INSERT INTO moovsmartTest.property_data(property_data_id, energy_certificate, has_air_condition, has_balcony, has_garden,
+                                        has_lift, is_accessible, is_insulated, property_condition, heating, orientation, parking, year_built, property_id)
+VALUES (2, 'AT_LEAST_AA_PLUS', true, false, true, true, true, true, 'RENOVATED', 'CENTRAL_HEATING',
+        'WEST', 'UNDERGROUND_GARAGE_SPACE', '1999', 3);
+INSERT INTO moovsmartTest.property_data(property_data_id, energy_certificate, has_air_condition, has_balcony, has_garden,
+                                        has_lift, is_accessible, is_insulated, property_condition, heating, orientation, parking, year_built, property_id)
+VALUES (3, 'AT_LEAST_AA', false, true, false, false, true, true, 'IN_GOOD_CONDITION', 'DISTRICT_HEATING', 'NORTH',
+        'DETACHED_GARAGE', '2003', 2);
 
 INSERT INTO moovsmartTest.estate_agent(estate_agent_id, agent_rank, sell_point, custom_user_id)
 VALUES (1, 'PROFESSIONAL', 30, 3);
