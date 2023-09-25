@@ -19,11 +19,8 @@ import java.util.Map;
 public class CloudinaryImageService {
 
     private Cloudinary cloudinary;
-
     private CustomUserService customUserService;
-
     private PropertyService propertyService;
-
     private PropertyImageURLService propertyImageURLService;
 
     @Autowired
@@ -39,17 +36,9 @@ public class CloudinaryImageService {
         Property property = propertyService.findPropertyById(propertyId);
 
         if (username.equals(property.getCustomUser().getUsername())) {
-            PropertyImageURL propertyImageURL = new PropertyImageURL();
-            propertyImageURL.setProperty(property);
-            propertyImageURLService.save(propertyImageURL);
-
+           PropertyImageURL propertyImageURL = createNewPropertyImageURL(property);
             try {
-                Map<String, Object> params = ObjectUtils.asMap(
-                        "public_id", "myProperty" + propertyId + "/my_property" + propertyImageURL.getPropertyImageUrlId(),
-                        "overwrite", true,
-                        "faces", true,
-                        "notification_url", "http://localhost:8080/api/cloudinary",
-                        "resource_type", "auto");
+                Map<String, Object> params = createMapForUpload(propertyId, propertyImageURL);
                 return cloudinary.uploader().upload(file.getBytes(), params);
             } catch (IOException e) {
                 throw new ImageUploadFailedException(username, propertyId);
@@ -59,6 +48,21 @@ public class CloudinaryImageService {
         }
     }
 
+
+    public PropertyImageURL createNewPropertyImageURL(Property property) {
+        PropertyImageURL propertyImageURL = new PropertyImageURL();
+        propertyImageURL.setProperty(property);
+        return propertyImageURLService.save(propertyImageURL);
+    }
+
+    public Map<String, Object> createMapForUpload(Long propertyId, PropertyImageURL propertyImageURL) {
+        return ObjectUtils.asMap(
+                "public_id", "myProperty" + propertyId + "/my_property" + propertyImageURL.getPropertyImageUrlId(),
+                "overwrite", true,
+                "faces", true,
+                "notification_url", "http://localhost:8080/api/cloudinary",
+                "resource_type", "auto");
+    }
 
     public void getURL(Map<String, Object> data) {
         String url = (String) data.get("url");
@@ -74,17 +78,9 @@ public class CloudinaryImageService {
         Property property = propertyService.findPropertyById(propertyId);
 
         if (username.equals(property.getCustomUser().getUsername())) {
-            PropertyImageURL propertyImageURL = new PropertyImageURL();
-            propertyImageURL.setProperty(property);
-            propertyImageURLService.save(propertyImageURL);
-
+            PropertyImageURL propertyImageURL = createNewPropertyImageURL(property);
             try {
-                Map<String, Object> params = ObjectUtils.asMap(
-                        "public_id", "myProperty" + propertyId + "/my_property" + propertyImageURL.getPropertyImageUrlId(),
-                        "overwrite", true,
-                        "faces", true,
-                        "notification_url", "http://localhost:8080/api/cloudinary",
-                        "resource_type", "auto");
+                Map<String, Object> params = createMapForUpload(propertyId, propertyImageURL);
                 return cloudinary.uploader().upload(url, params);
             } catch (IOException e) {
                 throw new ImageUploadFailedException(username, propertyId);
