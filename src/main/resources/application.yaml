@@ -25,6 +25,10 @@ spring:
   openweathermap:
     api:
       key: 3c00e57613b45fba6cbe0a0c859ab7f3
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
 
 #  spring.mail.scheduler.persistence.enabled: false
