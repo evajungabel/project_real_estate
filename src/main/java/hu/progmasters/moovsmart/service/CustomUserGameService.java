@@ -30,9 +30,6 @@ public class CustomUserGameService {
 
 
 
-//    @Scheduled(cron = "0 */5 * ? * *")
-
-    scheduler.schedule(task, new CronTrigger("0 15 9-17 * * MON-FRI"));
 
     public CustomUserGameInfo startGame(String username, Integer guessedNumber) {
         Random generator = new Random();
