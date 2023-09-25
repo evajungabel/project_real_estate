@@ -37,4 +37,7 @@ public class PropertyImageURLService {
         return propertyImageURLOptional.get();
     }
 
+    public void deleteById(Long propertyImageURLById) {
+        propertyImageURLRepository.deleteById(propertyImageURLById);
+    }
 }

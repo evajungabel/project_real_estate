@@ -85,7 +85,7 @@ public class CloudinaryImageService {
                         "faces", true,
                         "notification_url", "http://localhost:8080/api/cloudinary",
                         "resource_type", "auto");
-                return cloudinary.uploader().upload(url.getBytes(), params);
+                return cloudinary.uploader().upload(url, params);
             } catch (IOException e) {
                 throw new ImageUploadFailedException(username, propertyId);
             }
@@ -94,16 +94,18 @@ public class CloudinaryImageService {
         }
     }
 
-    public Map<String, Object> deleteImage(String username, String url) throws AuthenticationExceptionImpl {
-        Long propertyId = Long.parseLong(url.split("/my_property")[0].split("myProperty")[1]);
+    public Map<String, Object> deleteImage(String username, Long propertyId, Long propertyImageURLId) throws AuthenticationExceptionImpl {
 
         Property property = propertyService.findPropertyById(propertyId);
 
+        String deleteFilePublicId = "myProperty" + propertyId + "/my_property" + propertyImageURLId;
+
         if (username.equals(property.getCustomUser().getUsername())) {
             try {
+                propertyImageURLService.deleteById(propertyImageURLId);
                 Map<String, Object> params = ObjectUtils.asMap(
                         "notification_url", "http://localhost:8080/api/cloudinary");
-                return cloudinary.uploader().destroy(url, params);
+                return cloudinary.uploader().destroy(deleteFilePublicId, params);
             } catch (IOException e) {
                 throw new ImageUploadFailedException(username, propertyId);
             }
