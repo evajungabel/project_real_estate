@@ -1,3 +1,6 @@
+
+
+
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.CustomUserRole;
@@ -237,10 +240,10 @@ public class CustomUserService implements UserDetailsService {
 
 
     public CustomUserInfo getCustomUserDetails(String username) {
-                CustomUser customUser = findCustomUserByUsername(username);
-                CustomUserInfo customUserInfo = modelMapper.map(customUser, CustomUserInfo.class);
-                customUserInfo.setCustomUserRoles(customUser.getRoles());
-                return customUserInfo;
+        CustomUser customUser = findCustomUserByUsername(username);
+        CustomUserInfo customUserInfo = modelMapper.map(customUser, CustomUserInfo.class);
+        customUserInfo.setCustomUserRoles(customUser.getRoles());
+        return customUserInfo;
     }
 
 
@@ -424,3 +427,5 @@ public class CustomUserService implements UserDetailsService {
         return "Customer is deleted!";
     }
 }
+
+

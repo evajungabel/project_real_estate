@@ -38,7 +38,4 @@ public class PropertyForm {
 
     private String description;
 
-    @NotNull(message = "Username cannot be empty!")
-    private String customUsername;
-
 }

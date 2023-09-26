@@ -68,7 +68,7 @@ class AddressControllerTestIT {
                 .andExpect(jsonPath("$.country", is("Magyarország")))
                 .andExpect(jsonPath("$.houseNumber", is("2")))
                 .andExpect(jsonPath("$.zipcode", is(2202)))
-                .andExpect(jsonPath("$.propertyName", is("Eladó lakás Pécsett")));
+                .andExpect(jsonPath("$.propertyName", is("Kiadó lakás Pécsett")));
     }
 
     @Test
