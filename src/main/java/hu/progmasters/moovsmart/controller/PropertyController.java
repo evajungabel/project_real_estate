@@ -101,22 +101,22 @@ public class PropertyController {
     @Operation(summary = "Save property")
     @ApiResponse(responseCode = "201", description = "Property saved")
     @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
-    public ResponseEntity<PropertyInfo> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
+    public ResponseEntity<PropertyDetails> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
         log.info("Http request, POST /api/property, body: " + propertyForm.toString());
-        PropertyInfo propertyInfo = propertyService.createProperty(propertyForm);
+        PropertyDetails propertyDetails = propertyService.createProperty(propertyForm);
         log.info("POST data from repository/api/property, body: " + propertyForm);
-        return new ResponseEntity<>(propertyInfo, HttpStatus.CREATED);
+        return new ResponseEntity<>(propertyDetails, HttpStatus.CREATED);
     }
 
     @PutMapping("/{propertyId}")
     @Operation(summary = "Update property")
     @ApiResponse(responseCode = "200", description = "Property is updated")
     @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
-    public ResponseEntity<PropertyInfo> update(@PathVariable("propertyId") Long id,
+    public ResponseEntity<PropertyDetails> update(@PathVariable("propertyId") Long id,
                                                @Valid @RequestBody PropertyForm propertyForm) {
         log.info("Http request, PUT /api/property/{propertyId} body: " + propertyForm.toString() +
                 " with variable: " + id);
-        PropertyInfo updated = propertyService.update(id, propertyForm);
+        PropertyDetails updated = propertyService.update(id, propertyForm);
         log.info("PUT data from repository/api/property/{propertyId} body: " + propertyForm.toString() +
                 " with variable: " + id);
         return new ResponseEntity<>(updated, HttpStatus.OK);

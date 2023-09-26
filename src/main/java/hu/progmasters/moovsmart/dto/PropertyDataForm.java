@@ -14,8 +14,8 @@ import javax.validation.constraints.Min;
 public class PropertyDataForm {
 
     private PropertyCondition propertyCondition;
+
     @Min(value = 1700, message = "Year of building can not be earlier than 1700")
-    @Future(message = "Year of building can not be in the future")
     private Integer yearBuilt;
 
     private PropertyParking propertyParking;

@@ -63,7 +63,7 @@ public class Property {
     @Column(name = "status")
     private PropertyStatus status;
 
-    @OneToOne(mappedBy = "property")
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private PropertyData propertyData;
 
     @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)

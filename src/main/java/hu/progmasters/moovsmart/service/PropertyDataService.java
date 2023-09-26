@@ -19,7 +19,6 @@ public class PropertyDataService {
 
     private final PropertyDataRepository propertyDataRepository;
     private final PropertyService propertyService;
-
     private final ModelMapper modelMapper;
 
     @Autowired

@@ -41,11 +41,10 @@ public class PropertyService {
 
     private PropertyRepository propertyRepository;
     private CustomUserService customUserService;
-
     private PropertyImageURLService propertyImageURLService;
     private ModelMapper modelMapper;
-
     private AddressRepository addressRepository;
+//    private PropertyDataService propertyDataService;
 
     @Autowired
     public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService, AddressRepository addressRepository) {
@@ -54,6 +53,7 @@ public class PropertyService {
         this.customUserService = customUserService;
         this.propertyImageURLService = propertyImageURLService;
         this.addressRepository = addressRepository;
+//        this.propertyDataService = propertyDataService;
     }
 
 
@@ -214,6 +214,8 @@ public class PropertyService {
         PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
         AddressInfoForProperty addressInfoForProperty = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
         propertyDetails.setAddressInfoForProperty(addressInfoForProperty);
+        PropertyDataInfo propertyDataInfo = modelMapper.map(property.getPropertyData(), PropertyDataInfo.class);
+        propertyDetails.setPropertyDataInfo(propertyDataInfo);
         return propertyDetails;
     }
 
@@ -226,13 +228,13 @@ public class PropertyService {
     }
 
 
-    public PropertyInfo createProperty(PropertyForm propertyForm) {
+    public PropertyDetails createProperty(PropertyForm propertyForm) {
         Property toSave = modelMapper.map(propertyForm, Property.class);
         CustomUser customUser = customUserService.findCustomUserByUsername(propertyForm.getCustomUsername());
         toSave.setCustomUser(customUser);
         toSave.setDateOfCreation(LocalDateTime.now());
         Property property = propertyRepository.save(toSave);
-        return modelMapper.map(property, PropertyInfo.class);
+        return modelMapper.map(property, PropertyDetails.class);
     }
 
     public void makeInactive(Long id) {
@@ -242,10 +244,10 @@ public class PropertyService {
     }
 
 
-    public PropertyInfo update(Long id, PropertyForm propertyForm) {
+    public PropertyDetails update(Long id, PropertyForm propertyForm) {
         Property property = findPropertyById(id);
         modelMapper.map(propertyForm, property);
-        return modelMapper.map(property, PropertyInfo.class);
+        return modelMapper.map(property, PropertyDetails.class);
     }
 
     public List<PropertyImageURLInfo> createListOfImageURLs(Long id, List<PropertyImageURLForm> propertyImageURLForms) {
@@ -268,37 +270,61 @@ public class PropertyService {
         PDPage page = new PDPage(PDRectangle.A4);
         document.addPage(page);
 
-        PropertyInfo propertyInfo = modelMapper.map(findPropertyById(id),PropertyInfo.class);
+        PropertyDetails propertyDetails = getPropertyDetails(id);
 
         try {
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
             Path desktopPath = FileSystems.getDefault().getPath(System.getProperty("user.home"), "Desktop");
 
-            // Most már használhatod az "desktopPath"-et a PDF fájl mentési helyeként
-            String filePath = desktopPath.toString() + "/property"+id+".pdf";
+            String filePath = desktopPath + "/property"+id+".pdf";
 
-            // Adatok hozzáadása a PDF-hez (példa)
-            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 14);
             contentStream.beginText();
-            contentStream.newLine();
-            contentStream.newLineAtOffset(100, 700);
-            contentStream.newLine();
-            contentStream.setCharacterSpacing(1.5f); // Karakterköz beállítása
-            contentStream.showText("Property Name: " + propertyInfo.getName());
-            contentStream.newLine();
-            contentStream.showText("Property Type: " + propertyInfo.getType());
-            contentStream.newLine();
-            // További mezők hozzáadása...
-            contentStream.endText();
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+            contentStream.setLeading(16.0f);
 
+            contentStream.newLineAtOffset(100, 700);
+
+            contentStream.showText("Name: " + propertyDetails.getName());
+            contentStream.newLine();
+            contentStream.showText("City: " + propertyDetails.getAddressInfoForProperty().getCity());
+            contentStream.newLine();
+            contentStream.showText("Type: " + propertyDetails.getType());
+            contentStream.newLine();
+            contentStream.showText("Price: " + propertyDetails.getPrice());
+            contentStream.newLine();
+            contentStream.showText("purpose: " + propertyDetails.getPurpose());
+            contentStream.newLine();
+            contentStream.showText("area: " + propertyDetails.getArea());
+            contentStream.newLine();
+            contentStream.showText("description: " + propertyDetails.getDescription());
+            contentStream.newLine();
+            contentStream.showText("yearBuilt: " + propertyDetails.getPropertyDataInfo().getYearBuilt());
+            contentStream.newLine();
+            contentStream.showText("Orientation: " + propertyDetails.getPropertyDataInfo().getPropertyOrientation());
+            contentStream.newLine();
+            contentStream.showText("HeatingType: " + propertyDetails.getPropertyDataInfo().getPropertyHeatingType());
+            contentStream.newLine();
+            contentStream.showText("energyCertificate: " + propertyDetails.getPropertyDataInfo().getEnergyCertificate());
+            contentStream.newLine();
+            contentStream.showText("hasBalcony: " + propertyDetails.getPropertyDataInfo().getHasBalcony());
+            contentStream.newLine();
+            contentStream.showText("hasLift: " + propertyDetails.getPropertyDataInfo().isHasLift());
+            contentStream.newLine();
+            contentStream.showText("isAccessible: " + propertyDetails.getPropertyDataInfo().isAccessible());
+            contentStream.newLine();
+            contentStream.showText("isInsulated: " + propertyDetails.getPropertyDataInfo().isInsulated());
+            contentStream.newLine();
+            contentStream.showText("AirCondition: " + propertyDetails.getPropertyDataInfo().isHasAirCondition());
+            contentStream.newLine();
+            contentStream.showText("Garden: " + propertyDetails.getPropertyDataInfo().isHasGarden());
+
+            contentStream.endText();
             contentStream.close();
 
-            // PDF dokumentum mentése fájlba
             document.save(filePath);
             document.close();
         } catch (IOException e) {
-            // Hiba kezelése
             log.error("Error while generating and saving PDF", e);
             throw new RuntimeException("Error while generating and saving PDF", e);
         }
