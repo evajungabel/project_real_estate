@@ -1,23 +1,22 @@
 package hu.progmasters.moovsmart.controller;
 
-import hu.progmasters.moovsmart.domain.CustomUserGame;
-import hu.progmasters.moovsmart.dto.CustomUserForm;
 import hu.progmasters.moovsmart.dto.CustomUserGameForm;
 import hu.progmasters.moovsmart.dto.CustomUserGameInfo;
-import hu.progmasters.moovsmart.dto.CustomUserInfo;
+import hu.progmasters.moovsmart.exception.CustomUserPlayedTheGameException;
 import hu.progmasters.moovsmart.service.CustomUserGameService;
+import hu.progmasters.moovsmart.service.CustomUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/game")
@@ -26,21 +25,29 @@ public class CustomUserGameController {
 
     private CustomUserGameService customUserGameService;
 
+    private CustomUserService customUserService;
+
     @Autowired
-    public CustomUserGameController(CustomUserGameService customUserGameService) {
+    public CustomUserGameController(CustomUserGameService customUserGameService, CustomUserService customUserService) {
         this.customUserGameService = customUserGameService;
+        this.customUserService = customUserService;
     }
 
 
     @PostMapping()
     @Operation(summary = "Customer game")
     @ApiResponse(responseCode = "201", description = "Customer is played and saved")
-    public ResponseEntity<CustomUserGameInfo> register(@RequestParam("guessedNumber") Integer guessedNumber) {
+    public ResponseEntity<CustomUserGameInfo> register(@RequestBody CustomUserGameForm customUserGameForm) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        log.info("Http request, POST /api/game, body: " + customUserGameForm.toString());
-        CustomUserGameInfo customUserGameInfo = customUserGameService.startGame(userDetails.getUsername(), guessedNumber);
-//        log.info("POST data from repository/api/game, body: " + customUserGameForm);
-        return new ResponseEntity<>(customUserGameInfo, HttpStatus.CREATED);
+        LocalDateTime currentTime = LocalDateTime.now();
+         if (currentTime.getDayOfWeek() == DayOfWeek.TUESDAY) {
+                log.info("Http request, POST /api/game, username: " + userDetails.getUsername());
+                CustomUserGameInfo customUserGameInfo = customUserGameService.startGame(userDetails.getUsername(), customUserGameForm, currentTime);
+                log.info("POST data from repository/api/game, username: " + userDetails.getUsername());
+                return new ResponseEntity<>(customUserGameInfo, HttpStatus.CREATED);
+            } else {
+             throw new CustomUserPlayedTheGameException(userDetails.getUsername());
+         }
     }
 
 }

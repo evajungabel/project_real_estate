@@ -209,6 +209,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CustomUserPlayedTheGameException.class)
+    public ResponseEntity<ApiError> handleCustomUserPlayedTheGameException(CustomUserPlayedTheGameException ex) {
+        log.error("Customer played the game error: ", ex);
+
+        ApiError body = new ApiError("CUSTOMER_PLAYED_THE_GAME_ERROR", "Customer played the game error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ApiError> defaultErrorHandler(Throwable t) {
         log.error("An unexpected error occurred: ", t);

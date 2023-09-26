@@ -12,10 +12,9 @@ import lombok.NoArgsConstructor;
 public class CustomUserGameInfo {
 
     private String resultMessage;
-
     private Integer rouletteNumber;
-
     private Integer guessedNumber;
-
+    private Integer guessedParity;
+    private Integer guessedColour;
     private String customUserUsername;
 }

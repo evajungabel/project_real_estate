@@ -8,6 +8,7 @@ import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,18 +24,23 @@ public class CustomUserGame {
     private Long id;
 
     @Column(name = "date_of_play")
-    private LocalDate dateOfPlay;
-
-    @Column(name = "guessed_number")
-    private Integer guessedNumber;
+    private LocalDateTime dateOfPlay;
 
     @Column(name = "roulette_number")
     private Integer rouletteNumber;
 
+    @Column(name = "guessed_number")
+    private Integer guessedNumber;
+
+    @Column(name = "guessed_parity")
+    private Integer guessedParity;
+    @Column(name = "guessed_colour")
+    private Integer guessedColour;
+
     @Column(name = "result_message")
     private String resultMessage;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "custom_user_id")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private CustomUser customUser;
