@@ -24,4 +24,5 @@ public class PropertyDetails {
     private String description;
     private AddressInfoForProperty addressInfoForProperty;
     private List<PropertyImageURL> propertyImageURLS;
+    private PropertyDataInfo propertyDataInfo;
 }

@@ -49,10 +49,10 @@ public class PropertyController {
     @Operation(summary = "Get list of paginated and sorted property")
     @ApiResponse(responseCode = "200", description = "Paginated and sorted list of property is got.")
     public ResponseEntity<List<PropertyDetails>> findPaginatedAndSorted(
-             @RequestParam("sortDir") String sortDir,
-             @RequestParam("sort") String sort,
-             @RequestParam("page") int page,
-             @RequestParam("size") int size) {
+            @RequestParam("sortDir") String sortDir,
+            @RequestParam("sort") String sort,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
         log.info("Http request, GET /api/property with variables: " + page + size + sort + sortDir);
         List<PropertyDetails> propertyDetailsList = propertyService.getPropertyListPaginatedAndSorted(page, size, sortDir, sort);
         log.info("GET data from repository/property with variable: " + page + size + sort + sortDir);
@@ -174,4 +174,12 @@ public class PropertyController {
         return new ResponseEntity<>(propertyImageURLInfos, HttpStatus.CREATED);
     }
 
+    @GetMapping("/pdf/{propertyId}")
+    @Operation(summary = "Get property with {propertyId}")
+    @ApiResponse(responseCode = "200", description = "Property details")
+    public ResponseEntity<byte[]> generatePropertyPDF(@PathVariable("propertyId") Long id) {
+        log.info("Http request, GET /api/property/{propertyId} with variable: " + id);
+        propertyService.createPdf(id);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 }

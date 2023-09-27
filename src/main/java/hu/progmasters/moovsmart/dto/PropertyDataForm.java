@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class PropertyDataForm {
 
     private PropertyCondition propertyCondition;
+
     @NotInFuture(message = "Year of building can not be in the future")
     private Integer yearBuilt;
 

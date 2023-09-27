@@ -15,7 +15,6 @@ import java.util.List;
 @Data
 @Builder
 public class PropertyInfo {
-
     private Long id;
     private String name;
     private PropertyType type;
