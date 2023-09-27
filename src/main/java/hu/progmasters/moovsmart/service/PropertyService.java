@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
@@ -26,6 +27,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -281,9 +283,14 @@ public class PropertyService {
 
             contentStream.beginText();
             contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-            contentStream.setLeading(16.0f);
+            contentStream.setLeading(24.0f);
 
             contentStream.newLineAtOffset(100, 700);
+
+            contentStream.showText("                  I N G A T L A N   A D A T L A P   Id.: " + id);
+            contentStream.newLine();
+            contentStream.newLine();
+            contentStream.newLine();
 
             contentStream.showText("Name: " + propertyDetails.getName());
             contentStream.newLine();
@@ -301,23 +308,33 @@ public class PropertyService {
             contentStream.newLine();
             contentStream.showText("yearBuilt: " + propertyDetails.getPropertyDataInfo().getYearBuilt());
             contentStream.newLine();
-            contentStream.showText("Orientation: " + propertyDetails.getPropertyDataInfo().getPropertyOrientation());
+            contentStream.showText("Orientation: " + (propertyDetails.getPropertyDataInfo().getPropertyOrientation().equals(null) ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyOrientation()));
             contentStream.newLine();
-            contentStream.showText("HeatingType: " + propertyDetails.getPropertyDataInfo().getPropertyHeatingType());
+            contentStream.showText("HeatingType: " + (propertyDetails.getPropertyDataInfo().getPropertyHeatingType().equals(null) ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyHeatingType()));
             contentStream.newLine();
-            contentStream.showText("energyCertificate: " + propertyDetails.getPropertyDataInfo().getEnergyCertificate());
+            contentStream.showText("energyCertificate: " + (propertyDetails.getPropertyDataInfo().getEnergyCertificate().equals(null) ? "N/A" : propertyDetails.getPropertyDataInfo().getEnergyCertificate()));
             contentStream.newLine();
-            contentStream.showText("hasBalcony: " + propertyDetails.getPropertyDataInfo().getHasBalcony());
+            contentStream.showText("hasBalcony: " + (propertyDetails.getPropertyDataInfo().getHasBalcony() ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("hasLift: " + propertyDetails.getPropertyDataInfo().isHasLift());
+            contentStream.showText("hasLift: " + (propertyDetails.getPropertyDataInfo().isHasLift() ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("isAccessible: " + propertyDetails.getPropertyDataInfo().isAccessible());
+            contentStream.showText("isAccessible: " + (propertyDetails.getPropertyDataInfo().isAccessible() ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("isInsulated: " + propertyDetails.getPropertyDataInfo().isInsulated());
+            contentStream.showText("isInsulated: " + (propertyDetails.getPropertyDataInfo().isInsulated() ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("AirCondition: " + propertyDetails.getPropertyDataInfo().isHasAirCondition());
+            contentStream.showText("AirCondition: " + (propertyDetails.getPropertyDataInfo().isHasAirCondition() ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("Garden: " + propertyDetails.getPropertyDataInfo().isHasGarden());
+            contentStream.showText("Garden: " + (propertyDetails.getPropertyDataInfo().isHasGarden() ? "YES" : "NO"));
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateStr = "Készült: " + dateFormat.format(new Date());
+            contentStream.newLine();
+            contentStream.newLine();
+
+            contentStream.newLineAtOffset(100, 50);
+            contentStream.newLine();
+            contentStream.newLine();
+            contentStream.showText(dateStr);
 
             contentStream.endText();
             contentStream.close();
@@ -328,6 +345,5 @@ public class PropertyService {
             log.error("Error while generating and saving PDF", e);
             throw new RuntimeException("Error while generating and saving PDF", e);
         }
-
     }
 }
