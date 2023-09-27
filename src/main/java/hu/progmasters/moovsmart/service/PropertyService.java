@@ -16,6 +16,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.modelmapper.ModelMapper;
@@ -24,9 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -219,6 +218,8 @@ public class PropertyService {
         PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
         AddressInfoForProperty addressInfoForProperty = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
         propertyDetails.setAddressInfoForProperty(addressInfoForProperty);
+        PropertyDataInfo propertyDataInfo = modelMapper.map(property.getPropertyData(), PropertyDataInfo.class);
+        propertyDetails.setPropertyDataInfo(propertyDataInfo);
         return propertyDetails;
     }
 
@@ -264,7 +265,7 @@ public class PropertyService {
 
         Property property = findPropertyById(id);
         if (username.equals(property.getCustomUser().getUsername())) {
-            for (PropertyImageURL propertyImageURL: propertyImageURLs) {
+            for (PropertyImageURL propertyImageURL : propertyImageURLs) {
                 propertyImageURL.setProperty(findPropertyById(id));
                 propertyImageURLService.save(propertyImageURL);
             }
@@ -290,7 +291,7 @@ public class PropertyService {
 
             Path desktopPath = FileSystems.getDefault().getPath(System.getProperty("user.home"), "Desktop");
 
-            String filePath = desktopPath + "/property"+id+".pdf";
+            String filePath = desktopPath + "/property" + id + ".pdf";
 
             contentStream.beginText();
             contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);

@@ -7,26 +7,17 @@ import hu.progmasters.moovsmart.validation.PropertyFormValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.apache.pdfbox.pdmodel.font.*;
 
 import javax.validation.Valid;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -63,10 +54,10 @@ public class PropertyController {
     @Operation(summary = "Get list of paginated and sorted property")
     @ApiResponse(responseCode = "200", description = "Paginated and sorted list of property is got.")
     public ResponseEntity<List<PropertyDetails>> findPaginatedAndSorted(
-             @RequestParam("sortDir") String sortDir,
-             @RequestParam("sort") String sort,
-             @RequestParam("page") int page,
-             @RequestParam("size") int size) {
+            @RequestParam("sortDir") String sortDir,
+            @RequestParam("sort") String sort,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
         log.info("Http request, GET /api/property with variables: " + page + size + sort + sortDir);
         List<PropertyDetails> propertyDetailsList = propertyService.getPropertyListPaginatedAndSorted(page, size, sortDir, sort);
         log.info("GET data from repository/property with variable: " + page + size + sort + sortDir);
