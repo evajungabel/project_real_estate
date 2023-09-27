@@ -4,12 +4,15 @@ import hu.progmasters.moovsmart.dto.PropertyDataForm;
 import hu.progmasters.moovsmart.dto.PropertyDataInfo;
 import hu.progmasters.moovsmart.dto.PropertyDetails;
 import hu.progmasters.moovsmart.service.PropertyDataService;
+import hu.progmasters.moovsmart.validation.PropertyDataFormYearValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,10 +24,13 @@ import java.util.List;
 public class PropertyDataController {
     private final PropertyDataService propertyDataService;
 
+    private PropertyDataFormYearValidator propertyDataFormYearValidator;
     @Autowired
-    public PropertyDataController(PropertyDataService propertyDataService) {
+    public PropertyDataController(PropertyDataService propertyDataService, PropertyDataFormYearValidator propertyDataFormYearValidator) {
         this.propertyDataService = propertyDataService;
+        this.propertyDataFormYearValidator = propertyDataFormYearValidator;
     }
+
 
     @GetMapping("/{propertyId}")
     @Operation(summary = "Get property data for property id {propertyId}")

@@ -1,12 +1,14 @@
 package hu.progmasters.moovsmart.dto;
 
 import hu.progmasters.moovsmart.domain.*;
+import hu.progmasters.moovsmart.validation.NotInFuture;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.tomcat.jni.Local;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -20,7 +22,7 @@ import java.util.Date;
 public class PropertyDataForm {
 
     private PropertyCondition propertyCondition;
-//    @Past(message = "Year of building can not be in the future")
+    @NotInFuture(message = "Year of building can not be in the future")
     private Integer yearBuilt;
 
     private PropertyParking propertyParking;

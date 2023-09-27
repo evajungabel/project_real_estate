@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.apache.tomcat.websocket.AuthenticationException;
@@ -316,20 +317,20 @@ public class PropertyServiceTest {
         verifyNoMoreInteractions(propertyRepository);
     }
 
-//    @Test
-//    void testCreateListOfImageURLs() {
-//        when(modelMapper.map(propertyImageURLForm, PropertyImageURL.class)).thenReturn(propertyImageURL);
-//        when(propertyImageURLService.save(propertyImageURL)).thenReturn(propertyImageURL);
-//        when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
-//        when(modelMapper.map(propertyImageURL, PropertyImageURLInfo.class)).thenReturn(propertyImageURLInfo);
-//
-////        assertEquals(List.of(propertyImageURLInfo), propertyService.createListOfImageURLs("pistike", 1L, List.of(propertyImageURLForm)));
-////
-//        verify(propertyRepository, times(2)).findById(1L);
-//        verify(propertyImageURLService, times(1)).save(propertyImageURL);
-//        verifyNoMoreInteractions(propertyRepository);
-//        verifyNoMoreInteractions(propertyImageURLService);
-//    }
+    @Test
+    void testCreateListOfImageURLs() throws AuthenticationExceptionImpl {
+        when(modelMapper.map(propertyImageURLForm, PropertyImageURL.class)).thenReturn(propertyImageURL);
+        when(propertyImageURLService.save(propertyImageURL)).thenReturn(propertyImageURL);
+        when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
+        when(modelMapper.map(propertyImageURL, PropertyImageURLInfo.class)).thenReturn(propertyImageURLInfo);
+
+        assertEquals(List.of(propertyImageURLInfo), propertyService.createListOfImageURLs("pistike", 1L, List.of(propertyImageURLForm)));
+
+        verify(propertyRepository, times(2)).findById(1L);
+        verify(propertyImageURLService, times(1)).save(propertyImageURL);
+        verifyNoMoreInteractions(propertyRepository);
+        verifyNoMoreInteractions(propertyImageURLService);
+    }
 
 
 }

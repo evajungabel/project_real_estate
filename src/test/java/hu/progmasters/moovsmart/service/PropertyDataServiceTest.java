@@ -48,6 +48,7 @@ public class PropertyDataServiceTest {
     private PropertyDataService propertyDataService;
 
     private Property property1;
+    private Property propertyUpdate1;
     private PropertyData propertyData1;
     private PropertyDataInfo propertyDataInfo1;
     private PropertyDataForm propertyDataForm1;
@@ -59,106 +60,119 @@ public class PropertyDataServiceTest {
     @BeforeEach
     void init() {
 
+        propertyData1 = new PropertyData().builder()
+                .id(1L)
+                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
+                .hasAirCondition(true)
+                .hasBalcony(true)
+                .hasLift(true)
+                .propertyOrientation(PropertyOrientation.EAST)
+                .propertyParking(PropertyParking.COURTYARD)
+                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
+                .hasGarden(false)
+                .isAccessible(true)
+                .isInsulated(true)
+                .yearBuilt(1952)
+                .build();
 
-//        propertyData1 = new PropertyData().builder()
-//                .id(1L)
-//                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
-//                .hasAirCondition(true)
-//                .hasBalcony(true)
-//                .hasLift(true)
-//                .propertyOrientation(PropertyOrientation.EAST)
-//                .propertyParking(PropertyParking.COURTYARD)
-//                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
-//                .hasGarden(false)
-//                .isAccessible(true)
-//                .isInsulated(true)
-//                .yearBuilt(Year.of(1952))
-//                .build();
-//
-//        propertyDataInfo1 = new PropertyDataInfo().builder()
-//                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
-//                .hasAirCondition(true)
-//                .hasBalcony(true)
-//                .hasLift(true)
-//                .propertyOrientation(PropertyOrientation.EAST)
-//                .propertyParking(PropertyParking.COURTYARD)
-//                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
-//                .hasGarden(false)
-//                .isAccessible(true)
-//                .isInsulated(true)
-//                .yearBuilt(Year.of(1952))
-//                .build();
-//
-//        propertyDataForm1 = new PropertyDataForm().builder()
-//                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
-//                .hasAirCondition(true)
-//                .hasBalcony(true)
-//                .hasLift(true)
-//                .propertyOrientation(PropertyOrientation.EAST)
-//                .propertyParking(PropertyParking.COURTYARD)
-//                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
-//                .hasGarden(false)
-//                .isAccessible(true)
-//                .isInsulated(true)
-//                .yearBuilt(Year.of(1952))
-//                .build();
-//
-//        propertyData1Update = new PropertyData().builder()
-//                .id(1L)
-//                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
-//                .hasAirCondition(true)
-//                .hasBalcony(true)
-//                .hasLift(false)
-//                .propertyOrientation(PropertyOrientation.EAST)
-//                .propertyParking(PropertyParking.COURTYARD)
-//                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
-//                .hasGarden(false)
-//                .isAccessible(true)
-//                .isInsulated(true)
-//                .yearBuilt(Year.of(1952))
-//                .build();
-//
-//        propertyDataInfo1Update = new PropertyDataInfo().builder()
-//                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
-//                .hasAirCondition(true)
-//                .hasBalcony(true)
-//                .hasLift(false)
-//                .propertyOrientation(PropertyOrientation.EAST)
-//                .propertyParking(PropertyParking.COURTYARD)
-//                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
-//                .hasGarden(false)
-//                .isAccessible(true)
-//                .isInsulated(true)
-//                .yearBuilt(Year.of(1952))
-//                .build();
-//
-//        propertyDataForm1Update = new PropertyDataForm().builder()
-//                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
-//                .hasAirCondition(true)
-//                .hasBalcony(true)
-//                .hasLift(false)
-//                .propertyOrientation(PropertyOrientation.EAST)
-//                .propertyParking(PropertyParking.COURTYARD)
-//                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
-//                .hasGarden(false)
-//                .isAccessible(true)
-//                .isInsulated(true)
-//                .yearBuilt(Year.of(1952))
-//                .build();
-//
-//        property1 = new Property().builder()
-//                .id(1L)
-//                .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
-//                .name("Kuckó")
-//                .type(PropertyType.HOUSE)
-//                .price(400000000d)
-//                .area(90)
-//                .numberOfRooms(5)
-//                .status(PropertyStatus.ACTIVE)
-//                .description("Jó kis házikó")
-//                .propertyData(propertyData1)
-//                .build();
-//
+        propertyDataInfo1 = new PropertyDataInfo().builder()
+                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
+                .hasAirCondition(true)
+                .hasBalcony(true)
+                .hasLift(true)
+                .propertyOrientation(PropertyOrientation.EAST)
+                .propertyParking(PropertyParking.COURTYARD)
+                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
+                .hasGarden(false)
+                .isAccessible(true)
+                .isInsulated(true)
+                .yearBuilt(1952)
+                .build();
+
+        propertyDataForm1 = new PropertyDataForm().builder()
+                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
+                .hasAirCondition(true)
+                .hasBalcony(true)
+                .hasLift(true)
+                .propertyOrientation(PropertyOrientation.EAST)
+                .propertyParking(PropertyParking.COURTYARD)
+                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
+                .hasGarden(false)
+                .isAccessible(true)
+                .isInsulated(true)
+                .yearBuilt(1952)
+                .build();
+
+        propertyData1Update = new PropertyData().builder()
+                .id(1L)
+                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
+                .hasAirCondition(true)
+                .hasBalcony(true)
+                .hasLift(false)
+                .propertyOrientation(PropertyOrientation.EAST)
+                .propertyParking(PropertyParking.COURTYARD)
+                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
+                .hasGarden(false)
+                .isAccessible(true)
+                .isInsulated(true)
+                .yearBuilt(1952)
+                .build();
+
+        propertyDataInfo1Update = new PropertyDataInfo().builder()
+                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
+                .hasAirCondition(true)
+                .hasBalcony(true)
+                .hasLift(false)
+                .propertyOrientation(PropertyOrientation.EAST)
+                .propertyParking(PropertyParking.COURTYARD)
+                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
+                .hasGarden(false)
+                .isAccessible(true)
+                .isInsulated(true)
+                .yearBuilt(1952)
+                .build();
+
+        propertyDataForm1Update = new PropertyDataForm().builder()
+                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
+                .hasAirCondition(true)
+                .hasBalcony(true)
+                .hasLift(false)
+                .propertyOrientation(PropertyOrientation.EAST)
+                .propertyParking(PropertyParking.COURTYARD)
+                .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
+                .hasGarden(false)
+                .isAccessible(true)
+                .isInsulated(true)
+                .yearBuilt(1952)
+                .build();
+
+        property1 = new Property().builder()
+                .id(1L)
+                .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
+                .name("Kuckó")
+                .type(PropertyType.HOUSE)
+                .price(400000000d)
+                .area(90)
+                .numberOfRooms(5)
+                .status(PropertyStatus.ACTIVE)
+                .description("Jó kis házikó")
+                .propertyData(propertyData1)
+                .build();
+
+        propertyUpdate1 = new Property().builder()
+                .id(1L)
+                .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
+                .name("Kuckó")
+                .type(PropertyType.HOUSE)
+                .price(400000000d)
+                .area(90)
+                .numberOfRooms(5)
+                .status(PropertyStatus.ACTIVE)
+                .description("Jó kis házikó")
+                .propertyData(propertyData1Update)
+                .build();
+
+
     }
 
 
@@ -206,14 +220,14 @@ public class PropertyDataServiceTest {
 
     @Test
     void testUpdate() {
-        when(propertyService.findPropertyById(1L)).thenReturn(property1);
+        when(propertyService.findPropertyById(1L)).thenReturn(propertyUpdate1);
         when(modelMapper.map(propertyDataForm1Update, PropertyData.class)).thenReturn(propertyData1Update);
         when(modelMapper.map(propertyData1Update, PropertyDataInfo.class)).thenReturn(propertyDataInfo1Update);
 
         assertEquals(propertyDataInfo1Update, propertyDataService.update(propertyDataForm1Update, 1L));
 
-        verify(propertyDataRepository, times(1)).findById(1L);
-        verifyNoMoreInteractions(propertyDataRepository);
+        verify(propertyService, times(1)).findPropertyById(1L);
+        verifyNoMoreInteractions(propertyService);
     }
 
 

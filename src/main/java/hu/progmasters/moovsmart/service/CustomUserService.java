@@ -360,7 +360,7 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-    @Scheduled(cron = "0 0 */3 ? * *")
+    @Scheduled(cron = "0 0 6 * * ?")
     public void sendingNewsletter() {
         for (CustomUserEmail customUserEmail : customUserEmailService.getCustomUserEmails()) {
             String subject = "Hírlevél az újdonságokról!";
