@@ -11,6 +11,13 @@ import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.AddressRepository;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import hu.progmasters.moovsmart.specifications.PropertySpecifications;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +28,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,16 +39,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @Service
 @Transactional
+@Slf4j
 public class PropertyService {
 
     private PropertyRepository propertyRepository;
     private CustomUserService customUserService;
-
     private PropertyImageURLService propertyImageURLService;
     private ModelMapper modelMapper;
-
     private AddressRepository addressRepository;
 
     @Autowired
@@ -207,6 +218,8 @@ public class PropertyService {
         PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
         AddressInfoForProperty addressInfoForProperty = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
         propertyDetails.setAddressInfoForProperty(addressInfoForProperty);
+        PropertyDataInfo propertyDataInfo = modelMapper.map(property.getPropertyData(), PropertyDataInfo.class);
+        propertyDetails.setPropertyDataInfo(propertyDataInfo);
         return propertyDetails;
     }
 
@@ -252,7 +265,7 @@ public class PropertyService {
 
         Property property = findPropertyById(id);
         if (username.equals(property.getCustomUser().getUsername())) {
-            for (PropertyImageURL propertyImageURL: propertyImageURLs) {
+            for (PropertyImageURL propertyImageURL : propertyImageURLs) {
                 propertyImageURL.setProperty(findPropertyById(id));
                 propertyImageURLService.save(propertyImageURL);
             }
@@ -266,4 +279,83 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
+    public void createPdf(Long id) {
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage(PDRectangle.A4);
+        document.addPage(page);
+
+        PropertyDetails propertyDetails = getPropertyDetails(id);
+
+        try {
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            Path desktopPath = FileSystems.getDefault().getPath(System.getProperty("user.home"), "Desktop");
+
+            String filePath = desktopPath + "/property" + id + ".pdf";
+
+            contentStream.beginText();
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+            contentStream.setLeading(24.0f);
+
+            contentStream.newLineAtOffset(100, 700);
+
+            contentStream.showText("                  I N G A T L A N   A D A T L A P   Id.: " + id);
+            contentStream.newLine();
+            contentStream.newLine();
+            contentStream.newLine();
+
+            contentStream.showText("Name: " + propertyDetails.getName());
+            contentStream.newLine();
+            contentStream.showText("City: " + propertyDetails.getAddressInfoForProperty().getCity());
+            contentStream.newLine();
+            contentStream.showText("Type: " + propertyDetails.getType());
+            contentStream.newLine();
+            contentStream.showText("Price: " + propertyDetails.getPrice());
+            contentStream.newLine();
+            contentStream.showText("purpose: " + propertyDetails.getPurpose());
+            contentStream.newLine();
+            contentStream.showText("area: " + propertyDetails.getArea());
+            contentStream.newLine();
+            contentStream.showText("description: " + propertyDetails.getDescription());
+            contentStream.newLine();
+            contentStream.showText("yearBuilt: " + propertyDetails.getPropertyDataInfo().getYearBuilt());
+            contentStream.newLine();
+            contentStream.showText("Orientation: " + (propertyDetails.getPropertyDataInfo().getPropertyOrientation().equals(null) ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyOrientation()));
+            contentStream.newLine();
+            contentStream.showText("HeatingType: " + (propertyDetails.getPropertyDataInfo().getPropertyHeatingType().equals(null) ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyHeatingType()));
+            contentStream.newLine();
+            contentStream.showText("energyCertificate: " + (propertyDetails.getPropertyDataInfo().getEnergyCertificate().equals(null) ? "N/A" : propertyDetails.getPropertyDataInfo().getEnergyCertificate()));
+            contentStream.newLine();
+            contentStream.showText("hasBalcony: " + (propertyDetails.getPropertyDataInfo().getHasBalcony() ? "YES" : "NO"));
+            contentStream.newLine();
+            contentStream.showText("hasLift: " + (propertyDetails.getPropertyDataInfo().getHasLift() ? "YES" : "NO"));
+            contentStream.newLine();
+            contentStream.showText("isAccessible: " + (propertyDetails.getPropertyDataInfo().getIsAccessible()  ? "YES" : "NO"));
+            contentStream.newLine();
+            contentStream.showText("isInsulated: " + (propertyDetails.getPropertyDataInfo().getIsInsulated() ? "YES" : "NO"));
+            contentStream.newLine();
+            contentStream.showText("AirCondition: " + (propertyDetails.getPropertyDataInfo().getHasAirCondition() ? "YES" : "NO"));
+            contentStream.newLine();
+            contentStream.showText("Garden: " + (propertyDetails.getPropertyDataInfo().getHasGarden() ? "YES" : "NO"));
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateStr = "Készült: " + dateFormat.format(new Date());
+            contentStream.newLine();
+            contentStream.newLine();
+
+            contentStream.newLineAtOffset(100, 50);
+            contentStream.newLine();
+            contentStream.newLine();
+            contentStream.showText(dateStr);
+
+            contentStream.endText();
+            contentStream.close();
+
+            document.save(filePath);
+            document.close();
+        } catch (IOException e) {
+            log.error("Error while generating and saving PDF", e);
+            throw new RuntimeException("Error while generating and saving PDF", e);
+        }
+    }
 }

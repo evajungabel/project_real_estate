@@ -3,7 +3,7 @@ package hu.progmasters.moovsmart.controller;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.service.PropertyService;
-import hu.progmasters.moovsmart.validation.PropertyFormValidator;
+import hu.progmasters.moovsmart.validation.PropertyDataFormYearValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,18 +27,12 @@ import java.util.List;
 public class PropertyController {
 
     private PropertyService propertyService;
-    private PropertyFormValidator propertyFormValidator;
 
     @Autowired
-    public PropertyController(PropertyService propertyService, PropertyFormValidator propertyFormValidator) {
+    public PropertyController(PropertyService propertyService, PropertyDataFormYearValidator propertyDataFormYearValidator) {
         this.propertyService = propertyService;
-        this.propertyFormValidator = propertyFormValidator;
     }
 
-    @InitBinder("propertyDetails")
-    protected void initBinder(WebDataBinder binder) {
-        binder.addValidators(propertyFormValidator);
-    }
 
     @GetMapping("/allproperties")
     @Operation(summary = "Get all properties")
@@ -54,10 +49,10 @@ public class PropertyController {
     @Operation(summary = "Get list of paginated and sorted property")
     @ApiResponse(responseCode = "200", description = "Paginated and sorted list of property is got.")
     public ResponseEntity<List<PropertyDetails>> findPaginatedAndSorted(
-             @RequestParam("sortDir") String sortDir,
-             @RequestParam("sort") String sort,
-             @RequestParam("page") int page,
-             @RequestParam("size") int size) {
+            @RequestParam("sortDir") String sortDir,
+            @RequestParam("sort") String sort,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
         log.info("Http request, GET /api/property with variables: " + page + size + sort + sortDir);
         List<PropertyDetails> propertyDetailsList = propertyService.getPropertyListPaginatedAndSorted(page, size, sortDir, sort);
         log.info("GET data from repository/property with variable: " + page + size + sort + sortDir);
@@ -179,4 +174,12 @@ public class PropertyController {
         return new ResponseEntity<>(propertyImageURLInfos, HttpStatus.CREATED);
     }
 
+    @GetMapping("/pdf/{propertyId}")
+    @Operation(summary = "Get property with {propertyId}")
+    @ApiResponse(responseCode = "200", description = "Property details")
+    public ResponseEntity<byte[]> generatePropertyPDF(@PathVariable("propertyId") Long id) {
+        log.info("Http request, GET /api/property/{propertyId} with variable: " + id);
+        propertyService.createPdf(id);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 }

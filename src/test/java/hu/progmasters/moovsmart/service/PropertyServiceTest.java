@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.apache.tomcat.websocket.AuthenticationException;
@@ -317,7 +318,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testCreateListOfImageURLs() {
+    void testCreateListOfImageURLs() throws AuthenticationExceptionImpl {
         when(modelMapper.map(propertyImageURLForm, PropertyImageURL.class)).thenReturn(propertyImageURL);
         when(propertyImageURLService.save(propertyImageURL)).thenReturn(propertyImageURL);
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));

@@ -2,12 +2,15 @@ package hu.progmasters.moovsmart.dto;
 
 import hu.progmasters.moovsmart.domain.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class PropertyDataInfo {
 
     private PropertyCondition propertyCondition;
@@ -24,13 +27,13 @@ public class PropertyDataInfo {
 
     private Boolean hasBalcony;
 
-    private boolean hasLift;
+    private Boolean hasLift;
 
-    private boolean isAccessible;
+    private Boolean isAccessible;
 
-    private boolean isInsulated;
+    private Boolean isInsulated;
 
-    private boolean hasAirCondition;
+    private Boolean hasAirCondition;
 
-    private boolean hasGarden;
+    private Boolean hasGarden;
 }
