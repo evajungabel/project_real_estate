@@ -63,7 +63,7 @@ public class PropertyService {
     }
 
     public List<PropertyDetails> getProperties24() {
-        Date thresholdDate = new Date(System.currentTimeMillis() - 60000_000);
+        Date thresholdDate = new Date(System.currentTimeMillis() - 86400000);
         List<Property> properties = propertyRepository.findPropertiesCreatedAfterThresholdDate(thresholdDate);
         return properties.stream()
                 .map(property -> modelMapper.map(property, PropertyDetails.class))
