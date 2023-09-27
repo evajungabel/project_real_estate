@@ -296,7 +296,7 @@ public class CustomUserTest {
     @Test
     void test_List_asStart_emptyList() {
         when(customUserRepository.findAll()).thenReturn(List.of());
-        assertThat(customUserService.getCustomUsers().isEmpty());
+        assertThat(customUserService.getCustomUsers()).isEmpty();
 
         verify(customUserRepository, times(1)).findAll();
         verifyNoMoreInteractions(customUserRepository);

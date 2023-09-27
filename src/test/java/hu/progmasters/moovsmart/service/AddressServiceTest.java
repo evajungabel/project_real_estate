@@ -92,7 +92,7 @@ public class AddressServiceTest {
         address2.setId(id);
         when(addressRepository.findById(id)).thenReturn(Optional.of(address2));
         addressService.delete(id);
-        assertEquals(address2.getDeleted(), true);
+        assertTrue(address2.getDeleted());
     }
 
     @Test

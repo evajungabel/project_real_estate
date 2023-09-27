@@ -83,14 +83,14 @@ public class PropertyDataController {
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
-//    @DeleteMapping("/{propertyId}")
-//    @Operation(summary = "Delete property data for property id {propertyId}")
-//    @ApiResponse(responseCode = "200", description = "Property data deleted")
-////    @Secured({"ROLE_ADMIN"})
-//    public ResponseEntity<Void> deletePropertyData(@PathVariable("propertyId") Long id) {
-//        log.info("Http request, DELETE /api/properties/data/{propertyId} with variable: " + id);
-//        propertyDataService.deleteByPropertyId(id);
-//        log.info("DELETE deleted data from repository propertyData for property id " + id);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @DeleteMapping("/{propertyId}")
+    @Operation(summary = "Delete property data for property id {propertyId}")
+    @ApiResponse(responseCode = "200", description = "Property data deleted")
+//    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<Void> deletePropertyData(@PathVariable("propertyId") Long id) {
+        log.info("Http request, DELETE /api/properties/data/{propertyId} with variable: " + id);
+        propertyDataService.deleteByPropertyId(id);
+        log.info("DELETE deleted data from repository propertyData for property id " + id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
