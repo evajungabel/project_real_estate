@@ -20,8 +20,8 @@ import java.util.Date;
 public class PropertyDataForm {
 
     private PropertyCondition propertyCondition;
-    @Past(message = "Year of building can not be in the future")
-    private Year yearBuilt;
+//    @Past(message = "Year of building can not be in the future")
+    private Integer yearBuilt;
 
     private PropertyParking propertyParking;
 

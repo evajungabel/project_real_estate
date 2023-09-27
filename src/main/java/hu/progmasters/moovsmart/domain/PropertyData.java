@@ -28,7 +28,7 @@ public class PropertyData {
     private PropertyCondition propertyCondition;
 
     @Column(name = "year_built")
-    private Year yearBuilt;
+    private Integer yearBuilt;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "parking")

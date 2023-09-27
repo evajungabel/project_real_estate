@@ -18,7 +18,7 @@ public class PropertyDataInfo {
 
     private PropertyCondition propertyCondition;
 
-    private Year yearBuilt;
+    private Integer yearBuilt;
 
     private PropertyParking propertyParking;
 

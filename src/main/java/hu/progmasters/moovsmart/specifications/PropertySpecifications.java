@@ -79,7 +79,7 @@ public final class PropertySpecifications {
         };
     }
 
-    public static Specification<Property> hasPropertyYearBuilt(Year yearBuilt) {
+    public static Specification<Property> hasPropertyYearBuilt(Integer yearBuilt) {
         return (root, query, criteriaBuilder) -> {
             Join<Property, PropertyData> propertyDataJoin = root.join("propertyData", JoinType.INNER);
             return criteriaBuilder.equal(propertyDataJoin.get("yearBuilt"), yearBuilt);

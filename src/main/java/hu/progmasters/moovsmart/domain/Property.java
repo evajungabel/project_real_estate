@@ -63,10 +63,10 @@ public class Property {
     @Column(name = "status")
     private PropertyStatus status;
 
-    @OneToOne(mappedBy = "property")
+    @OneToOne(mappedBy = "property", fetch = FetchType.LAZY)
     private PropertyData propertyData;
 
-    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Address address;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)

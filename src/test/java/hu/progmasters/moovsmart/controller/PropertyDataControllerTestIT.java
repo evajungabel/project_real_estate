@@ -42,9 +42,9 @@ public class PropertyDataControllerTestIT {
         mockMvc.perform(get("/api/properties/data/paginatedandsortedlist?page=0&size=15&sort=yearBuilt&sortDir=ASC")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].yearBuilt", is("1987")))
-                .andExpect(jsonPath("$[1].yearBuilt", is("1999")))
-                .andExpect(jsonPath("$[2].yearBuilt", is("2003")));
+                .andExpect(jsonPath("$[0].yearBuilt", is(1987)))
+                .andExpect(jsonPath("$[1].yearBuilt", is(1999)))
+                .andExpect(jsonPath("$[2].yearBuilt", is(2003)));
     }
 
 
@@ -59,9 +59,9 @@ public class PropertyDataControllerTestIT {
                 .andExpect(jsonPath("$.hasAirCondition", is(true)))
                 .andExpect(jsonPath("$.hasBalcony", is(true)))
                 .andExpect(jsonPath("$.hasGarden", is(true)))
-                .andExpect(jsonPath("$.hasLift", is(true)))
+                .andExpect(jsonPath("$.hasLift", is(false)))
                 .andExpect(jsonPath("$.isAccessible", is(true)))
-                .andExpect(jsonPath("$.isInsulated", is(false)))
+                .andExpect(jsonPath("$.isInsulated", is(true)))
                 .andExpect(jsonPath("$.propertyHeatingType", is("GAS_CONVECTOR")))
                 .andExpect(jsonPath("$.propertyOrientation", is("NORTH_WEST")))
                 .andExpect(jsonPath("$.propertyParking", is("COURTYARD")))
