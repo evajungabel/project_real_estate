@@ -102,10 +102,19 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ApiError> handleUserNotFoundException(UsernameNotFoundException ex) {
+    public ResponseEntity<ApiError> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         log.error("Not found error: ", ex);
 
         ApiError body = new ApiError("NOT_FOUND_ERROR", "User not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationExceptionImpl.class)
+    public ResponseEntity<ApiError> handleAuthenticationExceptionImpl(AuthenticationExceptionImpl ex) {
+        log.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "User is denied error.", ex.getLocalizedMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -187,6 +196,15 @@ public class GlobalExceptionHandler {
         log.error("Illegal argument error: ", ex);
 
         ApiError body = new ApiError("ILLEGAL_ARGUMENT_ERROR", "An illegal argument has been passed to the method.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ImageUploadFailedException.class)
+    public ResponseEntity<ApiError> handleImageUploadFailedException(ImageUploadFailedException ex) {
+        log.error("Image upload failed error: ", ex);
+
+        ApiError body = new ApiError("IMAGE_UPLOAD_FAILED_ERROR", "Image upload is failed.", ex.getLocalizedMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }

@@ -1,7 +1,11 @@
 package hu.progmasters.moovsmart.service;
 
-import hu.progmasters.moovsmart.domain.*;
+import hu.progmasters.moovsmart.domain.CustomUser;
+import hu.progmasters.moovsmart.domain.Property;
+import hu.progmasters.moovsmart.domain.PropertyImageURL;
+import hu.progmasters.moovsmart.domain.PropertyStatus;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.exception.NoResourceFoundException;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.AddressRepository;
@@ -13,6 +17,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,7 +51,6 @@ public class PropertyService {
     private PropertyImageURLService propertyImageURLService;
     private ModelMapper modelMapper;
     private AddressRepository addressRepository;
-//    private PropertyDataService propertyDataService;
 
     @Autowired
     public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService, AddressRepository addressRepository) {
@@ -55,7 +59,6 @@ public class PropertyService {
         this.customUserService = customUserService;
         this.propertyImageURLService = propertyImageURLService;
         this.addressRepository = addressRepository;
-//        this.propertyDataService = propertyDataService;
     }
 
 
@@ -72,7 +75,7 @@ public class PropertyService {
     }
 
     public List<PropertyDetails> getProperties24() {
-        Date thresholdDate = new Date(System.currentTimeMillis() - 35_000);
+        Date thresholdDate = new Date(System.currentTimeMillis() - 60000_000);
         List<Property> properties = propertyRepository.findPropertiesCreatedAfterThresholdDate(thresholdDate);
         return properties.stream()
                 .map(property -> modelMapper.map(property, PropertyDetails.class))
@@ -80,7 +83,7 @@ public class PropertyService {
     }
 
 
-    public List<PropertyDetails> getPropertyListPaginated(int page, int size, String sortDir, String sort) {
+    public List<PropertyDetails> getPropertyListPaginatedAndSorted(int page, int size, String sortDir, String sort) {
 
         PageRequest pageReq
                 = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
@@ -216,8 +219,6 @@ public class PropertyService {
         PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
         AddressInfoForProperty addressInfoForProperty = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
         propertyDetails.setAddressInfoForProperty(addressInfoForProperty);
-        PropertyDataInfo propertyDataInfo = modelMapper.map(property.getPropertyData(), PropertyDataInfo.class);
-        propertyDetails.setPropertyDataInfo(propertyDataInfo);
         return propertyDetails;
     }
 
@@ -230,13 +231,13 @@ public class PropertyService {
     }
 
 
-    public PropertyDetails createProperty(PropertyForm propertyForm) {
+    public PropertyInfo createProperty(String username, PropertyForm propertyForm) {
         Property toSave = modelMapper.map(propertyForm, Property.class);
-        CustomUser customUser = customUserService.findCustomUserByUsername(propertyForm.getCustomUsername());
+        CustomUser customUser = customUserService.findCustomUserByUsername(username);
         toSave.setCustomUser(customUser);
         toSave.setDateOfCreation(LocalDateTime.now());
         Property property = propertyRepository.save(toSave);
-        return modelMapper.map(property, PropertyDetails.class);
+        return modelMapper.map(property, PropertyInfo.class);
     }
 
     public void makeInactive(Long id) {
@@ -246,21 +247,31 @@ public class PropertyService {
     }
 
 
-    public PropertyDetails update(Long id, PropertyForm propertyForm) {
+    public PropertyInfo update(String username, Long id, PropertyForm propertyForm) throws AuthenticationException {
         Property property = findPropertyById(id);
-        modelMapper.map(propertyForm, property);
-        return modelMapper.map(property, PropertyDetails.class);
+        if (username.equals(property.getCustomUser().getUsername())) {
+            modelMapper.map(propertyForm, property);
+            return modelMapper.map(property, PropertyInfo.class);
+        } else {
+            throw new AuthenticationExceptionImpl(username);
+        }
     }
 
-    public List<PropertyImageURLInfo> createListOfImageURLs(Long id, List<PropertyImageURLForm> propertyImageURLForms) {
+    public List<PropertyImageURLInfo> createListOfImageURLs(String username, Long id, List<PropertyImageURLForm> propertyImageURLForms) throws AuthenticationExceptionImpl {
         List<PropertyImageURL> propertyImageURLs = propertyImageURLForms.stream()
-                .map(propertyImageURLForm -> {
-                    PropertyImageURL propertyImageURL = modelMapper.map(propertyImageURLForm, PropertyImageURL.class);
-                    propertyImageURL.setProperty(findPropertyById(id));
-                    propertyImageURLService.save(propertyImageURL);
-                    return propertyImageURL;
-                })
+                .map(propertyImageURLForm -> modelMapper.map(propertyImageURLForm, PropertyImageURL.class))
                 .collect(Collectors.toList());
+
+        Property property = findPropertyById(id);
+        if (username.equals(property.getCustomUser().getUsername())) {
+            for (PropertyImageURL propertyImageURL: propertyImageURLs) {
+                propertyImageURL.setProperty(findPropertyById(id));
+                propertyImageURLService.save(propertyImageURL);
+            }
+        } else {
+            throw new AuthenticationExceptionImpl(username);
+        }
+
 
         return propertyImageURLs.stream()
                 .map(propertyImageURL -> modelMapper.map(propertyImageURL, PropertyImageURLInfo.class))

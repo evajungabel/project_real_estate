@@ -1,6 +1,7 @@
 package hu.progmasters.moovsmart.controller;
 
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.service.PropertyService;
 import hu.progmasters.moovsmart.validation.PropertyFormValidator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,12 +11,15 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.apache.pdfbox.pdmodel.font.*;
@@ -58,13 +62,13 @@ public class PropertyController {
     @GetMapping(params = {"page", "size", "sortDir", "sort"})
     @Operation(summary = "Get list of paginated and sorted property")
     @ApiResponse(responseCode = "200", description = "Paginated and sorted list of property is got.")
-    public ResponseEntity<List<PropertyDetails>> findPaginated(
-            @RequestParam("sortDir") String sortDir,
-            @RequestParam("sort") String sort,
-            @RequestParam("page") int page,
-            @RequestParam("size") int size) {
+    public ResponseEntity<List<PropertyDetails>> findPaginatedAndSorted(
+             @RequestParam("sortDir") String sortDir,
+             @RequestParam("sort") String sort,
+             @RequestParam("page") int page,
+             @RequestParam("size") int size) {
         log.info("Http request, GET /api/property with variables: " + page + size + sort + sortDir);
-        List<PropertyDetails> propertyDetailsList = propertyService.getPropertyListPaginated(page, size, sortDir, sort);
+        List<PropertyDetails> propertyDetailsList = propertyService.getPropertyListPaginatedAndSorted(page, size, sortDir, sort);
         log.info("GET data from repository/property with variable: " + page + size + sort + sortDir);
         return new ResponseEntity<>(propertyDetailsList, HttpStatus.OK);
     }
@@ -101,22 +105,49 @@ public class PropertyController {
     @Operation(summary = "Save property")
     @ApiResponse(responseCode = "201", description = "Property saved")
     @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
-    public ResponseEntity<PropertyDetails> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
+    public ResponseEntity<PropertyInfo> createProperty(@RequestBody @Valid PropertyForm propertyForm) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, POST /api/property, body: " + propertyForm.toString());
-        PropertyDetails propertyDetails = propertyService.createProperty(propertyForm);
+        PropertyInfo propertyInfo = propertyService.createProperty(userDetails.getUsername(), propertyForm);
         log.info("POST data from repository/api/property, body: " + propertyForm);
-        return new ResponseEntity<>(propertyDetails, HttpStatus.CREATED);
+        return new ResponseEntity<>(propertyInfo, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{username}")
+    @Operation(summary = "Save property")
+    @ApiResponse(responseCode = "201", description = "Property saved")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<PropertyInfo> createProperty(@PathVariable("username") String username, @RequestBody @Valid PropertyForm propertyForm) {
+        log.info("Http request, POST /api/property, body: " + propertyForm.toString());
+        PropertyInfo propertyInfo = propertyService.createProperty(username, propertyForm);
+        log.info("POST data from repository/api/property, body: " + propertyForm);
+        return new ResponseEntity<>(propertyInfo, HttpStatus.CREATED);
     }
 
     @PutMapping("/{propertyId}")
     @Operation(summary = "Update property")
     @ApiResponse(responseCode = "200", description = "Property is updated")
     @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
-    public ResponseEntity<PropertyDetails> update(@PathVariable("propertyId") Long id,
-                                               @Valid @RequestBody PropertyForm propertyForm) {
+    public ResponseEntity<PropertyInfo> update(@PathVariable("propertyId") Long id,
+                                               @Valid @RequestBody PropertyForm propertyForm) throws AuthenticationException {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, PUT /api/property/{propertyId} body: " + propertyForm.toString() +
                 " with variable: " + id);
-        PropertyDetails updated = propertyService.update(id, propertyForm);
+        PropertyInfo updated = propertyService.update(userDetails.getUsername(), id, propertyForm);
+        log.info("PUT data from repository/api/property/{propertyId} body: " + propertyForm.toString() +
+                " with variable: " + id);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
+    }
+
+    @PutMapping("/{username}/{propertyId}")
+    @Operation(summary = "Update property")
+    @ApiResponse(responseCode = "200", description = "Property is updated")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<PropertyInfo> update(@PathVariable("username") String username, @PathVariable("propertyId") Long id,
+                                               @Valid @RequestBody PropertyForm propertyForm) throws AuthenticationException {
+        log.info("Http request, PUT /api/property/{propertyId} body: " + propertyForm.toString() +
+                " with variable: " + id);
+        PropertyInfo updated = propertyService.update(username, id, propertyForm);
         log.info("PUT data from repository/api/property/{propertyId} body: " + propertyForm.toString() +
                 " with variable: " + id);
         return new ResponseEntity<>(updated, HttpStatus.OK);
@@ -138,9 +169,21 @@ public class PropertyController {
     @Operation(summary = "Save property's list of image URLs")
     @ApiResponse(responseCode = "201", description = "Property's list of image URLs is saved")
     @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
-    public ResponseEntity<List<PropertyImageURLInfo>> createListOfImageURLs(@PathVariable("propertyId") Long id, @RequestBody @Valid List<PropertyImageURLForm> propertyImageURLForms) {
+    public ResponseEntity<List<PropertyImageURLInfo>> createListOfImageURLs(@PathVariable("propertyId") Long id, @RequestBody @Valid List<PropertyImageURLForm> propertyImageURLForms) throws AuthenticationExceptionImpl {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, POST /api/property/imageurls, body: " + propertyImageURLForms.toString());
-        List<PropertyImageURLInfo> propertyImageURLInfos = propertyService.createListOfImageURLs(id, propertyImageURLForms);
+        List<PropertyImageURLInfo> propertyImageURLInfos = propertyService.createListOfImageURLs(userDetails.getUsername(), id, propertyImageURLForms);
+        log.info("POST data from repository/api/property/imageurls, body: " + propertyImageURLForms);
+        return new ResponseEntity<>(propertyImageURLInfos, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/imageurls/{username}/{propertyId}")
+    @Operation(summary = "Save property's list of image URLs")
+    @ApiResponse(responseCode = "201", description = "Property's list of image URLs is saved")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<List<PropertyImageURLInfo>> createListOfImageURLs(@PathVariable("username") String username, @PathVariable("propertyId") Long id, @RequestBody @Valid List<PropertyImageURLForm> propertyImageURLForms) throws AuthenticationExceptionImpl {
+        log.info("Http request, POST /api/property/imageurls, body: " + propertyImageURLForms.toString());
+        List<PropertyImageURLInfo> propertyImageURLInfos = propertyService.createListOfImageURLs(username, id, propertyImageURLForms);
         log.info("POST data from repository/api/property/imageurls, body: " + propertyImageURLForms);
         return new ResponseEntity<>(propertyImageURLInfos, HttpStatus.CREATED);
     }

@@ -5,6 +5,7 @@ import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,6 +68,16 @@ public class PropertyServiceTest {
 
     @BeforeEach
     void init() {
+        customUser1 = new CustomUser().builder()
+                .customUserId(1L)
+                .username("pistike")
+                .name("Kis Pistike")
+                .email("pistike@gmail.com")
+                .password("Pistike1*")
+                .roles(List.of(CustomUserRole.ROLE_USER))
+                .enable(true)
+                .activation("123456789")
+                .build();
 
         property1 = new Property().builder()
                 .id(1L)
@@ -78,6 +89,7 @@ public class PropertyServiceTest {
                 .numberOfRooms(5)
                 .status(PropertyStatus.ACTIVE)
                 .description("Jó kis házikó")
+                .customUser(customUser1)
                 .build();
 
         propertyImageURL = new PropertyImageURL().builder()
@@ -113,7 +125,6 @@ public class PropertyServiceTest {
                 .area(90d)
                 .numberOfRooms(5)
                 .description("Jó kis házikó")
-                .customUsername("pistike")
                 .build();
 
         property1Update = new Property().builder()
@@ -126,6 +137,7 @@ public class PropertyServiceTest {
                 .numberOfRooms(5)
                 .status(PropertyStatus.ACTIVE)
                 .description("Jó kis házikó")
+                .customUser(customUser1)
                 .build();
 
         propertyFormUpdate = new PropertyForm().builder()
@@ -135,7 +147,6 @@ public class PropertyServiceTest {
                 .area(91d)
                 .numberOfRooms(5)
                 .description("Jó kis házikó")
-                .customUsername("pistike")
                 .build();
 
         propertyForm2 = new PropertyForm().builder()
@@ -145,7 +156,6 @@ public class PropertyServiceTest {
                 .area(85d)
                 .numberOfRooms(4)
                 .description("Jó kis családi ház")
-                .customUsername("pistike")
                 .build();
 
 
@@ -190,16 +200,6 @@ public class PropertyServiceTest {
                 .build();
 
 
-        customUser1 = new CustomUser().builder()
-                .customUserId(1L)
-                .username("pistike")
-                .name("Kis Pistike")
-                .email("pistike@gmail.com")
-                .password("Pistike1*")
-                .roles(List.of(CustomUserRole.ROLE_USER))
-                .enable(true)
-                .activation("123456789")
-                .build();
 
 
     }
@@ -279,9 +279,9 @@ public class PropertyServiceTest {
         when(modelMapper.map(property1, PropertyInfo.class)).thenReturn(propertyInfo1);
         when(propertyRepository.save(property1)).thenReturn(property1);
 
-        when(customUserService.findCustomUserByUsername(propertyForm1.getCustomUsername())).thenReturn(customUser1);
+        when(customUserService.findCustomUserByUsername("pistike")).thenReturn(customUser1);
 
-        assertEquals(propertyInfo1, propertyService.createProperty(propertyForm1));
+        assertEquals(propertyInfo1, propertyService.createProperty("pistike", propertyForm1));
         assertEquals(customUser1.getUsername(), property1.getCustomUser().getUsername());
 
         verify(propertyRepository, times(1)).save(any());
@@ -305,12 +305,12 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testUpdate() {
+    void testUpdate() throws AuthenticationException {
         when(modelMapper.map(propertyFormUpdate, Property.class)).thenReturn(property1Update);
         when(modelMapper.map(property1Update, PropertyInfo.class)).thenReturn(propertyInfo1Update);
         when(propertyRepository.findById(3L)).thenReturn(Optional.ofNullable(property1Update));
 
-        assertEquals(propertyInfo1Update, propertyService.update(3L, propertyFormUpdate));
+        assertEquals(propertyInfo1Update, propertyService.update("pistike", 3L, propertyFormUpdate));
 
         verify(propertyRepository, times(1)).findById(3L);
         verifyNoMoreInteractions(propertyRepository);
@@ -323,9 +323,9 @@ public class PropertyServiceTest {
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
         when(modelMapper.map(propertyImageURL, PropertyImageURLInfo.class)).thenReturn(propertyImageURLInfo);
 
-        assertEquals(List.of(propertyImageURLInfo), propertyService.createListOfImageURLs(1L, List.of(propertyImageURLForm)));
+        assertEquals(List.of(propertyImageURLInfo), propertyService.createListOfImageURLs("pistike", 1L, List.of(propertyImageURLForm)));
 
-        verify(propertyRepository, times(1)).findById(1L);
+        verify(propertyRepository, times(2)).findById(1L);
         verify(propertyImageURLService, times(1)).save(propertyImageURL);
         verifyNoMoreInteractions(propertyRepository);
         verifyNoMoreInteractions(propertyImageURLService);
