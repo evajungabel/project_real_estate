@@ -328,15 +328,15 @@ public class PropertyService {
             contentStream.newLine();
             contentStream.showText("hasBalcony: " + (propertyDetails.getPropertyDataInfo().getHasBalcony() ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("hasLift: " + (propertyDetails.getPropertyDataInfo().isHasLift() ? "YES" : "NO"));
+            contentStream.showText("hasLift: " + (propertyDetails.getPropertyDataInfo().getHasLift() ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("isAccessible: " + (propertyDetails.getPropertyDataInfo().isAccessible() ? "YES" : "NO"));
+            contentStream.showText("isAccessible: " + (propertyDetails.getPropertyDataInfo().getIsAccessible()  ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("isInsulated: " + (propertyDetails.getPropertyDataInfo().isInsulated() ? "YES" : "NO"));
+            contentStream.showText("isInsulated: " + (propertyDetails.getPropertyDataInfo().getIsInsulated() ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("AirCondition: " + (propertyDetails.getPropertyDataInfo().isHasAirCondition() ? "YES" : "NO"));
+            contentStream.showText("AirCondition: " + (propertyDetails.getPropertyDataInfo().getHasAirCondition() ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("Garden: " + (propertyDetails.getPropertyDataInfo().isHasGarden() ? "YES" : "NO"));
+            contentStream.showText("Garden: " + (propertyDetails.getPropertyDataInfo().getHasGarden() ? "YES" : "NO"));
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateStr = "Készült: " + dateFormat.format(new Date());
