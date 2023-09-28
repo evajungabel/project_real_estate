@@ -109,7 +109,7 @@ public class PropertyDataServiceTest {
                 .build();
 
         propertyData1Update = new PropertyData().builder()
-                .id(1L)
+                .id(2L)
                 .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
                 .hasAirCondition(true)
                 .hasBalcony(true)
@@ -166,7 +166,7 @@ public class PropertyDataServiceTest {
                 .build();
 
         propertyUpdate1 = new Property().builder()
-                .id(1L)
+                .id(2L)
                 .dateOfCreation(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 10, 30))
                 .name("Kuckó")
                 .type(PropertyType.HOUSE)
@@ -193,8 +193,6 @@ public class PropertyDataServiceTest {
                 .isAgent(false)
                 .hasNewsletter(false)
                 .build();
-
-
 
     }
 
@@ -230,7 +228,7 @@ public class PropertyDataServiceTest {
     void testSave_singlePropertySaved() throws AuthenticationExceptionImpl {
         when(propertyDataRepository.findAll()).thenReturn((List.of(propertyData1)));
         when(propertyService.findPropertyById(1L)).thenReturn(property1);
-        when(modelMapper.map(propertyDataForm1, PropertyData.class)).thenReturn(propertyData1);
+        when(modelMapper.map(propertyDataForm1, PropertyData.class)).thenReturn(propertyData1Update);
         when(propertyDataRepository.save(any())).thenReturn(propertyData1);
         when(modelMapper.map(propertyData1, PropertyDataInfo.class)).thenReturn(propertyDataInfo1);
 
