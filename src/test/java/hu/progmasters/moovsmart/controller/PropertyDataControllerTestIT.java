@@ -39,7 +39,7 @@ public class PropertyDataControllerTestIT {
 
     @Test
     void IT_test_findAllPropertiesPaginatedAndSorted() throws Exception {
-        mockMvc.perform(get("/api/properties/data/paginatedandsortedlist?page=0&size=15&sort=yearBuilt&sortDir=ASC")
+        mockMvc.perform(get("/api/properties/data?page=0&size=15&sort=yearBuilt&sortDir=ASC")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].yearBuilt", is(1987)))
@@ -80,7 +80,7 @@ public class PropertyDataControllerTestIT {
 
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
+    @WithMockUser(username = "cduprec", authorities = "ROLE_USER")
     void IT_test_savePropertyDataForPropertyId() throws Exception {
 
         String inputCommand = "{\n" +
@@ -139,7 +139,7 @@ public class PropertyDataControllerTestIT {
 
 
     @Test
-    @WithMockUser(authorities = "ROLE_USER")
+    @WithMockUser(username = "aprandia", authorities = "ROLE_USER")
     void IT_test_updatePropertyDataWithPropertyId() throws Exception {
 
         String inputCommand = "{\n" +

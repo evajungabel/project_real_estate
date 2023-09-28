@@ -68,12 +68,10 @@ public class PropertyController {
             @RequestParam("sort") String sort,
             @RequestParam("page") int page,
             @RequestParam("size") int size,
-            @Valid @RequestBody PropertyFilterRequestForm propertyFilterRequestForm
-    ) {
+            @Valid @RequestBody PropertyFilterRequestForm propertyFilterRequestForm) {
         log.info("Http request, POST /api/property with variables: " + page + size + sort + sortDir + propertyFilterRequestForm);
         List<PropertyFilterRequestInfo> propertyFilterRequestInfos = propertyService.getPropertyRequests(page, size, sortDir, sort, propertyFilterRequestForm);
         log.info("POST data from repository/property with variable: " + page + size + sort + sortDir + propertyFilterRequestForm);
-
         return new ResponseEntity<>(propertyFilterRequestInfos, HttpStatus.OK);
     }
 

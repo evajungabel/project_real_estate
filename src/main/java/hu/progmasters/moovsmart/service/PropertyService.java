@@ -65,12 +65,26 @@ public class PropertyService {
         List<Property> properties = propertyRepository.findAll();
         List<PropertyDetails> propertyDetailsList = new ArrayList<>();
         for (Property property : properties) {
-            PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
-            AddressInfoForProperty addressInfoForProperties = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
-            propertyDetails.setAddressInfoForProperty(addressInfoForProperties);
-            propertyDetailsList.add(propertyDetails);
+            propertyDetailsList.add(helpFunctionMapping(property));
         }
         return propertyDetailsList;
+    }
+
+    public PropertyDetails helpFunctionMapping(Property property) {
+        PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
+        if (property.getAddress() != null) {
+            AddressInfoForProperty addressInfoForProperties = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
+            propertyDetails.setAddressInfoForProperty(addressInfoForProperties);
+        }
+        List<PropertyImageURLInfo> propertyImageURLInfos = property.getPropertyImageURLs().stream()
+                .map(propertyImageURL -> modelMapper.map(propertyImageURL, PropertyImageURLInfo.class))
+                .collect(Collectors.toList());
+        propertyDetails.setPropertyImageURLInfos(propertyImageURLInfos);
+        if (property.getPropertyData() != null) {
+            PropertyDataInfo propertyDataInfo = modelMapper.map(property.getPropertyData(), PropertyDataInfo.class);
+            propertyDetails.setPropertyDataInfo(propertyDataInfo);
+        }
+        return propertyDetails;
     }
 
     public List<PropertyDetails> getProperties24() {
@@ -92,7 +106,7 @@ public class PropertyService {
             throw new NoResourceFoundException(properties.getTotalPages());
         }
         return properties.getContent().stream()
-                .map(property -> modelMapper.map(property, PropertyDetails.class))
+                .map(this::helpFunctionMapping)
                 .collect(Collectors.toList());
     }
 
@@ -215,12 +229,7 @@ public class PropertyService {
 
     public PropertyDetails getPropertyDetails(Long id) {
         Property property = findPropertyById(id);
-        PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
-        AddressInfoForProperty addressInfoForProperty = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
-        propertyDetails.setAddressInfoForProperty(addressInfoForProperty);
-        PropertyDataInfo propertyDataInfo = modelMapper.map(property.getPropertyData(), PropertyDataInfo.class);
-        propertyDetails.setPropertyDataInfo(propertyDataInfo);
-        return propertyDetails;
+        return helpFunctionMapping(property);
     }
 
     public Property findPropertyById(Long propertyId) {
@@ -320,17 +329,17 @@ public class PropertyService {
             contentStream.newLine();
             contentStream.showText("yearBuilt: " + propertyDetails.getPropertyDataInfo().getYearBuilt());
             contentStream.newLine();
-            contentStream.showText("Orientation: " + (propertyDetails.getPropertyDataInfo().getPropertyOrientation().equals(null) ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyOrientation()));
+            contentStream.showText("Orientation: " + (propertyDetails.getPropertyDataInfo().getPropertyOrientation() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyOrientation()));
             contentStream.newLine();
-            contentStream.showText("HeatingType: " + (propertyDetails.getPropertyDataInfo().getPropertyHeatingType().equals(null) ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyHeatingType()));
+            contentStream.showText("HeatingType: " + (propertyDetails.getPropertyDataInfo().getPropertyHeatingType() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyHeatingType()));
             contentStream.newLine();
-            contentStream.showText("energyCertificate: " + (propertyDetails.getPropertyDataInfo().getEnergyCertificate().equals(null) ? "N/A" : propertyDetails.getPropertyDataInfo().getEnergyCertificate()));
+            contentStream.showText("energyCertificate: " + (propertyDetails.getPropertyDataInfo().getEnergyCertificate() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getEnergyCertificate()));
             contentStream.newLine();
             contentStream.showText("hasBalcony: " + (propertyDetails.getPropertyDataInfo().getHasBalcony() ? "YES" : "NO"));
             contentStream.newLine();
             contentStream.showText("hasLift: " + (propertyDetails.getPropertyDataInfo().getHasLift() ? "YES" : "NO"));
             contentStream.newLine();
-            contentStream.showText("isAccessible: " + (propertyDetails.getPropertyDataInfo().getIsAccessible()  ? "YES" : "NO"));
+            contentStream.showText("isAccessible: " + (propertyDetails.getPropertyDataInfo().getIsAccessible() ? "YES" : "NO"));
             contentStream.newLine();
             contentStream.showText("isInsulated: " + (propertyDetails.getPropertyDataInfo().getIsInsulated() ? "YES" : "NO"));
             contentStream.newLine();

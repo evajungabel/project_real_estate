@@ -1,7 +1,9 @@
 package hu.progmasters.moovsmart.service;
 
+import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.exception.PropertyDataNotFoundException;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyDataRepository;
@@ -21,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.Year;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,6 +58,7 @@ public class PropertyDataServiceTest {
     private PropertyData propertyData1Update;
     private PropertyDataInfo propertyDataInfo1Update;
     private PropertyDataForm propertyDataForm1Update;
+    private CustomUser customUser1;
 
 
     @BeforeEach
@@ -73,6 +77,7 @@ public class PropertyDataServiceTest {
                 .isAccessible(true)
                 .isInsulated(true)
                 .yearBuilt(1952)
+                .property(property1)
                 .build();
 
         propertyDataInfo1 = new PropertyDataInfo().builder()
@@ -157,6 +162,7 @@ public class PropertyDataServiceTest {
                 .status(PropertyStatus.ACTIVE)
                 .description("Jó kis házikó")
                 .propertyData(propertyData1)
+                .customUser(customUser1)
                 .build();
 
         propertyUpdate1 = new Property().builder()
@@ -170,7 +176,24 @@ public class PropertyDataServiceTest {
                 .status(PropertyStatus.ACTIVE)
                 .description("Jó kis házikó")
                 .propertyData(propertyData1Update)
+                .customUser(customUser1)
                 .build();
+
+        customUser1 = new CustomUser().builder()
+                .customUserId(1L)
+                .username("pistike")
+                .name("Kis Pistike")
+                .email("pistike@gmail.com")
+                .password("Pistike1*")
+                .phoneNumber("+36303333333")
+                .roles(List.of(CustomUserRole.ROLE_USER))
+                .enable(true)
+                .activation("123456")
+                .propertyList(List.of(property1))
+                .isAgent(false)
+                .hasNewsletter(false)
+                .build();
+
 
 
     }
@@ -204,13 +227,14 @@ public class PropertyDataServiceTest {
 
 
     @Test
-    void testSave_singlePropertySaved() {
-        when(modelMapper.map(propertyDataForm1, PropertyData.class)).thenReturn(propertyData1);
+    void testSave_singlePropertySaved() throws AuthenticationExceptionImpl {
+        when(propertyDataRepository.findAll()).thenReturn((List.of(propertyData1)));
         when(propertyService.findPropertyById(1L)).thenReturn(property1);
+        when(modelMapper.map(propertyDataForm1, PropertyData.class)).thenReturn(propertyData1);
         when(propertyDataRepository.save(any())).thenReturn(propertyData1);
         when(modelMapper.map(propertyData1, PropertyDataInfo.class)).thenReturn(propertyDataInfo1);
 
-        assertEquals(propertyDataInfo1, propertyDataService.createPropertyData(propertyDataForm1, 1L));
+        assertEquals(propertyDataInfo1, propertyDataService.createPropertyData("pistike", propertyDataForm1, 1L));
 
         verify(propertyDataRepository, times(1)).save(any());
         verifyNoMoreInteractions(propertyDataRepository);
@@ -219,12 +243,12 @@ public class PropertyDataServiceTest {
 
 
     @Test
-    void testUpdate() {
+    void testUpdate() throws AuthenticationExceptionImpl {
         when(propertyService.findPropertyById(1L)).thenReturn(propertyUpdate1);
         when(modelMapper.map(propertyDataForm1Update, PropertyData.class)).thenReturn(propertyData1Update);
         when(modelMapper.map(propertyData1Update, PropertyDataInfo.class)).thenReturn(propertyDataInfo1Update);
 
-        assertEquals(propertyDataInfo1Update, propertyDataService.update(propertyDataForm1Update, 1L));
+        assertEquals(propertyDataInfo1Update, propertyDataService.update("pistike", propertyDataForm1Update, 1L));
 
         verify(propertyService, times(1)).findPropertyById(1L);
         verifyNoMoreInteractions(propertyService);

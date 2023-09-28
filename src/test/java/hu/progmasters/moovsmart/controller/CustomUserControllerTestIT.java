@@ -512,7 +512,7 @@ public class CustomUserControllerTestIT {
                 .andExpect(jsonPath("$.username", is("bogyoesbaboca")))
                 .andExpect(jsonPath("$.email", is("bogyo.es.baboca@gmail.com")))
                 .andExpect(jsonPath("$.phoneNumber", is("+36306363634")))
-                .andExpect(jsonPath("$.customUserRoles", is(List.of("ROLE_USER"))))
+                .andExpect(jsonPath("$.customUserRoles", is(List.of("ROLE_AGENT"))))
                 .andExpect(status().isOk());
     }
 

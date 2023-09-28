@@ -69,6 +69,7 @@ public class PropertyServiceTest {
 
     @BeforeEach
     void init() {
+
         customUser1 = new CustomUser().builder()
                 .customUserId(1L)
                 .username("pistike")
@@ -78,6 +79,12 @@ public class PropertyServiceTest {
                 .roles(List.of(CustomUserRole.ROLE_USER))
                 .enable(true)
                 .activation("123456789")
+                .build();
+
+        propertyImageURL = new PropertyImageURL().builder()
+                .propertyImageUrlId(1L)
+                .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
+                .property(property1)
                 .build();
 
         property1 = new Property().builder()
@@ -91,21 +98,17 @@ public class PropertyServiceTest {
                 .status(PropertyStatus.ACTIVE)
                 .description("Jó kis házikó")
                 .customUser(customUser1)
+                .propertyImageURLs(List.of(propertyImageURL))
                 .build();
 
-        propertyImageURL = new PropertyImageURL().builder()
-                .propertyImageUrlId(1L)
+        propertyImageURLInfo = new PropertyImageURLInfo().builder()
                 .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
-                .property(property1)
                 .build();
 
         propertyImageURLForm = new PropertyImageURLForm().builder()
                 .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
                 .build();
 
-        propertyImageURLInfo = new PropertyImageURLInfo().builder()
-                .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
-                .build();
 
         property2 = new Property().builder()
                 .id(2L)
@@ -117,6 +120,7 @@ public class PropertyServiceTest {
                 .numberOfRooms(4)
                 .description("Jó kis családi ház")
                 .customUser(customUser1)
+                .propertyImageURLs(List.of(propertyImageURL))
                 .build();
 
         propertyForm1 = new PropertyForm().builder()
@@ -189,7 +193,7 @@ public class PropertyServiceTest {
                 .price(400000000d)
                 .numberOfRooms(5)
                 .description("Jó kis házikó")
-                .propertyImageURLS(List.of(propertyImageURL))
+                .propertyImageURLInfos(List.of(propertyImageURLInfo))
                 .build();
 
         propertyDetails2 = new PropertyDetails().builder()
@@ -197,7 +201,7 @@ public class PropertyServiceTest {
                 .price(35000000d)
                 .numberOfRooms(4)
                 .description("Jó kis családi ház")
-                .propertyImageURLS(List.of(propertyImageURL))
+                .propertyImageURLInfos(List.of(propertyImageURLInfo))
                 .build();
 
 

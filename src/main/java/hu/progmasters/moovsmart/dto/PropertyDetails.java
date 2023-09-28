@@ -23,6 +23,6 @@ public class PropertyDetails {
     private Double area;
     private String description;
     private AddressInfoForProperty addressInfoForProperty;
-    private List<PropertyImageURL> propertyImageURLS;
+    private List<PropertyImageURLInfo> propertyImageURLInfos;
     private PropertyDataInfo propertyDataInfo;
 }
