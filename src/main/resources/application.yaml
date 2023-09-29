@@ -29,6 +29,12 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+paypal:
+  mode: sandbox
+  client:
+    id: AQ_ZQybzRCfkWn2NdBMwfeYpJynHws9bkDv4BjhHqrcVygI-klHCPrOigQRg5LfSs5eNYZ9yJG2z4Vht
+    secret: AQ_ZQybzRCfkWn2NdBMwfeYpJynHws9bkDv4BjhHqrcVygI-klHCPrOigQRg5LfSs5eNYZ9yJG2z4Vht
+
 
 
 #  spring.mail.scheduler.persistence.enabled: false
