@@ -1,7 +1,7 @@
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable,
                                        is_agent, is_deleted, has_newsletter, name, password, username, phone_number)
 values (1, false, '123456', '2048-10-10 00:00:00.000000', 'aprandia@miitbeian.gov.cn', true, false, true, true, 'Avivah Prandi',
-        'jH0@qk''BXF', 'aprandia', '+36306363631');
+        '$2a$10$T2n5CutDSL3YPFhRe0/cvOZlpOYXarHeR9s9UOxwlj1QpxV0ihHna', 'aprandia', '+36306363631');
 insert into moovsmartTest.custom_user (custom_user_id, account_non_locked, activation, delete_date, e_mail, enable, is_agent,
                                        is_deleted, has_newsletter, name, password, username, phone_number)
 values (2, true, '654321', null, 'glockley5@howstuffworks.com', true, false, false, true, 'Gunter Lockley', 'jF0$=2+q$~iG',

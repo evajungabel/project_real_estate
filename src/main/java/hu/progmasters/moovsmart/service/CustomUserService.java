@@ -188,15 +188,23 @@ public class CustomUserService implements UserDetailsService {
 
 
 
-
-
     public CustomUserInfo login(String username, String email, String password) {
-        CustomUser customUser = findCustomUserByUsername(username);
+        if (username != null) {
+            CustomUser customUser = findCustomUserByUsername(username);
             if (passwordEncoder.matches(password, customUser.getPassword())) {
                 return modelMapper.map(customUser, CustomUserInfo.class);
-        } else {
-            throw new PasswordNotValidException(password);
+            } else {
+                throw new PasswordNotValidException(password);
+            }
         }
+        if (email != null) {
+            CustomUser customUser = findCustomUserByEmail(email);
+            if (passwordEncoder.matches(password, customUser.getPassword())) {
+                return modelMapper.map(customUser, CustomUserInfo.class);
+            } else {
+                throw new PasswordNotValidException(password);
+            }
+        } throw new UsernameAndEmailAddressNotFoundException(username, email);
     }
 
 

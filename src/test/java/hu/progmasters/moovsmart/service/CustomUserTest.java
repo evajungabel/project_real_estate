@@ -514,7 +514,7 @@ public class CustomUserTest {
             customUserService.findCustomUserByEmail("pistike@gmail.com");
             fail("Expected EmailAddressNotFoundException, but no exception was thrown.");
         } catch (EmailAddressNotFoundException e) {
-            assertEquals("CustomUser was not found with: pistike@gmail.com", e.getMessage());
+            assertEquals("CustomUser was not found with email: pistike@gmail.com", e.getMessage());
         }
     }
 
