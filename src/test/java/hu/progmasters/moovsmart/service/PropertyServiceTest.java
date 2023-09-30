@@ -210,7 +210,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testList_asStart_emptyList() {
+    void test_asStart_emptyList() {
         when(propertyRepository.findAll()).thenReturn(List.of());
         assertThat(propertyService.getProperties()).isEmpty();
 
@@ -219,7 +219,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testList_allPropertiesWithOneProperty() {
+    void test_allPropertiesWithOneProperty() {
         when(modelMapper.map(property1, PropertyDetails.class)).thenReturn(propertyDetails1);
         when(propertyRepository.findAll()).thenReturn(List.of(property1));
 
@@ -232,7 +232,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testList_allPropertiesWithTwoProperty() {
+    void test_allPropertiesWithTwoProperty() {
         when(propertyRepository.findAll()).thenReturn(List.of(property1, property2));
         when(modelMapper.map(property1, PropertyDetails.class)).thenReturn(propertyDetails1);
         when(modelMapper.map(property2, PropertyDetails.class)).thenReturn(propertyDetails2);
@@ -245,7 +245,7 @@ public class PropertyServiceTest {
 
 
     @Test
-    void testGetPropertyDetails_withNoId() {
+    void test_getPropertyDetails_withNoId() {
         when(propertyRepository.findById(3L)).thenReturn(Optional.empty());
 
         try {
@@ -257,7 +257,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testGetPropertyDetails_with1LId() {
+    void test_getPropertyDetails_with1LId() {
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
         when(modelMapper.map(property1, PropertyDetails.class)).thenReturn(propertyDetails1);
         assertEquals(propertyDetails1, propertyService.getPropertyDetails(1L));
@@ -267,7 +267,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testGetPropertyDetails_with2LId() {
+    void test_getPropertyDetails_with2LId() {
         when(propertyRepository.findById(2L)).thenReturn(Optional.ofNullable(property2));
         when(modelMapper.map(property2, PropertyDetails.class)).thenReturn(propertyDetails2);
         assertEquals(propertyDetails2, propertyService.getPropertyDetails(2L));
@@ -279,7 +279,7 @@ public class PropertyServiceTest {
 
 
     @Test
-    void testSave_singlePropertySaved() {
+    void test_saveProperty() {
         when(modelMapper.map(propertyForm1, Property.class)).thenReturn(property1);
         when(modelMapper.map(property1, PropertyInfo.class)).thenReturn(propertyInfo1);
         when(propertyRepository.save(property1)).thenReturn(property1);
@@ -298,7 +298,7 @@ public class PropertyServiceTest {
 
 
     @Test
-    void testMakeInactive() {
+    void test_makeInactiveProperty() {
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
 
         propertyService.makeInactive(1L);
@@ -310,7 +310,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testUpdate() throws AuthenticationException {
+    void test_updateProperty() throws AuthenticationException {
         when(modelMapper.map(propertyFormUpdate, Property.class)).thenReturn(property1Update);
         when(modelMapper.map(property1Update, PropertyInfo.class)).thenReturn(propertyInfo1Update);
         when(propertyRepository.findById(3L)).thenReturn(Optional.ofNullable(property1Update));
@@ -322,7 +322,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testCreateListOfImageURLs() throws AuthenticationExceptionImpl {
+    void test_createListOfImageURLs() throws AuthenticationExceptionImpl {
         when(modelMapper.map(propertyImageURLForm, PropertyImageURL.class)).thenReturn(propertyImageURL);
         when(propertyImageURLService.save(propertyImageURL)).thenReturn(propertyImageURL);
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
