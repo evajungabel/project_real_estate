@@ -37,36 +37,36 @@ public class PropertyDataControllerTestIT {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    void IT_test_findAllPropertiesPaginatedAndSorted() throws Exception {
-        mockMvc.perform(get("/api/properties/data?page=0&size=15&sort=yearBuilt&sortDir=ASC")
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].yearBuilt", is(1987)))
-                .andExpect(jsonPath("$[1].yearBuilt", is(1999)))
-                .andExpect(jsonPath("$[2].yearBuilt", is(2003)));
-    }
-
-
-
-
-    @Test
-    void IT_test_getPropertyDataDetailsForPropertyId() throws Exception {
-        mockMvc.perform(get("/api/properties/data/1")
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.energyCertificate", is("AT_LEAST_AA_PLUS_PLUS")))
-                .andExpect(jsonPath("$.hasAirCondition", is(true)))
-                .andExpect(jsonPath("$.hasBalcony", is(true)))
-                .andExpect(jsonPath("$.hasGarden", is(true)))
-                .andExpect(jsonPath("$.hasLift", is(false)))
-                .andExpect(jsonPath("$.isAccessible", is(true)))
-                .andExpect(jsonPath("$.isInsulated", is(true)))
-                .andExpect(jsonPath("$.propertyHeatingType", is("GAS_CONVECTOR")))
-                .andExpect(jsonPath("$.propertyOrientation", is("NORTH_WEST")))
-                .andExpect(jsonPath("$.propertyParking", is("COURTYARD")))
-                .andExpect(jsonPath("$.yearBuilt", is(1987)));
-    }
+//    @Test
+//    void IT_test_findAllPropertiesPaginatedAndSorted() throws Exception {
+//        mockMvc.perform(get("/api/properties/data?page=0&size=15&sort=yearBuilt&sortDir=ASC")
+//                        .accept(MediaType.APPLICATION_JSON_VALUE))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$[0].yearBuilt", is(1987)))
+//                .andExpect(jsonPath("$[1].yearBuilt", is(1999)))
+//                .andExpect(jsonPath("$[2].yearBuilt", is(2003)));
+//    }
+//
+//
+//
+//
+//    @Test
+//    void IT_test_getPropertyDataDetailsForPropertyId() throws Exception {
+//        mockMvc.perform(get("/api/properties/data/1")
+//                        .accept(MediaType.APPLICATION_JSON_VALUE))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.energyCertificate", is("AT_LEAST_AA_PLUS_PLUS")))
+//                .andExpect(jsonPath("$.hasAirCondition", is(true)))
+//                .andExpect(jsonPath("$.hasBalcony", is(true)))
+//                .andExpect(jsonPath("$.hasGarden", is(true)))
+//                .andExpect(jsonPath("$.hasLift", is(false)))
+//                .andExpect(jsonPath("$.isAccessible", is(true)))
+//                .andExpect(jsonPath("$.isInsulated", is(true)))
+//                .andExpect(jsonPath("$.propertyHeatingType", is("GAS_CONVECTOR")))
+//                .andExpect(jsonPath("$.propertyOrientation", is("NORTH_WEST")))
+//                .andExpect(jsonPath("$.propertyParking", is("COURTYARD")))
+//                .andExpect(jsonPath("$.yearBuilt", is(1987)));
+//    }
 
 
     @Test

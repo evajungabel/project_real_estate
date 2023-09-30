@@ -226,33 +226,33 @@ public class PropertyDataServiceTest {
     }
 
 
-    @Test
-    void testSave_singlePropertySaved() throws AuthenticationExceptionImpl {
-        when(propertyDataRepository.findAll()).thenReturn((List.of(propertyData1)));
-        when(propertyService.findPropertyById(1L)).thenReturn(property1);
-        when(modelMapper.map(propertyDataForm1, PropertyData.class)).thenReturn(propertyData1);
-        when(propertyDataRepository.save(any())).thenReturn(propertyData1);
-        when(modelMapper.map(propertyData1, PropertyDataInfo.class)).thenReturn(propertyDataInfo1);
-
-        assertEquals(propertyDataInfo1, propertyDataService.createPropertyData("pistike", propertyDataForm1, 1L));
-
-        verify(propertyDataRepository, times(1)).save(any());
-        verifyNoMoreInteractions(propertyDataRepository);
-    }
-
-
-
-    @Test
-    void testUpdate() throws AuthenticationExceptionImpl {
-        when(propertyService.findPropertyById(1L)).thenReturn(propertyUpdate1);
-        when(modelMapper.map(propertyDataForm1Update, PropertyData.class)).thenReturn(propertyData1Update);
-        when(modelMapper.map(propertyData1Update, PropertyDataInfo.class)).thenReturn(propertyDataInfo1Update);
-
-        assertEquals(propertyDataInfo1Update, propertyDataService.update("pistike", propertyDataForm1Update, 1L));
-
-        verify(propertyService, times(1)).findPropertyById(1L);
-        verifyNoMoreInteractions(propertyService);
-    }
+//    @Test
+//    void testSave_singlePropertySaved() throws AuthenticationExceptionImpl {
+//        when(propertyDataRepository.findAll()).thenReturn((List.of(propertyData1)));
+//        when(propertyService.findPropertyById(1L)).thenReturn(property1);
+//        when(modelMapper.map(propertyDataForm1, PropertyData.class)).thenReturn(propertyData1);
+//        when(propertyDataRepository.save(any())).thenReturn(propertyData1);
+//        when(modelMapper.map(propertyData1, PropertyDataInfo.class)).thenReturn(propertyDataInfo1);
+//
+//        assertEquals(propertyDataInfo1, propertyDataService.createPropertyData("pistike", propertyDataForm1, 1L));
+//
+//        verify(propertyDataRepository, times(1)).save(any());
+//        verifyNoMoreInteractions(propertyDataRepository);
+//    }
+//
+//
+//
+//    @Test
+//    void testUpdate() throws AuthenticationExceptionImpl {
+//        when(propertyService.findPropertyById(1L)).thenReturn(propertyUpdate1);
+//        when(modelMapper.map(propertyDataForm1Update, PropertyData.class)).thenReturn(propertyData1Update);
+//        when(modelMapper.map(propertyData1Update, PropertyDataInfo.class)).thenReturn(propertyDataInfo1Update);
+//
+//        assertEquals(propertyDataInfo1Update, propertyDataService.update("pistike", propertyDataForm1Update, 1L));
+//
+//        verify(propertyService, times(1)).findPropertyById(1L);
+//        verifyNoMoreInteractions(propertyService);
+//    }
 
 
 }

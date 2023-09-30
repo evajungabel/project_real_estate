@@ -174,7 +174,7 @@ public class PropertyController {
 
     @GetMapping("/pdf/{propertyId}")
     @Operation(summary = "Get property with {propertyId}")
-    @ApiResponse(responseCode = "200", description = "Property details")
+    @ApiResponse(responseCode = "201", description = "Property details")
     public ResponseEntity<byte[]> generatePropertyPDF(@PathVariable("propertyId") Long id) {
         log.info("Http request, GET /api/property/{propertyId} with variable: " + id);
         propertyService.createPdf(id);
