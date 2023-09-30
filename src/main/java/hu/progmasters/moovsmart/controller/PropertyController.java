@@ -1,5 +1,6 @@
 package hu.progmasters.moovsmart.controller;
 
+import hu.progmasters.moovsmart.domain.Currencies;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.service.PropertyService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Currency;
 import java.util.List;
 
 @RestController
@@ -173,11 +175,20 @@ public class PropertyController {
     }
 
     @GetMapping("/pdf/{propertyId}")
-    @Operation(summary = "Get property with {propertyId}")
+    @Operation(summary = "Create PDF file")
     @ApiResponse(responseCode = "201", description = "Property details")
     public ResponseEntity<byte[]> generatePropertyPDF(@PathVariable("propertyId") Long id) {
-        log.info("Http request, GET /api/property/{propertyId} with variable: " + id);
+        log.info("Http request, GET /api/property/pdf/{propertyId} with variable: " + id);
         propertyService.createPdf(id);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/exchange/{propertyId}/{currency}")
+    @Operation(summary = "Exchange property price")
+    @ApiResponse(responseCode = "201", description = "Property details")
+    public ResponseEntity<Double> changePrice(@PathVariable("propertyId") Long id, @PathVariable("currency") Currencies currency) {
+        log.info("Http request, GET /api/property/exchange/{propertyId} with variable: " + id);
+        Double changedPrice = propertyService.exchange(id,currency);
+        return new ResponseEntity<>(changedPrice,HttpStatus.CREATED);
     }
 }

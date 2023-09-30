@@ -1,9 +1,6 @@
 package hu.progmasters.moovsmart.service;
 
-import hu.progmasters.moovsmart.domain.CustomUser;
-import hu.progmasters.moovsmart.domain.Property;
-import hu.progmasters.moovsmart.domain.PropertyImageURL;
-import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.exception.NoResourceFoundException;
@@ -33,10 +30,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -50,14 +44,16 @@ public class PropertyService {
     private PropertyImageURLService propertyImageURLService;
     private ModelMapper modelMapper;
     private AddressRepository addressRepository;
+    private ExchangeService exchangeService;
 
     @Autowired
-    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService, AddressRepository addressRepository) {
+    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService, AddressRepository addressRepository, ExchangeService exchangeService) {
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
         this.customUserService = customUserService;
         this.propertyImageURLService = propertyImageURLService;
         this.addressRepository = addressRepository;
+        this.exchangeService = exchangeService;
     }
 
 
@@ -366,5 +362,13 @@ public class PropertyService {
             log.error("Error while generating and saving PDF", e);
             throw new RuntimeException("Error while generating and saving PDF", e);
         }
+    }
+
+    public Double exchange(Long id, Currencies currency) {
+        Property property = findPropertyById(id);
+        Double price = property.getPrice();
+        exchangeService.changePrice(price,currency);
+
+        return null;
     }
 }

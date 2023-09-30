@@ -1,6 +1,7 @@
 package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.config.ExchangeApiConfig;
+import hu.progmasters.moovsmart.domain.Currencies;
 import hu.progmasters.moovsmart.dto.ExchangeData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import java.util.Currency;
 
 @Service
 @Slf4j
@@ -22,9 +22,9 @@ public class ExchangeService {
         this.restTemplate = restTemplate;
     }
 
-    public ExchangeData getexchangeData() {
+    public ExchangeData getexchangeData(Currencies currency) {
         String apiKey = exchangeApiConfig.getExchangeratesApiKey();
-        String apiUrl = "http://api.exchangeratesapi.io/v1/latest?access_key="+ apiKey + "& symbols = EUR";
+        String apiUrl = "http://api.exchangeratesapi.io/v1/latest?access_key=" + apiKey + "&base=EUR&symbols=" + currency;
 
         try {
             log.info("RestTemplate GET ExchangeData");
@@ -43,9 +43,11 @@ public class ExchangeService {
         }
     }
 
-    public Integer changePrice(Integer price, Currency currency){
-        ExchangeData exchangeData = getexchangeData();
+    public Double changePrice(Double price, Currencies currency) {
+        ExchangeData exchangeData1 = getexchangeData(Currencies.HUF);
+        Double pEuro = (exchangeData1.getEUR()) / price;
+        ExchangeData exchangeData2 = getexchangeData(currency);
 
-        return null;
+        return exchangeData2.get;
     }
 }

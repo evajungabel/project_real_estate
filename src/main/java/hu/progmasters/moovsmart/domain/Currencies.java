@@ -1,5 +1,5 @@
 package hu.progmasters.moovsmart.domain;
 
 public enum Currencies {
-    EUR
+    EUR,HUF,USD,CNY,RON,RUB,XPF
 }
