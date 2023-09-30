@@ -54,7 +54,7 @@ public class PayPalPaymentController {
         return new ResponseEntity<>("There is an error in payment process!", HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping(SUCCESS_URL)
+    @GetMapping("/success")
     public ResponseEntity<String> successPay(@RequestParam("paymentId") String paymentId, @RequestParam("PayerID") String payerId) {
         try {
             Payment payment = payPalPaymentService.executePayment(paymentId, payerId);
