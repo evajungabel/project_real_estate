@@ -3,25 +3,21 @@ package hu.progmasters.moovsmart.service;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @Transactional
 public class PayPalPaymentService {
 
-    public static final String SUCCESS_URL = "pay/success";
-    public static final String CANCEL_URL = "pay/cancel";
-    private static final String INTENT = "sale";
-    private static final String METHOD = "paypal";
+    public static final String SUCCESS_URL = "http://localhost:8080/api/paypal/success";
+    public static final String CANCEL_URL = "http://localhost:8080/api/paypal/cancel";
 
     private final String SENDER_BATCH = "test sender batch";
     private final String EMAIL_SUBJECT = "test subject";
@@ -33,11 +29,14 @@ public class PayPalPaymentService {
     public Payment createPayment(
             Double total,
             String currency,
-            String description) throws PayPalRESTException {
+            String method,
+            String intent,
+            String description,
+            String CANCEL_URL,
+            String SUCCESS_URL) throws PayPalRESTException {
         Amount amount = new Amount();
         amount.setCurrency(currency);
-        total = new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).doubleValue();
-        amount.setTotal(String.format("%.2f", total));
+        amount.setTotal(String.format(Locale.forLanguageTag(currency), "%.2f", total));
 
         Transaction transaction = new Transaction();
         transaction.setDescription(description);
@@ -47,12 +46,14 @@ public class PayPalPaymentService {
         transactions.add(transaction);
 
         Payer payer = new Payer();
-        payer.setPaymentMethod(METHOD);
+        payer.setPaymentMethod(method);
 
         Payment payment = new Payment();
-        payment.setIntent(INTENT);
+        payment.setIntent(intent);
+
         payment.setPayer(payer);
         payment.setTransactions(transactions);
+
         RedirectUrls redirectUrls = new RedirectUrls();
         redirectUrls.setCancelUrl(CANCEL_URL);
         redirectUrls.setReturnUrl(SUCCESS_URL);
