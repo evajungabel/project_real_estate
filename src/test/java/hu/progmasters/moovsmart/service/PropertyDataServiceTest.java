@@ -64,12 +64,14 @@ public class PropertyDataServiceTest {
     @BeforeEach
     void init() {
 
-        propertyData1 = new PropertyData().builder()
-                .id(1L)
-                .energyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA)
-                .hasAirCondition(true)
-                .hasBalcony(true)
-                .hasLift(true)
+        propertyData1 = new PropertyData();
+
+        propertyData1.setId(1L);
+        propertyData1.setEnergyCertificate(PropertyEnergyPerformanceCertificate.AT_LEAST_AA);
+        propertyData1.setHasAirCondition(true);
+        propertyData1.setHasBalcony(true);
+        propertyData1.setHasLift(true);
+
                 .propertyOrientation(PropertyOrientation.EAST)
                 .propertyParking(PropertyParking.COURTYARD)
                 .propertyHeatingType(PropertyHeatingType.CENTRAL_HEATING)
