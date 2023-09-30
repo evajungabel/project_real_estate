@@ -67,32 +67,24 @@ public class CustomUserTest {
     private CustomUserInfo customUserInfo1;
     private CustomUserInfo customUserInfo1A;
     private CustomUserInfo customUserInfo3;
-
     private CustomUserForm customUserForm1;
     private CustomUserForm customUserForm2;
     private CustomUserFormAdmin customUserFormAdmin;
     private CustomUserForm customUserFormA;
-
     private CustomUser customUser2;
     private CustomUser customUser3;
     private CustomUserInfo customUserInfo2;
-
     private CustomUser customUserDeleted;
     private Property property1;
-
     private ConfirmationToken confirmationToken1;
     private ConfirmationToken confirmationToken2;
     private ConfirmationToken confirmationToken3;
-
     private User customUserLoggedIn1;
-
     private CustomUserEmail customUserEmail1;
     private CustomUserEmail customUserEmail2;
     private CustomUserEmail customUserEmail3;
-
     private List<String> listOfUsernames = new ArrayList<>();
     private List<String> listOfEmails = new ArrayList<>();
-
     private Timer activationTimer;
 
     @BeforeEach
@@ -303,7 +295,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_Register_CustomUserAsUser() {
+    void test_registerCustomUserAsUser() {
         when(confirmationTokenService.save(any())).thenReturn(confirmationToken1);
         when(passwordEncoder.encode(any())).thenReturn("Pistike1*");
         when(customUserRepository.findByEmail(customUserForm1.getEmail())).thenReturn(null).thenReturn(customUser1);
@@ -322,7 +314,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_Register_CustomUserAsAgent() {
+    void test_registerCustomUserAsAgent() {
         when(confirmationTokenService.save(any())).thenReturn(confirmationToken1);
         when(passwordEncoder.encode(any())).thenReturn("Moricka1*");
         when(customUserRepository.findByEmail(customUserForm2.getEmail())).thenReturn(null).thenReturn(customUser2);
@@ -342,7 +334,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_Register_CustomUserFirstAdmin() {
+    void test_registerCustomUserFirstAdmin() {
         when(confirmationTokenService.save(any())).thenReturn(confirmationToken3);
         when(passwordEncoder.encode(any())).thenReturn("Erzsike1*");
         when(customUserRepository.findByEmail(customUserFormAdmin.getEmail())).thenReturn(null).thenReturn(customUser2);
@@ -362,7 +354,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_SendingActivationEmail_CustomUser() {
+    void test_sendingActivationEmailToCustomUser() {
         when(customUserRepository.findByEmail("pistike@gmail.com")).thenReturn(customUser1);
 
         customUserService.sendingActivationEmail("Pistike", "pistike@gmail.com");
@@ -384,7 +376,7 @@ public class CustomUserTest {
 
 
     @Test
-    void test_Update_CustomUser() {
+    void test_updateCustomUser() {
         when(passwordEncoder.encode(any())).thenReturn("Pistike1*");
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
@@ -399,7 +391,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_RegisterCustomerUser_withExistingUsername() {
+    void test_registerCustomerUserWithExistingUsername() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
         try {
@@ -412,7 +404,7 @@ public class CustomUserTest {
 
 
     @Test
-    void test_RegisterCustomerUser_withExistingEmailAddress() {
+    void test_registerCustomerUserWithExistingEmailAddress() {
         when(customUserRepository.findByEmail("pistike@gmail.com")).thenReturn(customUser1);
 
         try {
@@ -425,7 +417,7 @@ public class CustomUserTest {
 
 
     @Test
-    void test_CustomUserActivationIsTRue() {
+    void test_customUserActivationIsTrue() {
         when(customUserRepository.findByActivation(confirmationToken1.getConfirmationToken())).thenReturn(customUser1);
 
         assertEquals("Activation is successful!", customUserService.userActivation(confirmationToken1.getConfirmationToken()));
@@ -436,7 +428,7 @@ public class CustomUserTest {
 
 
     @Test
-    void test_CustomUserActivationIsNotTrue() {
+    void test_customUserActivationIsNotTrue() {
         when(customUserRepository.findByActivation(confirmationToken2.getConfirmationToken())).thenReturn(customUser2);
 
         assertEquals("The token is invalid or broken", customUserService.userActivation(confirmationToken2.getConfirmationToken()));
@@ -447,7 +439,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_LoadCustomUserByUsername() {
+    void test_loadCustomUserByUsername() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
         assertEquals(customUserLoggedIn1, customUserService.loadUserByUsername("pistike"));
@@ -458,7 +450,7 @@ public class CustomUserTest {
 
 
     @Test
-    void test_List_getAllCustomUsersWithOneCustomUser() {
+    void test_listGetAllCustomUsersWithOneCustomUser() {
         when(modelMapper.map(customUser1, CustomUserInfo.class)).thenReturn(customUserInfo1);
         when(customUserRepository.findAll()).thenReturn(List.of(customUser1));
 
@@ -471,7 +463,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_List_allCustomUsersWithTwoCustomUser() {
+    void test_listAllCustomUsersWithTwoCustomUser() {
         when(customUserRepository.findAll()).thenReturn(List.of(customUser1, customUser2));
         when(modelMapper.map(customUser1, CustomUserInfo.class)).thenReturn(customUserInfo1);
         when(modelMapper.map(customUser2, CustomUserInfo.class)).thenReturn(customUserInfo2);
@@ -482,7 +474,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_FindCustomUserByUsername_withNoUsername() {
+    void test_findCustomUserByUsernameWithNoUsername() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(null);
 
         try {
@@ -494,7 +486,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_FindCustomUserByUsername_withUsernamePistike() {
+    void test_findCustomUserByUsernameWithUsernamePistike() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
         assertEquals(customUser1, customUserService.findCustomUserByUsername("pistike"));
@@ -505,7 +497,7 @@ public class CustomUserTest {
 
 
     @Test
-    void test_FindCustomUserByUsername_with2LId() {
+    void test_findCustomUserByUsernameWith2LId() {
         when(customUserRepository.findByUsername("moricka")).thenReturn(customUser2);
         assertEquals(customUser2, customUserService.findCustomUserByUsername("moricka"));
 
@@ -515,19 +507,19 @@ public class CustomUserTest {
 
 
     @Test
-    void test_FindCustomUserByEmail_withNoEmailAddress() {
+    void test_findCustomUserByEmailWithNoEmailAddress() {
         when(customUserRepository.findByEmail("pistike@gmail.com")).thenReturn(null);
 
         try {
             customUserService.findCustomUserByEmail("pistike@gmail.com");
             fail("Expected EmailAddressNotFoundException, but no exception was thrown.");
         } catch (EmailAddressNotFoundException e) {
-            assertEquals("CustomUser was not found with: pistike@gmail.com", e.getMessage());
+            assertEquals("CustomUser was not found with email: pistike@gmail.com", e.getMessage());
         }
     }
 
     @Test
-    void test_FindCustomUserByUsername_with1LId() {
+    void test_findCustomUserByUsernameWith1LId() {
         when(customUserRepository.findByEmail("pistike@gmail.com")).thenReturn(customUser1);
 
         assertEquals(customUser1, customUserService.findCustomUserByEmail("pistike@gmail.com"));
@@ -537,7 +529,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_FindCustomUserByEmail_with2LId() {
+    void test_findCustomUserByEmailWith2LId() {
         when(customUserRepository.findByEmail("moricka@gmail.com")).thenReturn(customUser2);
         assertEquals(customUser2, customUserService.findCustomUserByEmail("moricka@gmail.com"));
 
@@ -546,7 +538,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_CustomUser_saleWithExistingId() {
+    void test_customUserSaleWithExistingId() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
         assertEquals("Congratulate! You sold your property!", customUserService.deleteSale("pistike", 1L));
@@ -556,7 +548,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_CustomUser_saleWithWrongPropertyId() {
+    void test_customUserSaleWithWrongPropertyId() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
         assertEquals("There is no property with that id.", customUserService.deleteSale("pistike", 3L));
@@ -566,7 +558,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_CustomUser_deleteWithExistingId() {
+    void test_deleteCustomUserPropertyWithExistingId() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
         assertEquals("You deleted your property!", customUserService.deleteProperty("pistike", 1L));
@@ -576,7 +568,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_CustomUser_deleteWithWrongPropertyId() {
+    void test_deleteCustomUserPropertyWithWrongPropertyId() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
         assertEquals("There is no property with that id.", customUserService.deleteProperty("pistike", 3L));
@@ -586,7 +578,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_CustomUser_makeInactive() {
+    void test_makeInactiveCustomUser() {
         when(customUserRepository.findByUsername("pistike")).thenReturn(customUser1);
 
         assertEquals("You deleted your property!", customUserService.deleteProperty("pistike", 1L));
@@ -597,7 +589,7 @@ public class CustomUserTest {
     }
 
     @Test
-    void test_SendingEmailForUpdate_CustomUser() {
+    void test_sendingEmailForUpdateCustomUser() {
 
         customUserService.sendingEmailForUpdate("Pistike", "pistike@gmail.com");
 
@@ -615,7 +607,7 @@ public class CustomUserTest {
 
 
     @Test
-    void test_UserUnsubscribeNewsletter_CustomUser() {
+    void test_unsubscribeNewsletterCustomUser() {
         when(customUserRepository.findByActivation("123456")).thenReturn(customUser1);
 
         assertEquals("Sikeresen leíratkozott a hírlevélről!", customUserService.userUnsubscribeNewsletter("123456"));

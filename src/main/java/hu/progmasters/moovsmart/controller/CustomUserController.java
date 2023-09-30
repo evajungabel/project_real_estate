@@ -44,14 +44,12 @@ public class CustomUserController {
         return new ResponseEntity<>(customUserInfo, HttpStatus.CREATED);
     }
 
-    @GetMapping("/login/me")
+    @PostMapping("/login/me")
     @Operation(summary = "Login customer")
     @ApiResponse(responseCode = "201", description = "Customer is logged in")
-    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_EAGENT"})
-    public ResponseEntity<UserDetails> getLoggedInUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<CustomUserInfo> login(@RequestBody CustomUserLogInForm customUserLogInForm) {
         log.info("Http request, GET /api/customusers, logged in");
-        UserDetails loggedInUser = (User) authentication.getPrincipal();
+        CustomUserInfo loggedInUser = customUserService.login(customUserLogInForm.getUsername(), customUserLogInForm.getEmail(), customUserLogInForm.getPassword());
         log.info("GET data from repository/api/customusers, logged in");
         return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
     }

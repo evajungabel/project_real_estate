@@ -110,6 +110,25 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+
+    @ExceptionHandler(UsernameAndEmailAddressNotFoundException.class)
+    public ResponseEntity<ApiError> handleUsernameAndEmailAddressNotFoundException(UsernameAndEmailAddressNotFoundException ex) {
+        log.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "Username or email not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PasswordNotValidException.class)
+    public ResponseEntity<ApiError> handlePasswordNotValidException(PasswordNotValidException ex) {
+        log.error("Not valis error: ", ex);
+
+        ApiError body = new ApiError("NOT_VALID_ERROR", "Password is not valid error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(AuthenticationExceptionImpl.class)
     public ResponseEntity<ApiError> handleAuthenticationExceptionImpl(AuthenticationExceptionImpl ex) {
         log.error("Not found error: ", ex);
