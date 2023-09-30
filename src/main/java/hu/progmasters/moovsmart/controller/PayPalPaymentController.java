@@ -2,10 +2,7 @@ package hu.progmasters.moovsmart.controller;
 
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
-import com.paypal.api.payments.PayoutBatch;
 import com.paypal.base.rest.PayPalRESTException;
-import hu.progmasters.moovsmart.domain.paypal.Order;
-import hu.progmasters.moovsmart.domain.paypal.PayoutOrder;
 import hu.progmasters.moovsmart.service.PayPalPaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,7 @@ public class PayPalPaymentController {
 
 
     @PostMapping("/paying")
-    public String payment(@RequestParam("amount") String amount,
+    public ResponseEntity<String> payment(@RequestParam("amount") String amount,
                           @RequestParam("currency") String currency,
                           @RequestParam("method") String method,
                           @RequestParam("description") String description) {
@@ -34,25 +31,21 @@ public class PayPalPaymentController {
             Payment payment = payPalPaymentService.createPayment(Double.valueOf(amount), currency, method, "sale", description, CANCEL_URL, SUCCESS_URL);
             for (Links link : payment.getLinks()) {
                 if (link.getRel().equals("approval_url")) {
-                    return "redirect:" + link.getHref();
+                    return new ResponseEntity<>("redirect:" + link.getHref(), HttpStatus.CREATED);
                 }
             }
         } catch (PayPalRESTException e) {
             log.info("Http request, POST /api/paypal/paying, request parameters: " + amount, currency, method, description);
             e.getDetails();
         }
-        return "/paying/error";
+        return new ResponseEntity<>("There is an error in payment process!", HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping(CANCEL_URL)
+    @GetMapping("/cancel")
     public ResponseEntity<String> cancelPay() {
         return new ResponseEntity<>("The payment is canceled!", HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/paying/error")
-    public ResponseEntity<String> cancelError() {
-        return new ResponseEntity<>("There is an error in payment process!", HttpStatus.BAD_REQUEST);
-    }
 
     @GetMapping("/success")
     public ResponseEntity<String> successPay(@RequestParam("paymentId") String paymentId, @RequestParam("PayerID") String payerId) {
@@ -67,15 +60,6 @@ public class PayPalPaymentController {
         return new ResponseEntity<>("The payment is successful!", HttpStatus.OK);
     }
 
-    @PostMapping("/payout")
-    public PayoutBatch payout(@RequestBody PayoutOrder payoutOrder) {
-        try {
-            return payPalPaymentService.payout(payoutOrder.getTotalAmount(), payoutOrder.getCurrency(),
-                    payoutOrder.getReceiver());
-        } catch (PayPalRESTException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+
 }
 

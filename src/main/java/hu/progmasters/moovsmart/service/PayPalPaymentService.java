@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,10 +17,6 @@ public class PayPalPaymentService {
 
     public static final String SUCCESS_URL = "http://localhost:8080/api/paypal/success";
     public static final String CANCEL_URL = "http://localhost:8080/api/paypal/cancel";
-
-    private final String SENDER_BATCH = "test sender batch";
-    private final String EMAIL_SUBJECT = "test subject";
-    private final String RECIPIENT_TYPE = "EMAIL";
 
     @Autowired
     private APIContext apiContext;
@@ -70,20 +65,5 @@ public class PayPalPaymentService {
         return payment.execute(apiContext, paymentExecute);
     }
 
-    public PayoutBatch payout(double total, String currency, String receiverEmail) throws PayPalRESTException {
-        Date currentDate = new Date(System.currentTimeMillis());
-        PayoutSenderBatchHeader payoutSenderBatchHeader = new PayoutSenderBatchHeader();
-        payoutSenderBatchHeader.setSenderBatchId(SENDER_BATCH + " " + currentDate.toString());
-        payoutSenderBatchHeader.setEmailSubject(EMAIL_SUBJECT);
-        payoutSenderBatchHeader.setRecipientType(RECIPIENT_TYPE);
-        List<PayoutItem> payoutItems = new ArrayList<>();
 
-        payoutItems.add(new PayoutItem(new Currency(currency, String.format("%.2f", total)), receiverEmail));
-        Payout payout = new Payout();
-
-        payout.setSenderBatchHeader(payoutSenderBatchHeader);
-        payout.setItems(payoutItems);
-
-        return payout.create(apiContext, null);
-    }
 }

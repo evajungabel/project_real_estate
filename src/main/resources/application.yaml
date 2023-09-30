@@ -36,7 +36,3 @@ paypal:
     secret: EN07Ibkeb8_uvPR6jHi-tLgdNQg19oEsICZm8Dsw0KLGl6NsjMpbFhIeYwyqXoq2EpuXlirTDHTqu6GG
 
 
-
-#  spring.mail.scheduler.persistence.enabled: false
-#  spring.mail.scheduler.persistence.redis.embedded: false
-#  spring.mail.scheduler.persistence.redis.enabled: false
