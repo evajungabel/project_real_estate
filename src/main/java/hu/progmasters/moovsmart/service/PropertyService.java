@@ -367,8 +367,7 @@ public class PropertyService {
     public Double exchange(Long id, Currencies currency) {
         Property property = findPropertyById(id);
         Double price = property.getPrice();
-        exchangeService.changePrice(price,currency);
-
-        return null;
+        String sCurrenci = currency.toString();
+        return exchangeService.changePrice(price,sCurrenci);
     }
 }

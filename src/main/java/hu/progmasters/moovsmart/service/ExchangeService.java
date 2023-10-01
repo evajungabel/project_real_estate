@@ -22,7 +22,7 @@ public class ExchangeService {
         this.restTemplate = restTemplate;
     }
 
-    public ExchangeData getexchangeData(Currencies currency) {
+    public ExchangeData getexchangeData(String currency) {
         String apiKey = exchangeApiConfig.getExchangeratesApiKey();
         String apiUrl = "http://api.exchangeratesapi.io/v1/latest?access_key=" + apiKey + "&base=EUR&symbols=" + currency;
 
@@ -43,11 +43,11 @@ public class ExchangeService {
         }
     }
 
-    public Double changePrice(Double price, Currencies currency) {
-        ExchangeData exchangeData1 = getexchangeData(Currencies.HUF);
-        Double pEuro = (exchangeData1.getEUR()) / price;
+    public Double changePrice(Double price, String currency) {
+        ExchangeData exchangeData1 = getexchangeData("HUF");
+        Double pEuro = (exchangeData1.getRates().get("HUF")) / price;
         ExchangeData exchangeData2 = getexchangeData(currency);
 
-        return exchangeData2.get;
+        return (exchangeData2.getRates().get(currency)) / pEuro;
     }
 }
