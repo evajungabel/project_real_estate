@@ -83,7 +83,7 @@ public class CloudinaryImageUploadController {
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
 
-    @PostMapping("/profile")
+    @PostMapping(value = "/profile", consumes = {"multipart/form-data"})
     @Operation(summary = "Saving customer's image")
     @ApiResponse(responseCode = "201", description = "Customer's image is saved by customer.")
     @SecurityRequirement(name = "basicAuth")
@@ -97,7 +97,7 @@ public class CloudinaryImageUploadController {
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
 
-    @PostMapping("/profile/{username}")
+    @PostMapping(value = "/profile/{username}", consumes = {"multipart/form-data"})
     @Operation(summary = "Saving customers's image by admin.")
     @ApiResponse(responseCode = "201", description = "Customer's image is saved by admin.")
     @SecurityRequirement(name = "basicAuth")
