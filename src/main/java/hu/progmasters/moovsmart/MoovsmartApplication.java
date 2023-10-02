@@ -9,5 +9,4 @@ public class MoovsmartApplication {
     public static void main(String[] args) {
         SpringApplication.run(MoovsmartApplication.class, args);
     }
-
 }
