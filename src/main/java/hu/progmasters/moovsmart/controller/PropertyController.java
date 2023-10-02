@@ -39,7 +39,7 @@ public class PropertyController {
     public ResponseEntity<List<PropertyDetails>> getAllProperties() {
         log.info("Http request, GET /api/properties/allproperties");
         List<PropertyDetails> propertyList = propertyService.getProperties();
-        log.info("GET data of repository from /api/properties/allproperties");
+        log.info("GET data from repository from /api/properties/allproperties");
         return new ResponseEntity<>(propertyList, HttpStatus.OK);
     }
 
@@ -54,7 +54,7 @@ public class PropertyController {
             @RequestParam("size") int size) {
         log.info("Http request, GET /api/properties, with variables: " + page + size + sort + sortDir);
         List<PropertyDetails> propertyDetailsList = propertyService.getPropertyListPaginatedAndSorted(page, size, sortDir, sort);
-        log.info("GET data of repository from /api/properties, with variable: " + page + size + sort + sortDir);
+        log.info("GET data from repository from /api/properties, with variable: " + page + size + sort + sortDir);
         return new ResponseEntity<>(propertyDetailsList, HttpStatus.OK);
     }
 
@@ -70,7 +70,7 @@ public class PropertyController {
             @Valid @RequestBody PropertyFilterRequestForm propertyFilterRequestForm) {
         log.info("Http request, POST /api/properties/requests, with variables: " + page + size + sort + sortDir + propertyFilterRequestForm);
         List<PropertyFilterRequestInfo> propertyFilterRequestInfos = propertyService.getPropertyRequests(page, size, sortDir, sort, propertyFilterRequestForm);
-        log.info("POST data of repository from /api/properties/requests, with variable: " + page + size + sort + sortDir + propertyFilterRequestForm);
+        log.info("POST data from repository from /api/properties/requests, with variable: " + page + size + sort + sortDir + propertyFilterRequestForm);
         return new ResponseEntity<>(propertyFilterRequestInfos, HttpStatus.OK);
     }
 
@@ -80,7 +80,7 @@ public class PropertyController {
     public ResponseEntity<PropertyDetails> getPropertyDetails(@PathVariable("propertyId") Long id) {
         log.info("Http request, GET /api/properties/{propertyId}, with variable: " + id);
         PropertyDetails propertyDetails = propertyService.getPropertyDetails(id);
-        log.info("GET data of repository from /api/properties/{propertyId}, with variable: " + id);
+        log.info("GET data from repository from /api/properties/{propertyId}, with variable: " + id);
         return new ResponseEntity<>(propertyDetails, HttpStatus.OK);
     }
 
@@ -93,7 +93,7 @@ public class PropertyController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, POST /api/properties, body: " + propertyForm.toString());
         PropertyInfo propertyInfo = propertyService.createProperty(userDetails.getUsername(), propertyForm);
-        log.info("POST data of repository from /api/properties, body: " + propertyForm);
+        log.info("POST data from repository from /api/properties, body: " + propertyForm);
         return new ResponseEntity<>(propertyInfo, HttpStatus.CREATED);
     }
 
@@ -105,7 +105,7 @@ public class PropertyController {
     public ResponseEntity<PropertyInfo> createProperty(@PathVariable("username") String username, @RequestBody @Valid PropertyForm propertyForm) {
         log.info("Http request, POST /api/properties/{username}, body: " + propertyForm.toString());
         PropertyInfo propertyInfo = propertyService.createProperty(username, propertyForm);
-        log.info("POST data of repository from /api/properties/{username}, body: " + propertyForm);
+        log.info("POST data from repository from /api/properties/{username}, body: " + propertyForm);
         return new ResponseEntity<>(propertyInfo, HttpStatus.CREATED);
     }
 
@@ -120,7 +120,7 @@ public class PropertyController {
         log.info("Http request, PUT /api/properties/{propertyId} body: " + propertyForm.toString() +
                 " with propertyId: " + id);
         PropertyInfo updated = propertyService.update(userDetails.getUsername(), id, propertyForm);
-        log.info("PUT data of repository from /api/properties/{propertyId} body: " + propertyForm.toString() +
+        log.info("PUT data from repository from /api/properties/{propertyId} body: " + propertyForm.toString() +
                 " with propertyId: " + id);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
@@ -135,7 +135,7 @@ public class PropertyController {
         log.info("Http request, PUT /api/properties/{username}/{propertyId}, body: " + propertyForm.toString() +
                 " with username: " + username + ",and propertyId" + id);
         PropertyInfo updated = propertyService.update(username, id, propertyForm);
-        log.info("PUT data of repository from /api/properties/{username}/{propertyId} body: " + propertyForm +
+        log.info("PUT data from repository from /api/properties/{username}/{propertyId} body: " + propertyForm +
                 " with username: " + username + ",and propertyId" +  + id);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
@@ -149,7 +149,7 @@ public class PropertyController {
     public ResponseEntity<Void> delete(@PathVariable("propertyId") Long id) {
         log.info("Http request, DELETE /api/properties/{propertyId} with propertyId: " + id);
         propertyService.makeInactive(id);
-        log.info("DELETE data of repository from /api/properties/{propertyId} with propertyId: " + id);
+        log.info("DELETE data from repository from /api/properties/{propertyId} with propertyId: " + id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -162,7 +162,7 @@ public class PropertyController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, POST /api/properties/imageurls/{propertyId}, body: " + propertyImageURLForms.toString());
         List<PropertyImageURLInfo> propertyImageURLInfos = propertyService.createListOfImageURLs(userDetails.getUsername(), id, propertyImageURLForms);
-        log.info("POST data of repository from /api/properties/imageurls/{propertyId}, body: " + propertyImageURLForms);
+        log.info("POST data from repository from /api/properties/imageurls/{propertyId}, body: " + propertyImageURLForms);
         return new ResponseEntity<>(propertyImageURLInfos, HttpStatus.CREATED);
     }
 
@@ -174,7 +174,7 @@ public class PropertyController {
     public ResponseEntity<List<PropertyImageURLInfo>> createListOfImageURLs(@PathVariable("username") String username, @PathVariable("propertyId") Long id, @RequestBody @Valid List<PropertyImageURLForm> propertyImageURLForms) throws AuthenticationExceptionImpl {
         log.info("Http request, POST /api/properties/imageurls/{username}/{propertyId}, body: " + propertyImageURLForms.toString());
         List<PropertyImageURLInfo> propertyImageURLInfos = propertyService.createListOfImageURLs(username, id, propertyImageURLForms);
-        log.info("POST data of repository from /api/properties/imageurls/{username}/{propertyId}, body: " + propertyImageURLForms);
+        log.info("POST data from repository from /api/properties/imageurls/{username}/{propertyId}, body: " + propertyImageURLForms);
         return new ResponseEntity<>(propertyImageURLInfos, HttpStatus.CREATED);
     }
 
@@ -184,7 +184,7 @@ public class PropertyController {
     public ResponseEntity<byte[]> generatePropertyPDF(@PathVariable("propertyId") Long id) {
         log.info("Http request, GET /api/properties/pdf/{propertyId} with propertyId: " + id);
         propertyService.createPdf(id);
-        log.info("GET pdf of repository from /api/properties/pdf/{propertyId} with propertyId: " + id);
+        log.info("GET pdf from repository from /api/properties/pdf/{propertyId} with propertyId: " + id);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

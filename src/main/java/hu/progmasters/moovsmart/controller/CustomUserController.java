@@ -39,7 +39,7 @@ public class CustomUserController {
     public ResponseEntity<CustomUserInfo> register(@Valid @RequestBody CustomUserForm customUserForm) {
         log.info("Http request, POST /api/customusers/registration, body: " + customUserForm.toString());
         CustomUserInfo customUserInfo = customUserService.register(customUserForm);
-        log.info("POST data of repository from /api/customusers/registration, body: " + customUserForm);
+        log.info("POST data from repository from /api/customusers/registration, body: " + customUserForm);
         return new ResponseEntity<>(customUserInfo, HttpStatus.CREATED);
     }
 
@@ -49,7 +49,7 @@ public class CustomUserController {
     public ResponseEntity<CustomUserInfo> login(@RequestBody CustomUserLogInForm customUserLogInForm) {
         log.info("Http request, GET /api/customusers/login/me");
         CustomUserInfo loggedInUser = customUserService.login(customUserLogInForm.getUsername(), customUserLogInForm.getEmail(), customUserLogInForm.getPassword());
-        log.info("GET data of repository from repository/api/customusers/login/me");
+        log.info("GET data from repository from repository/api/customusers/login/me");
         return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
     }
 
@@ -81,7 +81,7 @@ public class CustomUserController {
     public ResponseEntity<List<CustomUserInfo>> getAllCustomers() {
         log.info("Http request, GET /api/customusers, list of all customers");
         List<CustomUserInfo> customerInfoList = customUserService.getCustomUsers();
-        log.info("GET data of repository from /api/customusers, list of all customers");
+        log.info("GET data from repository from /api/customusers, list of all customers");
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }
 
@@ -94,7 +94,7 @@ public class CustomUserController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, GET /api/customusers/customuser, with username: " + userDetails.getUsername());
         CustomUserInfo customerInfoList = customUserService.getCustomUserDetails(userDetails.getUsername());
-        log.info("GET data of repository from /api/customusers/customuser, with username: " + userDetails.getUsername());
+        log.info("GET data from repository from /api/customusers/customuser, with username: " + userDetails.getUsername());
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }
 
@@ -106,7 +106,7 @@ public class CustomUserController {
     public ResponseEntity<CustomUserInfo> getCustomUserDetails(@PathVariable("username") String username) {
         log.info("Http request, GET /api/customusers/{username}, with username: " + username);
         CustomUserInfo customerInfoList = customUserService.getCustomUserDetails(username);
-        log.info("GET data of repository from /api/customusers/{username}, with username: " + username);
+        log.info("GET data from repository from /api/customusers/{username}, with username: " + username);
         return new ResponseEntity<>(customerInfoList, HttpStatus.OK);
     }
 
@@ -121,7 +121,7 @@ public class CustomUserController {
         log.info("Http request, PUT /api/customusers, body: " + customUserForm +
                 " with username: " + userDetails.getUsername());
         CustomUserInfo updated = customUserService.update(userDetails.getUsername(), customUserForm);
-        log.info("PUT data of repository from /api/customusers, body: " + customUserForm +
+        log.info("PUT data from repository from /api/customusers, body: " + customUserForm +
                 " with username: " + userDetails.getUsername());
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
@@ -137,7 +137,7 @@ public class CustomUserController {
         log.info("Http request, PUT /api/customusers/{username}, body: " + customUserForm +
                 " with username: " + username);
         CustomUserInfo updated = customUserService.update(username, customUserForm);
-        log.info("PUT data of repository from /api/customusers/{username}, body: " + customUserForm +
+        log.info("PUT data from repository from /api/customusers/{username}, body: " + customUserForm +
                 " with username: " + username);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
@@ -152,7 +152,7 @@ public class CustomUserController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, DELETE /api/customusers with username: " + userDetails.getUsername());
         String message = customUserService.makeInactive(userDetails.getUsername());
-        log.info("DELETE data of repository from /api/customusers with username: " + userDetails.getUsername());
+        log.info("DELETE data from repository from /api/customusers with username: " + userDetails.getUsername());
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -164,7 +164,7 @@ public class CustomUserController {
     public ResponseEntity<String> deleteUser(@PathVariable("customUsername") String customUsername) {
         log.info("Http request, DELETE /api/customusers/{customUsername} with username: " + customUsername);
         String message = customUserService.makeInactive(customUsername);
-        log.info("DELETE data of repository from /api/customusers/{customUsername} with username: " + customUsername);
+        log.info("DELETE data from repository from /api/customusers/{customUsername} with username: " + customUsername);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -179,7 +179,7 @@ public class CustomUserController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, DELETE /api/customusers/sale/{propertyId} with username: " + userDetails.getUsername() + ", and {propertyId} with variable: " + pId);
         String message = customUserService.deleteSale(userDetails.getUsername(), pId);
-        log.info("DELETE data of repository from /api/customusers/sale/{propertyId} with username: " + userDetails.getUsername() + ", and {propertyId} with variable: " + pId);
+        log.info("DELETE data from repository from /api/customusers/sale/{propertyId} with username: " + userDetails.getUsername() + ", and {propertyId} with variable: " + pId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -191,7 +191,7 @@ public class CustomUserController {
     public ResponseEntity<String> deleteSale(@PathVariable("username") String username, @PathVariable("propertyId") Long pId) {
         log.info("Http request, DELETE /api/customusers/sale/{username}/{propertyId} with username: " + username + ", and {propertyId} with variable: " + pId);
         String message = customUserService.deleteSale(username, pId);
-        log.info("DELETE data of repository from /api/customusers/sale/{username}/{propertyId} with username: " + username + ", and {propertyId} with variable: " + pId);
+        log.info("DELETE data from repository from /api/customusers/sale/{username}/{propertyId} with username: " + username + ", and {propertyId} with variable: " + pId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -204,7 +204,7 @@ public class CustomUserController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, DELETE /api/customusers/delete/{propertyId} with username: " + userDetails.getUsername() + ", and {propertyId} with variable: " + pId);
         String message = customUserService.deleteProperty(userDetails.getUsername(), pId);
-        log.info("DELETE data of repository from /api/customusers/delete/{propertyId} with username: " + userDetails.getUsername() + ", and {propertyId} with variable: " + pId);
+        log.info("DELETE data from repository from /api/customusers/delete/{propertyId} with username: " + userDetails.getUsername() + ", and {propertyId} with variable: " + pId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -216,7 +216,7 @@ public class CustomUserController {
     public ResponseEntity<Void> comment(@Valid @RequestBody CommentForm comment) {
         log.info("Http request, POST /api/customusers/comment, body: " + comment.toString());
         customUserService.comment(comment);
-        log.info("POST data of repository from /api/customusers/comment, body: " + comment);
+        log.info("POST data from repository from /api/customusers/comment, body: " + comment);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -226,7 +226,7 @@ public class CustomUserController {
     public ResponseEntity<EstateAgentInfo> listComments(@PathVariable("userName") String userName) {
         log.info("Http request, GET /api/customusers/comment/{userName} with username: " + userName);
         EstateAgentInfo estateAgentInfo = customUserService.getAgentInfo(userName);
-        log.info("GET data of repository from /api/customusers/comment/{userName} with username: " + userName);
+        log.info("GET data from repository from /api/customusers/comment/{userName} with username: " + userName);
         return new ResponseEntity<>(estateAgentInfo, HttpStatus.OK);
     }
 
@@ -237,7 +237,7 @@ public class CustomUserController {
         log.info("Http request, POST /api/customusers/register-admin, body: " + customUserFormAdmin.toString());
         if (customUserService.countByIsAdminTrue() == 0 && customUserFormAdmin.getQuestion().equals("tetőcserép")) {
             customUserService.registerAdmin(customUserFormAdmin);
-            log.info("POST data of repository from /api/customusers/register-admin, body: " + customUserFormAdmin);
+            log.info("POST data from repository from /api/customusers/register-admin, body: " + customUserFormAdmin);
             return new ResponseEntity<>("Admin registration was successful!", HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("The admin registration is closed!", HttpStatus.BAD_REQUEST);
@@ -263,7 +263,7 @@ public class CustomUserController {
     public ResponseEntity<String> deleteUserTotal(@PathVariable("customUsername") String customUsername) {
         log.info("Http request, DELETE /api/customusers/total/{customUsername} with username: " + customUsername);
         String message = customUserService.deleteUser(customUsername);
-        log.info("DELETE data of repository from /api/customusers/total/{customUsername} with username: " + customUsername);
+        log.info("DELETE data from repository from /api/customusers/total/{customUsername} with username: " + customUsername);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }
