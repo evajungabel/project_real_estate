@@ -212,7 +212,6 @@ public class PropertyDataServiceTest {
 
     }
 
-
     @Test
     void test_getPropertyDataWithPropertyId() {
         when(modelMapper.map(propertyData1, PropertyDataInfo.class)).thenReturn(propertyDataInfo1);
@@ -224,7 +223,6 @@ public class PropertyDataServiceTest {
         verify(propertyDataRepository, times(1)).findById(1L);
         verifyNoMoreInteractions(propertyDataRepository);
     }
-
 
     @Test
     void test_getPropertyData_withNoPropertyId() {
@@ -255,9 +253,6 @@ public class PropertyDataServiceTest {
         verifyNoMoreInteractions(propertyDataRepository);
     }
 
-
-
-
     @Test
     void test_updatePropertyDataWithWrongUser() throws AuthenticationExceptionImpl {
         when(propertyService.findPropertyById(1L)).thenReturn(propertyUpdate1);
@@ -272,8 +267,6 @@ public class PropertyDataServiceTest {
         verify(propertyService, times(1)).findPropertyById(1L);
         verifyNoMoreInteractions(propertyService);
     }
-
-
 
     @Test
     void test_savePropertyDataWithWrongPropertyDataId() {
@@ -310,8 +303,4 @@ public class PropertyDataServiceTest {
         verify(propertyDataRepository, times(1)).findAll();
         verifyNoMoreInteractions(propertyDataRepository);
     }
-
-
-
-
 }

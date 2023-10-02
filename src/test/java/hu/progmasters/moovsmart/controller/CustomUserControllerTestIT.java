@@ -1169,6 +1169,4 @@ public class CustomUserControllerTestIT {
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
-
-
 }
