@@ -255,17 +255,23 @@ public class PropertyDataServiceTest {
 
 
 
-    @Test
-    void test_updatePropertyData() throws AuthenticationExceptionImpl {
-        when(propertyService.findPropertyById(1L)).thenReturn(propertyUpdate1);
-        when(modelMapper.map(propertyDataForm1Update, PropertyData.class)).thenReturn(propertyData1Update);
-        when(modelMapper.map(propertyData1Update, PropertyDataInfo.class)).thenReturn(propertyDataInfo1Update);
 
-        assertEquals(propertyDataInfo1Update, propertyDataService.update("pistike", propertyDataForm1Update, 1L));
+    @Test
+    void test_updatePropertyDataWithWrongUser() throws AuthenticationExceptionImpl {
+        when(propertyService.findPropertyById(1L)).thenReturn(propertyUpdate1);
+
+        try {
+            propertyDataService.update("moriczka", propertyDataForm1Update, 1L);
+            fail("Expected PropertyNotFoundException, but no exception was thrown.");
+        } catch (AuthenticationExceptionImpl e) {
+            assertEquals("User was denied with username: moriczka", e.getMessage());
+        }
 
         verify(propertyService, times(1)).findPropertyById(1L);
         verifyNoMoreInteractions(propertyService);
     }
+
+
 
     @Test
     void test_savePropertyDataWithWrongPropertyDataId() {
