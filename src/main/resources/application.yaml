@@ -29,6 +29,9 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+  exchangerates:
+    api:
+      key: e4840fe407a170ac955cb39e55c54ae7
 paypal:
   mode: sandbox
   client:

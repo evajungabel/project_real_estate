@@ -1,13 +1,13 @@
 package hu.progmasters.moovsmart.service;
 
-import hu.progmasters.moovsmart.domain.CustomUser;
-import hu.progmasters.moovsmart.domain.Property;
-import hu.progmasters.moovsmart.domain.PropertyImageURL;
-import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.dto.weather.Coordinate;
+import hu.progmasters.moovsmart.dto.weather.WeatherData;
 import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.exception.NoResourceFoundException;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
+import hu.progmasters.moovsmart.exception.WeatherNotFoundException;
 import hu.progmasters.moovsmart.repository.AddressRepository;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import hu.progmasters.moovsmart.specifications.PropertySpecifications;
@@ -50,14 +50,18 @@ public class PropertyService {
     private PropertyImageURLService propertyImageURLService;
     private ModelMapper modelMapper;
     private AddressRepository addressRepository;
+    private ExchangeService exchangeService;
+    private WeatherService weatherService;
 
     @Autowired
-    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService, AddressRepository addressRepository) {
+    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService, AddressRepository addressRepository, ExchangeService exchangeService, WeatherService weatherService) {
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
         this.customUserService = customUserService;
         this.propertyImageURLService = propertyImageURLService;
         this.addressRepository = addressRepository;
+        this.exchangeService = exchangeService;
+        this.weatherService = weatherService;
     }
 
 
@@ -313,39 +317,39 @@ public class PropertyService {
             contentStream.newLine();
             contentStream.newLine();
 
-            contentStream.showText("Name: " + propertyDetails.getName());
+            contentStream.showText("NÉV: " + propertyDetails.getName());
             contentStream.newLine();
-            contentStream.showText("City: " + propertyDetails.getAddressInfoForProperty().getCity());
+            contentStream.showText("VÁROS: " + propertyDetails.getAddressInfoForProperty().getCity());
             contentStream.newLine();
-            contentStream.showText("Type: " + propertyDetails.getType());
+            contentStream.showText("TÍPUS: " + propertyDetails.getType());
             contentStream.newLine();
-            contentStream.showText("Price: " + propertyDetails.getPrice());
+            contentStream.showText("ÁR: " + propertyDetails.getPrice());
             contentStream.newLine();
-            contentStream.showText("purpose: " + propertyDetails.getPurpose());
+            contentStream.showText("KÍNÁL: " + propertyDetails.getPurpose());
             contentStream.newLine();
-            contentStream.showText("area: " + propertyDetails.getArea());
+            contentStream.showText("ALAPTERÜLET: " + propertyDetails.getArea());
             contentStream.newLine();
-            contentStream.showText("description: " + propertyDetails.getDescription());
+            contentStream.showText("LEÍRÁS: " + propertyDetails.getDescription());
             contentStream.newLine();
-            contentStream.showText("yearBuilt: " + propertyDetails.getPropertyDataInfo().getYearBuilt());
+            contentStream.showText("ÉPÍTÉS ÉVE: " + propertyDetails.getPropertyDataInfo().getYearBuilt());
             contentStream.newLine();
-            contentStream.showText("Orientation: " + (propertyDetails.getPropertyDataInfo().getPropertyOrientation() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyOrientation()));
+            contentStream.showText("FEKVÉS: " + (propertyDetails.getPropertyDataInfo().getPropertyOrientation() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyOrientation()));
             contentStream.newLine();
-            contentStream.showText("HeatingType: " + (propertyDetails.getPropertyDataInfo().getPropertyHeatingType() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyHeatingType()));
+            contentStream.showText("FüTÉS TÍPUS: " + (propertyDetails.getPropertyDataInfo().getPropertyHeatingType() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyHeatingType()));
             contentStream.newLine();
-            contentStream.showText("energyCertificate: " + (propertyDetails.getPropertyDataInfo().getEnergyCertificate() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getEnergyCertificate()));
+            contentStream.showText("ENERGIA OSZTÁLY: " + (propertyDetails.getPropertyDataInfo().getEnergyCertificate() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getEnergyCertificate()));
             contentStream.newLine();
-            contentStream.showText("hasBalcony: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasBalcony()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasBalcony()) ? "NO" : "N/A"));
+            contentStream.showText("ERKÉLY: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasBalcony()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasBalcony()) ? "NO" : "N/A"));
             contentStream.newLine();
-            contentStream.showText("hasLift: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasLift()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasLift()) ? "NO" : "N/A"));
+            contentStream.showText("LIFT: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasLift()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasLift()) ? "NO" : "N/A"));
             contentStream.newLine();
-            contentStream.showText("isAccessible: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getIsAccessible()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getIsAccessible()) ? "NO" : "N/A"));
+            contentStream.showText("AKADÁLYMENTES: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getIsAccessible()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getIsAccessible()) ? "NO" : "N/A"));
             contentStream.newLine();
-            contentStream.showText("isInsulated: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getIsInsulated()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getIsInsulated()) ? "NO" : "N/A"));
+            contentStream.showText("KÜLÖNÁLLÓ: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getIsInsulated()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getIsInsulated()) ? "NO" : "N/A"));
             contentStream.newLine();
-            contentStream.showText("AirCondition: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasAirCondition()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasAirCondition()) ? "NO" : "N/A"));
+            contentStream.showText("LÉGKONDICIONÁLÓ: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasAirCondition()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasAirCondition()) ? "NO" : "N/A"));
             contentStream.newLine();
-            contentStream.showText("Garden: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasGarden()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasGarden()) ? "NO" : "N/A"));
+            contentStream.showText("KERT: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasGarden()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasGarden()) ? "NO" : "N/A"));
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateStr = "Készült: " + dateFormat.format(new Date());
@@ -366,5 +370,34 @@ public class PropertyService {
             log.error("Error while generating and saving PDF", e);
             throw new RuntimeException("Error while generating and saving PDF", e);
         }
+    }
+
+    public String exchange(Long id, Currencies currency) {
+        Property property = findPropertyById(id);
+        Double price = property.getPrice();
+        String sCurrenci = currency.toString();
+        return exchangeService.changePrice(price, sCurrenci);
+    }
+
+    public WeatherData findWeather(String zipcode) {
+        Coordinate coordinates = weatherService.getCoordinatesForZip(zipcode);
+        if (coordinates != null) {
+            return weatherService.getWeatherForCoordinates(coordinates.getLat(), coordinates.getLon());
+        } else {
+            return null;
+        }
+    }
+
+    public AddressInfoWeather findAddressWeather(Long id) {
+        Property property = findPropertyById(id);
+        AddressInfoWeather addressInfo = modelMapper.map(property.getAddress(), AddressInfoWeather.class);
+        String zipcode = Integer.toString(addressInfo.getZipcode());
+        WeatherData weatherData = findWeather(zipcode);
+        if (weatherData == null) {
+            throw new WeatherNotFoundException(id);
+        }
+        weatherData.getTemperatureInCelsius();
+        addressInfo.setWeatherData(weatherData);
+        return addressInfo;
     }
 }

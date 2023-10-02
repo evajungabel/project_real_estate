@@ -3,13 +3,13 @@ package hu.progmasters.moovsmart.controller;
 import hu.progmasters.moovsmart.dto.AddressForm;
 import hu.progmasters.moovsmart.dto.AddressInfo;
 import hu.progmasters.moovsmart.service.AddressService;
-import hu.progmasters.moovsmart.service.WeatherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,6 +28,7 @@ public class AddressController {
 
     @PostMapping
     @Operation(summary = "Save address")
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     @ApiResponse(responseCode = "201", description = "Save Address")
     public ResponseEntity<Void> createAddress(@Valid @RequestBody AddressForm form) {
         log.info("Http request, GET /api/addresses" + form.toString());
@@ -38,6 +39,7 @@ public class AddressController {
 
     @GetMapping("/id/{id}")
     @Operation(summary = "Find address by id.")
+    @Secured({"ROLE_ADMIN", "ROLE_AGENT"})
     @ApiResponse(responseCode = "200", description = "Find Address")
     public ResponseEntity<AddressInfo> findById(@PathVariable("id") Long id) {
         log.info("Http request, GET /api/addresses/{id} with variable" + id);
@@ -46,18 +48,9 @@ public class AddressController {
         return new ResponseEntity<>(addressInfo, HttpStatus.OK);
     }
 
-    @GetMapping("/weather/id/{id}")
-    @Operation(summary = "Find weather for the address by id.")
-    @ApiResponse(responseCode = "200", description = "Weather info for the Address")
-    public ResponseEntity<AddressInfo> findWeatherById(@PathVariable("id") Long id) {
-        log.info("Http request, GET /api/weather/addresses/{id} with variable" + id);
-        AddressInfo addressInfo = addressService.findAddressWeather(id);
-        log.info("GET data from repository/api/weather/list Weather info for the Address");
-        return new ResponseEntity<>(addressInfo, HttpStatus.OK);
-    }
-
     @PutMapping("id/{id}")
     @Operation(summary = "update address")
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     @ApiResponse(responseCode = "200", description = "Update Addresses")
     public ResponseEntity<AddressInfo> update(@PathVariable("id") Long id, @Valid @RequestBody AddressForm form) {
         log.info("Http request, PUT /api/bee/{beeId} body: " + form.toString() + " With variable: " + id);
@@ -68,6 +61,7 @@ public class AddressController {
 
     @DeleteMapping("/id/{id}")
     @Operation(summary = "Delete address")
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     @ApiResponse(responseCode = "200", description = "Delete Addresses")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         log.info("Http request, DELETE /api/addresses/{id} with variable: " + id);
@@ -78,6 +72,7 @@ public class AddressController {
 
     @GetMapping("/value")
     @Operation(summary = "Find address by value.")
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
     @ApiResponse(responseCode = "200", description = "Find Addresses")
     public ResponseEntity<List<AddressInfo>> findByValue(@RequestParam("value") String value) {
         log.info("Http request, GET /api/addresses/{value} with variable" + value);
@@ -88,6 +83,7 @@ public class AddressController {
 
     @GetMapping
     @Operation(summary = "List all address")
+    @Secured({"ROLE_ADMIN", "ROLE_AGENT"})
     @ApiResponse(responseCode = "200", description = "List all Addresses")
     public ResponseEntity<List<AddressInfo>> findAllAddress() {
         log.info("Http request, GET /api/addresses/ with variable");

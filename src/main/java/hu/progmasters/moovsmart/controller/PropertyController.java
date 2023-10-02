@@ -1,9 +1,9 @@
 package hu.progmasters.moovsmart.controller;
 
+import hu.progmasters.moovsmart.domain.Currencies;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.service.PropertyService;
-import hu.progmasters.moovsmart.validation.PropertyDataFormYearValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,7 +28,7 @@ public class PropertyController {
     private PropertyService propertyService;
 
     @Autowired
-    public PropertyController(PropertyService propertyService, PropertyDataFormYearValidator propertyDataFormYearValidator) {
+    public PropertyController(PropertyService propertyService) {
         this.propertyService = propertyService;
     }
 
@@ -179,12 +179,32 @@ public class PropertyController {
     }
 
     @GetMapping("/pdf/{propertyId}")
-    @Operation(summary = "Getting property with {propertyId} by anybody")
-    @ApiResponse(responseCode = "200", description = "Property details wit {propertyId} is got by anybody.")
+    @Operation(summary = "Create PDF file")
+    @ApiResponse(responseCode = "201", description = "Property details")
     public ResponseEntity<byte[]> generatePropertyPDF(@PathVariable("propertyId") Long id) {
-        log.info("Http request, GET /api/properties/pdf/{propertyId} with propertyId: " + id);
+        log.info("Http request, GET /api/property/pdf/{propertyId} with variable: " + id);
         propertyService.createPdf(id);
         log.info("GET pdf from repository from /api/properties/pdf/{propertyId} with propertyId: " + id);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/exchange/{propertyId}/{currency}")
+    @Operation(summary = "Exchange property price")
+    @ApiResponse(responseCode = "201", description = "Property details")
+    public ResponseEntity<String> changePrice(@PathVariable("propertyId") Long id, @PathVariable("currency") Currencies currency) {
+        log.info("Http request, GET /api/property/exchange/{propertyId} with variable: " + id);
+        String changedPrice = propertyService.exchange(id, currency);
+        return new ResponseEntity<>(changedPrice, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/weather/{id}")
+    @Operation(summary = "Find weather for the address by id.")
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
+    @ApiResponse(responseCode = "200", description = "Weather info for the Address")
+    public ResponseEntity<AddressInfoWeather> findWeatherById(@PathVariable("id") Long id) {
+        log.info("Http request, GET /api/weather/{id} with variable" + id);
+        AddressInfoWeather addressInfo = propertyService.findAddressWeather(id);
+        log.info("GET data from repository/api/property/list Weather info for the Address");
+        return new ResponseEntity<>(addressInfo, HttpStatus.OK);
     }
 }

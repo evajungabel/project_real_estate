@@ -11,6 +11,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 
 import java.util.*;
@@ -64,5 +65,25 @@ public class ProjectConfig {
         return new APIContext(clientId, clientSecret, mode);
     }
 
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Value("${spring.openweathermap.api.key}")
+    private String openWeatherMapApiKey;
+
+    public String getOpenWeatherMapApiKey() {
+        return openWeatherMapApiKey;
+    }
+
+    @Value("${spring.exchangerates.api.key}")
+    private String exchangeratesApiKey;
+
+
+    public String getExchangeratesApiKey() {
+        return exchangeratesApiKey;
+    }
 
 }
