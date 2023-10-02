@@ -7,10 +7,12 @@ import hu.progmasters.moovsmart.service.CustomUserGameService;
 import hu.progmasters.moovsmart.service.CustomUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -37,10 +39,12 @@ public class CustomUserGameController {
     @PostMapping()
     @Operation(summary = "Customer game")
     @ApiResponse(responseCode = "201", description = "Customer is played and saved")
-    public ResponseEntity<CustomUserGameInfo> register(@RequestBody CustomUserGameForm customUserGameForm) {
+    @SecurityRequirement(name = "basicAuth")
+    @Secured({"ROLE_USER", "ROLE_AGENT"})
+    public ResponseEntity<CustomUserGameInfo> startGame(@RequestBody CustomUserGameForm customUserGameForm) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LocalDateTime currentTime = LocalDateTime.now();
-         if (currentTime.getDayOfWeek() == DayOfWeek.FRIDAY) {
+         if (currentTime.getDayOfWeek() == DayOfWeek.MONDAY) {
                 log.info("Http request, POST /api/game, username: " + userDetails.getUsername());
                 CustomUserGameInfo customUserGameInfo = customUserGameService.startGame(userDetails.getUsername(), customUserGameForm, currentTime);
                 log.info("POST data from repository/api/game, username: " + userDetails.getUsername());

@@ -29,7 +29,7 @@ public class CloudinaryImageUploadController {
         this.cloudinaryImageService = cloudinaryImageService;
     }
 
-    @PostMapping
+    @PostMapping(consumes = {"multipart/form-data"})
     @Operation(summary = "Saving property's image")
     @ApiResponse(responseCode = "201", description = "Property's image is saved by customer.")
     @SecurityRequirement(name = "basicAuth")
@@ -43,7 +43,7 @@ public class CloudinaryImageUploadController {
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{username}")
+    @PostMapping(value = "/{username}", consumes = {"multipart/form-data"})
     @Operation(summary = "Saving property's image by admin.")
     @ApiResponse(responseCode = "201", description = "Property's image is saved by admin.")
     @SecurityRequirement(name = "basicAuth")
