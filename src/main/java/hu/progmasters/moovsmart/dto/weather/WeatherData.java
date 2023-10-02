@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherData {
     private List<Weather> weather;
     private MainData main;
