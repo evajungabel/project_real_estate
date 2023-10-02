@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import javax.persistence.EntityManager;
 
@@ -32,6 +33,7 @@ class AddressControllerTestIT {
     private EntityManager entityManager;
 
     @Test
+    @WithMockUser(username = "tesztuser", roles = {"ADMIN"})
     void test_atStart_emptyList() throws Exception {
         mockMvc.perform(get("/api/addresses"))
                 .andExpect(status().isOk());
@@ -39,6 +41,7 @@ class AddressControllerTestIT {
 
 
     @Test
+    @WithMockUser(username = "tesztuser", roles = {"USER"})
     void IT_saveAddress_test() throws Exception {
 
         String inputCommand = "{\n" +
@@ -58,6 +61,7 @@ class AddressControllerTestIT {
     }
 
     @Test
+    @WithMockUser(username = "tesztuser", roles = {"ADMIN"})
     void IT_addressFindById_test() throws Exception {
 
         mockMvc.perform(get("/api/addresses/id/4")
@@ -72,6 +76,7 @@ class AddressControllerTestIT {
     }
 
     @Test
+    @WithMockUser(username = "tesztuser", roles = {"USER"})
     void IT_addressUpdate_test()  throws Exception {
         String input = "{" +
                 "\"zipcode\": 2222," +
@@ -92,6 +97,7 @@ class AddressControllerTestIT {
     }
 
     @Test
+    @WithMockUser(username = "tesztuser", roles = {"USER"})
     void IT_deleteAddress_test() throws Exception {
         Address address = entityManager.find(Address.class, 1L);
         assertFalse(address.getDeleted());
@@ -102,6 +108,7 @@ class AddressControllerTestIT {
     }
 
     @Test
+    @WithMockUser(username = "tesztuser", roles = {"USER"})
     void IT_AddressNotExists_test() throws Exception {
         mockMvc.perform(delete("/api/addresses/id/34")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -111,6 +118,7 @@ class AddressControllerTestIT {
 
 
     @Test
+    @WithMockUser(username = "tesztuser", roles = {"ADMIN"})
     void IT_addressFindByValue_test() throws Exception {
         String value = "mon";
 
@@ -122,6 +130,7 @@ class AddressControllerTestIT {
     }
 
     @Test
+    @WithMockUser(username = "tesztuser", roles = {"ADMIN"})
     void findAllAddress() throws Exception {
         mockMvc.perform(get("/api/addresses")
                         .accept(MediaType.APPLICATION_JSON_VALUE))

@@ -335,7 +335,7 @@ public class PropertyService {
             contentStream.newLine();
             contentStream.showText("FEKVÉS: " + (propertyDetails.getPropertyDataInfo().getPropertyOrientation() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyOrientation()));
             contentStream.newLine();
-            contentStream.showText("FŰTÉS TÍPUS: " + (propertyDetails.getPropertyDataInfo().getPropertyHeatingType() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyHeatingType()));
+            contentStream.showText("FüTÉS TÍPUS: " + (propertyDetails.getPropertyDataInfo().getPropertyHeatingType() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyHeatingType()));
             contentStream.newLine();
             contentStream.showText("ENERGIA OSZTÁLY: " + (propertyDetails.getPropertyDataInfo().getEnergyCertificate() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getEnergyCertificate()));
             contentStream.newLine();
