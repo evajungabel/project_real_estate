@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -46,6 +47,21 @@ public class ProjectConfig {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Value("${spring.openweathermap.api.key}")
+    private String openWeatherMapApiKey;
+
+    public String getOpenWeatherMapApiKey() {
+        return openWeatherMapApiKey;
+    }
+
+    @Value("${spring.exchangerates.api.key}")
+    private String exchangeratesApiKey;
+
+
+    public String getExchangeratesApiKey() {
+        return exchangeratesApiKey;
     }
 
 }

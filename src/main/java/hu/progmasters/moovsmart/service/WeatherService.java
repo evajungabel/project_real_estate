@@ -1,6 +1,6 @@
 package hu.progmasters.moovsmart.service;
 
-import hu.progmasters.moovsmart.config.WeatherApiConfig;
+import hu.progmasters.moovsmart.config.ProjectConfig;
 import hu.progmasters.moovsmart.dto.weather.Coordinate;
 import hu.progmasters.moovsmart.dto.weather.WeatherData;
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +13,11 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 public class WeatherService {
-    private final WeatherApiConfig appConfig;
+    private final ProjectConfig appConfig;
     private final RestTemplate restTemplate;
 
     @Autowired
-    public WeatherService(WeatherApiConfig appConfig, RestTemplate restTemplate) {
+    public WeatherService(ProjectConfig appConfig, RestTemplate restTemplate) {
         this.appConfig = appConfig;
         this.restTemplate = restTemplate;
     }

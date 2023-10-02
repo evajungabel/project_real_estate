@@ -1,7 +1,6 @@
 package hu.progmasters.moovsmart.service;
 
-import hu.progmasters.moovsmart.config.ExchangeApiConfig;
-import hu.progmasters.moovsmart.domain.Currencies;
+import hu.progmasters.moovsmart.config.ProjectConfig;
 import hu.progmasters.moovsmart.dto.ExchangeData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +12,11 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 public class ExchangeService {
-    private final ExchangeApiConfig exchangeApiConfig;
+    private final ProjectConfig exchangeApiConfig;
     private final RestTemplate restTemplate;
 
     @Autowired
-    public ExchangeService(ExchangeApiConfig exchangeApiConfig, RestTemplate restTemplate) {
+    public ExchangeService(ProjectConfig exchangeApiConfig, RestTemplate restTemplate) {
         this.exchangeApiConfig = exchangeApiConfig;
         this.restTemplate = restTemplate;
     }
@@ -49,8 +48,8 @@ public class ExchangeService {
         ExchangeData exchangeData2 = getexchangeData(currency);
         Double result = (exchangeData2.getRates().get(currency)) / pEuro;
 
-       String formPrice = String.format("%.2f",price);
-       String formResult = String.format("%.2f",result);
+        String formPrice = String.format("%.2f", price);
+        String formResult = String.format("%.2f", result);
 
         return "Átváltás: \n" +
                 "HUF: " + formPrice + "\n" +
