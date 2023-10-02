@@ -1,16 +1,23 @@
 package hu.progmasters.moovsmart.service;
 
-import hu.progmasters.moovsmart.domain.CustomUser;
-import hu.progmasters.moovsmart.domain.Property;
-import hu.progmasters.moovsmart.domain.PropertyImageURL;
-import hu.progmasters.moovsmart.domain.PropertyStatus;
+import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.dto.weather.Coordinate;
+import hu.progmasters.moovsmart.dto.weather.WeatherData;
 import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.exception.NoResourceFoundException;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
+import hu.progmasters.moovsmart.exception.WeatherNotFoundException;
 import hu.progmasters.moovsmart.repository.AddressRepository;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import hu.progmasters.moovsmart.specifications.PropertySpecifications;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +28,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,25 +39,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @Service
 @Transactional
+@Slf4j
 public class PropertyService {
 
     private PropertyRepository propertyRepository;
     private CustomUserService customUserService;
-
     private PropertyImageURLService propertyImageURLService;
     private ModelMapper modelMapper;
-
     private AddressRepository addressRepository;
+    private ExchangeService exchangeService;
+    private WeatherService weatherService;
 
     @Autowired
-    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService, AddressRepository addressRepository) {
+    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService, AddressRepository addressRepository, ExchangeService exchangeService, WeatherService weatherService) {
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
         this.customUserService = customUserService;
         this.propertyImageURLService = propertyImageURLService;
         this.addressRepository = addressRepository;
+        this.exchangeService = exchangeService;
+        this.weatherService = weatherService;
     }
 
 
@@ -54,16 +69,30 @@ public class PropertyService {
         List<Property> properties = propertyRepository.findAll();
         List<PropertyDetails> propertyDetailsList = new ArrayList<>();
         for (Property property : properties) {
-            PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
-            AddressInfoForProperty addressInfoForProperties = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
-            propertyDetails.setAddressInfoForProperty(addressInfoForProperties);
-            propertyDetailsList.add(propertyDetails);
+            propertyDetailsList.add(helpFunctionMapping(property));
         }
         return propertyDetailsList;
     }
 
+    public PropertyDetails helpFunctionMapping(Property property) {
+        PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
+        if (property.getAddress() != null) {
+            AddressInfoForProperty addressInfoForProperties = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
+            propertyDetails.setAddressInfoForProperty(addressInfoForProperties);
+        }
+        List<PropertyImageURLInfo> propertyImageURLInfos = property.getPropertyImageURLs().stream()
+                .map(propertyImageURL -> modelMapper.map(propertyImageURL, PropertyImageURLInfo.class))
+                .collect(Collectors.toList());
+        propertyDetails.setPropertyImageURLInfos(propertyImageURLInfos);
+        if (property.getPropertyData() != null) {
+            PropertyDataInfo propertyDataInfo = modelMapper.map(property.getPropertyData(), PropertyDataInfo.class);
+            propertyDetails.setPropertyDataInfo(propertyDataInfo);
+        }
+        return propertyDetails;
+    }
+
     public List<PropertyDetails> getProperties24() {
-        Date thresholdDate = new Date(System.currentTimeMillis() - 60000_000);
+        Date thresholdDate = new Date(System.currentTimeMillis() - 86400000);
         List<Property> properties = propertyRepository.findPropertiesCreatedAfterThresholdDate(thresholdDate);
         return properties.stream()
                 .map(property -> modelMapper.map(property, PropertyDetails.class))
@@ -81,7 +110,7 @@ public class PropertyService {
             throw new NoResourceFoundException(properties.getTotalPages());
         }
         return properties.getContent().stream()
-                .map(property -> modelMapper.map(property, PropertyDetails.class))
+                .map(this::helpFunctionMapping)
                 .collect(Collectors.toList());
     }
 
@@ -204,10 +233,7 @@ public class PropertyService {
 
     public PropertyDetails getPropertyDetails(Long id) {
         Property property = findPropertyById(id);
-        PropertyDetails propertyDetails = modelMapper.map(property, PropertyDetails.class);
-        AddressInfoForProperty addressInfoForProperty = modelMapper.map(property.getAddress(), AddressInfoForProperty.class);
-        propertyDetails.setAddressInfoForProperty(addressInfoForProperty);
-        return propertyDetails;
+        return helpFunctionMapping(property);
     }
 
     public Property findPropertyById(Long propertyId) {
@@ -252,7 +278,7 @@ public class PropertyService {
 
         Property property = findPropertyById(id);
         if (username.equals(property.getCustomUser().getUsername())) {
-            for (PropertyImageURL propertyImageURL: propertyImageURLs) {
+            for (PropertyImageURL propertyImageURL : propertyImageURLs) {
                 propertyImageURL.setProperty(findPropertyById(id));
                 propertyImageURLService.save(propertyImageURL);
             }
@@ -266,4 +292,112 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
+    public void createPdf(Long id) {
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage(PDRectangle.A4);
+        document.addPage(page);
+
+        PropertyDetails propertyDetails = getPropertyDetails(id);
+
+        try {
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            Path desktopPath = FileSystems.getDefault().getPath(System.getProperty("user.home"), "Desktop");
+
+            String filePath = desktopPath + "/property" + id + ".pdf";
+
+            contentStream.beginText();
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+            contentStream.setLeading(24.0f);
+
+            contentStream.newLineAtOffset(100, 700);
+
+            contentStream.showText("                  I N G A T L A N   A D A T L A P   Id.: " + id);
+            contentStream.newLine();
+            contentStream.newLine();
+            contentStream.newLine();
+
+            contentStream.showText("NÉV: " + propertyDetails.getName());
+            contentStream.newLine();
+            contentStream.showText("VÁROS: " + propertyDetails.getAddressInfoForProperty().getCity());
+            contentStream.newLine();
+            contentStream.showText("TÍPUS: " + propertyDetails.getType());
+            contentStream.newLine();
+            contentStream.showText("ÁR: " + propertyDetails.getPrice());
+            contentStream.newLine();
+            contentStream.showText("KÍNÁL: " + propertyDetails.getPurpose());
+            contentStream.newLine();
+            contentStream.showText("ALAPTERÜLET: " + propertyDetails.getArea());
+            contentStream.newLine();
+            contentStream.showText("LEÍRÁS: " + propertyDetails.getDescription());
+            contentStream.newLine();
+            contentStream.showText("ÉPÍTÉS ÉVE: " + propertyDetails.getPropertyDataInfo().getYearBuilt());
+            contentStream.newLine();
+            contentStream.showText("FEKVÉS: " + (propertyDetails.getPropertyDataInfo().getPropertyOrientation() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyOrientation()));
+            contentStream.newLine();
+            contentStream.showText("FüTÉS TÍPUS: " + (propertyDetails.getPropertyDataInfo().getPropertyHeatingType() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getPropertyHeatingType()));
+            contentStream.newLine();
+            contentStream.showText("ENERGIA OSZTÁLY: " + (propertyDetails.getPropertyDataInfo().getEnergyCertificate() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getEnergyCertificate()));
+            contentStream.newLine();
+            contentStream.showText("ERKÉLY: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasBalcony()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasBalcony()) ? "NO" : "N/A"));
+            contentStream.newLine();
+            contentStream.showText("LIFT: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasLift()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasLift()) ? "NO" : "N/A"));
+            contentStream.newLine();
+            contentStream.showText("AKADÁLYMENTES: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getIsAccessible()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getIsAccessible()) ? "NO" : "N/A"));
+            contentStream.newLine();
+            contentStream.showText("KÜLÖNÁLLÓ: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getIsInsulated()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getIsInsulated()) ? "NO" : "N/A"));
+            contentStream.newLine();
+            contentStream.showText("LÉGKONDICIONÁLÓ: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasAirCondition()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasAirCondition()) ? "NO" : "N/A"));
+            contentStream.newLine();
+            contentStream.showText("KERT: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasGarden()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasGarden()) ? "NO" : "N/A"));
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateStr = "Készült: " + dateFormat.format(new Date());
+            contentStream.newLine();
+            contentStream.newLine();
+
+            contentStream.newLineAtOffset(100, 50);
+            contentStream.newLine();
+            contentStream.newLine();
+            contentStream.showText(dateStr);
+
+            contentStream.endText();
+            contentStream.close();
+
+            document.save(filePath);
+            document.close();
+        } catch (IOException e) {
+            log.error("Error while generating and saving PDF", e);
+            throw new RuntimeException("Error while generating and saving PDF", e);
+        }
+    }
+
+    public String exchange(Long id, Currencies currency) {
+        Property property = findPropertyById(id);
+        Double price = property.getPrice();
+        String sCurrenci = currency.toString();
+        return exchangeService.changePrice(price, sCurrenci);
+    }
+
+    public WeatherData findWeather(String zipcode) {
+        Coordinate coordinates = weatherService.getCoordinatesForZip(zipcode);
+        if (coordinates != null) {
+            return weatherService.getWeatherForCoordinates(coordinates.getLat(), coordinates.getLon());
+        } else {
+            return null;
+        }
+    }
+
+    public AddressInfoWeather findAddressWeather(Long id) {
+        Property property = findPropertyById(id);
+        AddressInfoWeather addressInfo = modelMapper.map(property.getAddress(), AddressInfoWeather.class);
+        String zipcode = Integer.toString(addressInfo.getZipcode());
+        WeatherData weatherData = findWeather(zipcode);
+        if (weatherData == null) {
+            throw new WeatherNotFoundException(id);
+        }
+        weatherData.getTemperatureInCelsius();
+        addressInfo.setWeatherData(weatherData);
+        return addressInfo;
+    }
 }

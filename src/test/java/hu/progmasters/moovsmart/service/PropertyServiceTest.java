@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.config.CustomUserRole;
 import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import org.apache.tomcat.websocket.AuthenticationException;
@@ -68,6 +69,7 @@ public class PropertyServiceTest {
 
     @BeforeEach
     void init() {
+
         customUser1 = new CustomUser().builder()
                 .customUserId(1L)
                 .username("pistike")
@@ -77,6 +79,12 @@ public class PropertyServiceTest {
                 .roles(List.of(CustomUserRole.ROLE_USER))
                 .enable(true)
                 .activation("123456789")
+                .build();
+
+        propertyImageURL = new PropertyImageURL().builder()
+                .propertyImageUrlId(1L)
+                .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
+                .property(property1)
                 .build();
 
         property1 = new Property().builder()
@@ -90,21 +98,17 @@ public class PropertyServiceTest {
                 .status(PropertyStatus.ACTIVE)
                 .description("Jó kis házikó")
                 .customUser(customUser1)
+                .propertyImageURLs(List.of(propertyImageURL))
                 .build();
 
-        propertyImageURL = new PropertyImageURL().builder()
-                .propertyImageUrlId(1L)
+        propertyImageURLInfo = new PropertyImageURLInfo().builder()
                 .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
-                .property(property1)
                 .build();
 
         propertyImageURLForm = new PropertyImageURLForm().builder()
                 .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
                 .build();
 
-        propertyImageURLInfo = new PropertyImageURLInfo().builder()
-                .propertyImageURL("image/jpeg;base64,/2555879j/4AAQSk")
-                .build();
 
         property2 = new Property().builder()
                 .id(2L)
@@ -116,6 +120,7 @@ public class PropertyServiceTest {
                 .numberOfRooms(4)
                 .description("Jó kis családi ház")
                 .customUser(customUser1)
+                .propertyImageURLs(List.of(propertyImageURL))
                 .build();
 
         propertyForm1 = new PropertyForm().builder()
@@ -188,7 +193,7 @@ public class PropertyServiceTest {
                 .price(400000000d)
                 .numberOfRooms(5)
                 .description("Jó kis házikó")
-                .propertyImageURLS(List.of(propertyImageURL))
+                .propertyImageURLInfos(List.of(propertyImageURLInfo))
                 .build();
 
         propertyDetails2 = new PropertyDetails().builder()
@@ -196,7 +201,7 @@ public class PropertyServiceTest {
                 .price(35000000d)
                 .numberOfRooms(4)
                 .description("Jó kis családi ház")
-                .propertyImageURLS(List.of(propertyImageURL))
+                .propertyImageURLInfos(List.of(propertyImageURLInfo))
                 .build();
 
 
@@ -205,7 +210,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testList_asStart_emptyList() {
+    void test_asStart_emptyList() {
         when(propertyRepository.findAll()).thenReturn(List.of());
         assertThat(propertyService.getProperties()).isEmpty();
 
@@ -214,7 +219,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testList_allPropertiesWithOneProperty() {
+    void test_allPropertiesWithOneProperty() {
         when(modelMapper.map(property1, PropertyDetails.class)).thenReturn(propertyDetails1);
         when(propertyRepository.findAll()).thenReturn(List.of(property1));
 
@@ -227,7 +232,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testList_allPropertiesWithTwoProperty() {
+    void test_allPropertiesWithTwoProperty() {
         when(propertyRepository.findAll()).thenReturn(List.of(property1, property2));
         when(modelMapper.map(property1, PropertyDetails.class)).thenReturn(propertyDetails1);
         when(modelMapper.map(property2, PropertyDetails.class)).thenReturn(propertyDetails2);
@@ -240,7 +245,7 @@ public class PropertyServiceTest {
 
 
     @Test
-    void testGetPropertyDetails_withNoId() {
+    void test_getPropertyDetails_withNoId() {
         when(propertyRepository.findById(3L)).thenReturn(Optional.empty());
 
         try {
@@ -252,7 +257,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testGetPropertyDetails_with1LId() {
+    void test_getPropertyDetails_with1LId() {
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
         when(modelMapper.map(property1, PropertyDetails.class)).thenReturn(propertyDetails1);
         assertEquals(propertyDetails1, propertyService.getPropertyDetails(1L));
@@ -262,7 +267,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testGetPropertyDetails_with2LId() {
+    void test_getPropertyDetails_with2LId() {
         when(propertyRepository.findById(2L)).thenReturn(Optional.ofNullable(property2));
         when(modelMapper.map(property2, PropertyDetails.class)).thenReturn(propertyDetails2);
         assertEquals(propertyDetails2, propertyService.getPropertyDetails(2L));
@@ -274,7 +279,7 @@ public class PropertyServiceTest {
 
 
     @Test
-    void testSave_singlePropertySaved() {
+    void test_saveProperty() {
         when(modelMapper.map(propertyForm1, Property.class)).thenReturn(property1);
         when(modelMapper.map(property1, PropertyInfo.class)).thenReturn(propertyInfo1);
         when(propertyRepository.save(property1)).thenReturn(property1);
@@ -293,7 +298,7 @@ public class PropertyServiceTest {
 
 
     @Test
-    void testMakeInactive() {
+    void test_makeInactiveProperty() {
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));
 
         propertyService.makeInactive(1L);
@@ -305,7 +310,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testUpdate() throws AuthenticationException {
+    void test_updateProperty() throws AuthenticationException {
         when(modelMapper.map(propertyFormUpdate, Property.class)).thenReturn(property1Update);
         when(modelMapper.map(property1Update, PropertyInfo.class)).thenReturn(propertyInfo1Update);
         when(propertyRepository.findById(3L)).thenReturn(Optional.ofNullable(property1Update));
@@ -317,7 +322,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void testCreateListOfImageURLs() {
+    void test_createListOfImageURLs() throws AuthenticationExceptionImpl {
         when(modelMapper.map(propertyImageURLForm, PropertyImageURL.class)).thenReturn(propertyImageURL);
         when(propertyImageURLService.save(propertyImageURL)).thenReturn(propertyImageURL);
         when(propertyRepository.findById(1L)).thenReturn(Optional.ofNullable(property1));

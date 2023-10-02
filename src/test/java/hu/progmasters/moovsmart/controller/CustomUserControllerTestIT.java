@@ -4,40 +4,30 @@ package hu.progmasters.moovsmart.controller;
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.service.CustomUserService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.List;
 
 
 @SpringBootTest
@@ -60,12 +50,16 @@ public class CustomUserControllerTestIT {
     @Autowired
     CustomUserService customUserService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @BeforeEach
-    public void init(){
+    public void init() {
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext).apply(springSecurity())
                 .build();
     }
+
     @Test
     @WithMockUser(authorities = "ROLE_ADMIN")
     void IT_test_atStart_emptyList() throws Exception {
@@ -74,12 +68,75 @@ public class CustomUserControllerTestIT {
     }
 
 
-    //TODO logintest
-    @WithUserDetails("aprandia")
     @Test
-    void IT_test_successfulLoginCustomUser() throws Exception {
-        mockMvc.perform(get("/api/customusers/login/me").contentType(MediaType.APPLICATION_JSON))
+    void IT_test_successfulLoginCustomUserWithUsername() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"username\": \"aprandia\",\n" +
+                "    \"password\": \"jH0@qkBXF\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/login/me").
+                        contentType(MediaType.APPLICATION_JSON)
+                        .content(inputCommand))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void IT_test_successfulLoginCustomUserWithEmailAddress() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"email\": \"aprandia@miitbeian.gov.cn\",\n" +
+                "    \"password\": \"jH0@qkBXF\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/login/me").
+                        contentType(MediaType.APPLICATION_JSON)
+                        .content(inputCommand))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void IT_test_unsuccessfulLoginCustomUserUsernameNotExist() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"username\": \"aprandi\",\n" +
+                "    \"password\": \"jH0@qkBXF\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/login/me").
+                        contentType(MediaType.APPLICATION_JSON)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("User not found error.")))
+                .andExpect(jsonPath("$.details", is("Username was not found with: aprandi")));
+    }
+
+    @Test
+    void IT_test_unsuccessfulLoginCustomUserEmailNotExist() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"email\": \"aprandia@miitbeian.gov.c\",\n" +
+                "    \"password\": \"jH0@qkBXF\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/login/me").
+                        contentType(MediaType.APPLICATION_JSON)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("Email address not found error.")))
+                .andExpect(jsonPath("$.details", is("CustomUser was not found with email: aprandia@miitbeian.gov.c")));
+    }
+
+    @Test
+    void IT_test_unsuccessfulLoginCustomUserWrongPassword() throws Exception {
+        String inputCommand = "{\n" +
+                "    \"username\": \"aprandia\",\n" +
+                "    \"password\": \"jH0@qkX\"\n" +
+                "}";
+
+        mockMvc.perform(post("/api/customusers/login/me").
+                        contentType(MediaType.APPLICATION_JSON)
+                        .content(inputCommand))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("Password is not valid error.")))
+                .andExpect(jsonPath("$.details", is("Password is not valid with: jH0@qkX")));
     }
 
 
@@ -512,7 +569,7 @@ public class CustomUserControllerTestIT {
                 .andExpect(jsonPath("$.username", is("bogyoesbaboca")))
                 .andExpect(jsonPath("$.email", is("bogyo.es.baboca@gmail.com")))
                 .andExpect(jsonPath("$.phoneNumber", is("+36306363634")))
-                .andExpect(jsonPath("$.customUserRoles", is(List.of("ROLE_USER"))))
+                .andExpect(jsonPath("$.customUserRoles", is(List.of("ROLE_AGENT"))))
                 .andExpect(status().isOk());
     }
 
@@ -932,7 +989,6 @@ public class CustomUserControllerTestIT {
                 .andExpect(jsonPath("$.email", is("aprandia@miitbeian.gov.cn")))
                 .andExpect(jsonPath("$.phoneNumber", is("+36306363631")));
     }
-
 
 
     @Test

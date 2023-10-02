@@ -9,13 +9,10 @@ import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.exception.*;
 import hu.progmasters.moovsmart.repository.AgentCommentRepository;
 import hu.progmasters.moovsmart.repository.CustomUserRepository;
-import org.apache.tomcat.websocket.AuthenticationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -82,7 +79,7 @@ public class CustomUserService implements UserDetailsService {
             CustomUser customUser = buildCustomUserForRegistration(customUserForm, confirmationToken);
             confirmationToken.setCustomUser(customUser);
             CustomUser savedUser = customUserRepository.save(customUser);
-            isAgent(customUser);
+            isAgent(customUserForm, customUser);
             addToEmailList(customUserForm, customUser);
             CustomUserInfo customUserInfo = modelMapper.map(savedUser, CustomUserInfo.class);
             customUserInfo.setCustomUserRoles(customUser.getRoles());
@@ -122,13 +119,11 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-    public boolean isAgent(CustomUser customUser) {
-        if (customUser.isAgent()) {
+    public void isAgent(CustomUserForm customUserForm, CustomUser customUser) {
+        if (customUserForm.getIsAgent()) {
             customUser.setRoles(List.of(CustomUserRole.ROLE_AGENT));
             estateAgentService.save(customUser);
-            return true;
         }
-        return false;
     }
 
     public void sendingActivationEmail(String name, String email) {
@@ -142,7 +137,7 @@ public class CustomUserService implements UserDetailsService {
     }
 
     public void addToEmailList(CustomUserForm customUserForm, CustomUser customUser) {
-        if (customUser.isHasNewsletter()) {
+        if (customUser.isHasNewsletter() && customUser.getCustomUserEmail() == null) {
             CustomUserEmail customUserEmail = CustomUserEmail.builder()
                     .email(customUserForm.getEmail())
                     .customUser(customUser)
@@ -192,12 +187,34 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
+
+    public CustomUserInfo login(String username, String email, String password) {
+        if (username != null) {
+            CustomUser customUser = findCustomUserByUsername(username);
+            if (passwordEncoder.matches(password, customUser.getPassword())) {
+                return modelMapper.map(customUser, CustomUserInfo.class);
+            } else {
+                throw new PasswordNotValidException(password);
+            }
+        }
+        if (email != null) {
+            CustomUser customUser = findCustomUserByEmail(email);
+            if (passwordEncoder.matches(password, customUser.getPassword())) {
+                return modelMapper.map(customUser, CustomUserInfo.class);
+            } else {
+                throw new PasswordNotValidException(password);
+            }
+        } throw new UsernameAndEmailAddressNotFoundException(username, email);
+    }
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         CustomUser customUser = findCustomUserByUsername(username);
         String[] roles = customUser.getRoles().stream()
                 .map(Enum::toString)
                 .toArray(String[]::new);
+
         if (customUser.isEnabled()) {
             return User
                     .withUsername(customUser.getUsername())
@@ -296,6 +313,18 @@ public class CustomUserService implements UserDetailsService {
             String emailOld = customUser.getEmail();
             String nameOld = customUser.getName();
             modelMapper.map(customUserForm, customUser);
+            isAgent(customUserForm, customUser);
+            if (Boolean.FALSE.equals(customUserForm.getIsAgent())) {
+                customUser.setRoles(List.of(CustomUserRole.ROLE_USER));
+            }
+            addToEmailList(customUserForm, customUser);
+            if (Boolean.FALSE.equals(customUserForm.getHasNewsletter())) {
+                CustomUserEmail customUserEmail = customUser.getCustomUserEmail();
+                customUser.setCustomUserEmail(null);
+                if (customUserEmail != null) {
+                    customUserEmailService.delete(customUserEmail);
+                }
+            }
             customUser.setPassword(passwordEncoder.encode(customUserForm.getPassword()));
             CustomUserInfo customUserInfo = modelMapper.map(customUser, CustomUserInfo.class);
             customUserInfo.setCustomUserRoles(customUser.getRoles());
@@ -360,7 +389,7 @@ public class CustomUserService implements UserDetailsService {
     }
 
 
-    @Scheduled(cron = "0 0 */3 ? * *")
+    @Scheduled(cron = "0 0 6 * * ?")
     public void sendingNewsletter() {
         for (CustomUserEmail customUserEmail : customUserEmailService.getCustomUserEmails()) {
             String subject = "Hírlevél az újdonságokról!";
