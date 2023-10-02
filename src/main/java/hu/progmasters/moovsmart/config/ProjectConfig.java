@@ -2,8 +2,8 @@ package hu.progmasters.moovsmart.config;
 
 import com.cloudinary.Cloudinary;
 import com.paypal.base.rest.APIContext;
-import com.paypal.base.rest.OAuthTokenCredential;
-import com.paypal.base.rest.PayPalRESTException;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.modelmapper.ModelMapper;
@@ -12,10 +12,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 
 @Configuration
+@SecurityScheme(
+        type = SecuritySchemeType.HTTP,
+        name = "basicAuth",
+        scheme = "basic")
 public class ProjectConfig {
 
     @Bean
@@ -25,6 +29,7 @@ public class ProjectConfig {
                 .setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;
     }
+
 
     @Bean
     public OpenAPI customOpenAPI() {

@@ -13935,3 +13935,22 @@ Caused by: java.lang.IllegalArgumentException: Parameter value [Sat Sep 23 13:39
 2023-10-01 00:22:51 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
 2023-10-01 00:22:51 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
 2023-10-01 00:22:51 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2023-10-01 21:08:39 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'methodSecurityInterceptor' defined in class path resource [org/springframework/security/config/annotation/method/configuration/GlobalMethodSecurityConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=null; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration; factoryMethodName=methodSecurityInterceptor; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/security/config/annotation/method/configuration/GlobalMethodSecurityConfiguration.class]] for bean 'methodSecurityInterceptor': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=null; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=methodSecurityConfig; factoryMethodName=methodSecurityInterceptor; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [hu/progmasters/moovsmart/config/MethodSecurityConfig.class]] bound.
+2023-10-01 21:13:08 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'methodSecurityInterceptor' defined in class path resource [org/springframework/security/config/annotation/method/configuration/GlobalMethodSecurityConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=null; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration; factoryMethodName=methodSecurityInterceptor; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/security/config/annotation/method/configuration/GlobalMethodSecurityConfiguration.class]] for bean 'methodSecurityInterceptor': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=null; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=methodSecurityConfig; factoryMethodName=methodSecurityInterceptor; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [hu/progmasters/moovsmart/config/MethodSecurityConfig.class]] bound.
+2023-10-01 21:13:08 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2023-10-01 21:13:08 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'methodSecurityInterceptor', defined in class path resource [org/springframework/security/config/annotation/method/configuration/GlobalMethodSecurityConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [hu/progmasters/moovsmart/config/MethodSecurityConfig.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
