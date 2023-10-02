@@ -43,11 +43,17 @@ public class ExchangeService {
         }
     }
 
-    public Double changePrice(Double price, String currency) {
+    public String changePrice(Double price, String currency) {
         ExchangeData exchangeData1 = getexchangeData("HUF");
         Double pEuro = (exchangeData1.getRates().get("HUF")) / price;
         ExchangeData exchangeData2 = getexchangeData(currency);
+        Double result = (exchangeData2.getRates().get(currency)) / pEuro;
 
-        return (exchangeData2.getRates().get(currency)) / pEuro;
+       String formPrice = String.format("%.2f",price);
+       String formResult = String.format("%.2f",result);
+
+        return "Átváltás: \n" +
+                "HUF: " + formPrice + "\n" +
+                currency + ": " + formResult;
     }
 }

@@ -2,9 +2,12 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.*;
 import hu.progmasters.moovsmart.dto.*;
+import hu.progmasters.moovsmart.dto.weather.Coordinate;
+import hu.progmasters.moovsmart.dto.weather.WeatherData;
 import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
 import hu.progmasters.moovsmart.exception.NoResourceFoundException;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
+import hu.progmasters.moovsmart.exception.WeatherNotFoundException;
 import hu.progmasters.moovsmart.repository.AddressRepository;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
 import hu.progmasters.moovsmart.specifications.PropertySpecifications;
@@ -30,7 +33,10 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -45,15 +51,17 @@ public class PropertyService {
     private ModelMapper modelMapper;
     private AddressRepository addressRepository;
     private ExchangeService exchangeService;
+    private WeatherService weatherService;
 
     @Autowired
-    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService, AddressRepository addressRepository, ExchangeService exchangeService) {
+    public PropertyService(PropertyRepository propertyRepository, ModelMapper modelMapper, CustomUserService customUserService, PropertyImageURLService propertyImageURLService, AddressRepository addressRepository, ExchangeService exchangeService, WeatherService weatherService) {
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
         this.customUserService = customUserService;
         this.propertyImageURLService = propertyImageURLService;
         this.addressRepository = addressRepository;
         this.exchangeService = exchangeService;
+        this.weatherService = weatherService;
     }
 
 
@@ -364,10 +372,32 @@ public class PropertyService {
         }
     }
 
-    public Double exchange(Long id, Currencies currency) {
+    public String exchange(Long id, Currencies currency) {
         Property property = findPropertyById(id);
         Double price = property.getPrice();
         String sCurrenci = currency.toString();
-        return exchangeService.changePrice(price,sCurrenci);
+        return exchangeService.changePrice(price, sCurrenci);
+    }
+
+    public WeatherData findWeather(String zipcode) {
+        Coordinate coordinates = weatherService.getCoordinatesForZip(zipcode);
+        if (coordinates != null) {
+            return weatherService.getWeatherForCoordinates(coordinates.getLat(), coordinates.getLon());
+        } else {
+            return null;
+        }
+    }
+
+    public AddressInfoWeather findAddressWeather(Long id) {
+        Property property = findPropertyById(id);
+        AddressInfoWeather addressInfo = modelMapper.map(property.getAddress(), AddressInfoWeather.class);
+        String zipcode = Integer.toString(addressInfo.getZipcode());
+        WeatherData weatherData = findWeather(zipcode);
+        if (weatherData == null) {
+            throw new WeatherNotFoundException(id);
+        }
+        weatherData.getTemperatureInCelsius();
+        addressInfo.setWeatherData(weatherData);
+        return addressInfo;
     }
 }

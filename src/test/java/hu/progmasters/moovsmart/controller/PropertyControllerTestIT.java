@@ -627,6 +627,7 @@ public class PropertyControllerTestIT {
                 .andExpect(jsonPath("$.details", is("No property found with id: 16")));
     }
 
+
     @Test
     @WithMockUser(username = "aprandia", authorities = "ROLE_USER")
     void IT_test_savePropertyImageURLS() throws Exception {
@@ -647,5 +648,5 @@ public class PropertyControllerTestIT {
                 .andExpect(jsonPath("$[1].propertyImageURL", is("image/jpeg;base64,/2j/4AAQSk...")));
                 }
 
-
 }
+

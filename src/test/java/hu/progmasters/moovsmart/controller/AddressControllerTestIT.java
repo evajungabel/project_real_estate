@@ -72,28 +72,6 @@ class AddressControllerTestIT {
     }
 
     @Test
-    void IT_weatherFindById_test() throws Exception {
-
-        mockMvc.perform(get("/api/addresses/weather/id/1")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content("1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.city", is("Monor")))
-                .andExpect(jsonPath("$.country", is("Magyarország")))
-                .andExpect(jsonPath("$.zipcode", is(2200)));
-    }
-
-    @Test
-    void IT_weather_NOT_Find_test() throws Exception {
-
-        mockMvc.perform(get("/api/addresses/weather/id/14")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content("14"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.details", is("No weather information found with id: 14")));
-    }
-
-    @Test
     void IT_addressUpdate_test()  throws Exception {
         String input = "{" +
                 "\"zipcode\": 2222," +
