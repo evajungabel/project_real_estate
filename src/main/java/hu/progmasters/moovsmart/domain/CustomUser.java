@@ -76,6 +76,9 @@ public class CustomUser implements UserDetails {
     @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private EstateAgent estateAgent;
 
+    @OneToMany(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CustomUserImageURL> customUserImageURLs;
+
 
     @OneToOne(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private CustomUserEmail customUserEmail;

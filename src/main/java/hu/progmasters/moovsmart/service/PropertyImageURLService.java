@@ -2,6 +2,7 @@ package hu.progmasters.moovsmart.service;
 
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyImageURL;
+import hu.progmasters.moovsmart.exception.PropertyImageURLNotFoundException;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyImageURLRepository;
 import org.modelmapper.ModelMapper;
@@ -32,7 +33,7 @@ public class PropertyImageURLService {
     public PropertyImageURL findPropertyImageURLById(Long propertyImageURLId) {
         Optional<PropertyImageURL> propertyImageURLOptional = propertyImageURLRepository.findById(propertyImageURLId);
         if (propertyImageURLOptional.isEmpty()) {
-            throw new PropertyNotFoundException(propertyImageURLId);
+            throw new PropertyImageURLNotFoundException(propertyImageURLId);
         }
         return propertyImageURLOptional.get();
     }

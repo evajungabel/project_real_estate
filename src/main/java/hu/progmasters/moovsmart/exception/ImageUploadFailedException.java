@@ -3,12 +3,20 @@ package hu.progmasters.moovsmart.exception;
 public class ImageUploadFailedException extends  RuntimeException{
 
     private final String username;
-    private final Long propertyId;
+    private final Long id;
 
 
-    public ImageUploadFailedException(String username, Long propertyId) {
-        super("Image uploading fail with username: " + username + ", and propertyId: " + propertyId);
+    public ImageUploadFailedException(String username, Long id) {
+        super("Image uploading fail with username: " + username + ", and id: " + id);
         this.username = username;
-        this.propertyId = propertyId;
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

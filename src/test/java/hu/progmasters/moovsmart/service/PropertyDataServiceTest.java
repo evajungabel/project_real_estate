@@ -8,6 +8,7 @@ import hu.progmasters.moovsmart.exception.PropertyDataNotFoundException;
 import hu.progmasters.moovsmart.exception.PropertyNotFoundException;
 import hu.progmasters.moovsmart.repository.PropertyDataRepository;
 import hu.progmasters.moovsmart.repository.PropertyRepository;
+import net.bytebuddy.pool.TypePool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.Year;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -255,18 +257,23 @@ public class PropertyDataServiceTest {
 
 
 
+
     @Test
-    void test_updatePropertyData() throws AuthenticationExceptionImpl {
+    void test_updatePropertyDataWithWrongPropertyDataId() {
         when(propertyService.findPropertyById(1L)).thenReturn(propertyUpdate1);
         when(modelMapper.map(propertyDataForm1Update, PropertyData.class)).thenReturn(propertyData1Update);
-        when(modelMapper.map(propertyData1Update, PropertyDataInfo.class)).thenReturn(propertyDataInfo1Update);
 
-        assertEquals(propertyDataInfo1Update, propertyDataService.update("pistike", propertyDataForm1Update, 1L));
+
+        try {
+            propertyDataService.update("moriczka", propertyDataForm1Update, 1L);
+            fail("Expected PropertyNotFoundException, but no exception was thrown.");
+        } catch (AuthenticationExceptionImpl e) {
+            assertEquals("User was denied with username: moriczka", e.getMessage());
+        }
 
         verify(propertyService, times(1)).findPropertyById(1L);
         verifyNoMoreInteractions(propertyService);
     }
-
     @Test
     void test_savePropertyDataWithWrongPropertyDataId() {
         when(propertyDataRepository.findAll()).thenReturn((List.of(propertyData1)));
