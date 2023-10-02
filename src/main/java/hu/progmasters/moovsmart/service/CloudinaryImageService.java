@@ -2,9 +2,12 @@ package hu.progmasters.moovsmart.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import hu.progmasters.moovsmart.domain.CustomUser;
+import hu.progmasters.moovsmart.domain.CustomUserImageURL;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.domain.PropertyImageURL;
 import hu.progmasters.moovsmart.exception.AuthenticationExceptionImpl;
+import hu.progmasters.moovsmart.exception.ImageDeleteFailedException;
 import hu.progmasters.moovsmart.exception.ImageUploadFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,12 +26,15 @@ public class CloudinaryImageService {
     private PropertyService propertyService;
     private PropertyImageURLService propertyImageURLService;
 
+    private CustomUserImageURLService customUserImageURLService;
+
     @Autowired
-    public CloudinaryImageService(Cloudinary cloudinary, CustomUserService customUserService, PropertyService propertyService, PropertyImageURLService propertyImageURLService) {
+    public CloudinaryImageService(Cloudinary cloudinary, CustomUserService customUserService, PropertyService propertyService, PropertyImageURLService propertyImageURLService, CustomUserImageURLService customUserImageURLService) {
         this.cloudinary = cloudinary;
         this.customUserService = customUserService;
         this.propertyService = propertyService;
         this.propertyImageURLService = propertyImageURLService;
+        this.customUserImageURLService = customUserImageURLService;
     }
 
 
@@ -36,7 +42,7 @@ public class CloudinaryImageService {
         Property property = propertyService.findPropertyById(propertyId);
 
         if (username.equals(property.getCustomUser().getUsername())) {
-           PropertyImageURL propertyImageURL = createNewPropertyImageURL(property);
+            PropertyImageURL propertyImageURL = createNewPropertyImageURL(property);
             try {
                 Map<String, Object> params = createMapForUpload(propertyId, propertyImageURL);
                 return cloudinary.uploader().upload(file.getBytes(), params);
@@ -47,7 +53,6 @@ public class CloudinaryImageService {
             throw new AuthenticationExceptionImpl(username);
         }
     }
-
 
     public PropertyImageURL createNewPropertyImageURL(Property property) {
         PropertyImageURL propertyImageURL = new PropertyImageURL();
@@ -64,6 +69,34 @@ public class CloudinaryImageService {
                 "resource_type", "auto");
     }
 
+    public Map<String, Object> uploadProfile(MultipartFile file, String username) throws AuthenticationExceptionImpl {
+
+        CustomUser customUser = customUserService.findCustomUserByUsername(username);
+        CustomUserImageURL customUserImageURL = createNewCustomUserImageURL(customUser);
+        try {
+            Map<String, Object> params = createMapForUploadProfile(customUser.getCustomUserId(), customUserImageURL);
+            return cloudinary.uploader().upload(file.getBytes(), params);
+        } catch (IOException e) {
+            throw new ImageUploadFailedException(username, customUser.getCustomUserId());
+        }
+
+    }
+
+    public CustomUserImageURL createNewCustomUserImageURL(CustomUser customUser) {
+        CustomUserImageURL customUserImageURL = new CustomUserImageURL();
+        customUserImageURL.setCustomUser(customUser);
+        return customUserImageURLService.save(customUserImageURL);
+    }
+
+    public Map<String, Object> createMapForUploadProfile(Long customUserId, CustomUserImageURL customUserImageURL) {
+        return ObjectUtils.asMap(
+                "public_id", "myProfile" + customUserId + "/my_profile" + customUserImageURL.getCustomUserImageUrlId(),
+                "overwrite", true,
+                "faces", true,
+                "notification_url", "http://localhost:8080/api/cloudinary",
+                "resource_type", "auto");
+    }
+
     public void getURL(Map<String, Object> data) {
         String url = (String) data.get("url");
 
@@ -73,6 +106,17 @@ public class CloudinaryImageService {
         propertyImageURL.setPropertyImageURL(url);
         propertyImageURLService.save(propertyImageURL);
     }
+
+    public void getURLProfile(Map<String, Object> data) {
+        String url = (String) data.get("url");
+
+        Long customUserImageURLId = Long.parseLong(url.split("my_profile")[1].split("\\.")[0]);
+
+        CustomUserImageURL customUserImageURL = customUserImageURLService.findCustomUserImageURLById(customUserImageURLId);
+        customUserImageURL.setCustomUserImageURL(url);
+        customUserImageURLService.save(customUserImageURL);
+    }
+
 
     public Map<String, Object> uploadFromURL(String url, String username, Long propertyId) throws AuthenticationExceptionImpl {
         Property property = propertyService.findPropertyById(propertyId);
@@ -90,10 +134,22 @@ public class CloudinaryImageService {
         }
     }
 
+
+    public Map<String, Object> uploadProfileFromURL(String url, String username) throws AuthenticationExceptionImpl {
+        CustomUser customUser = customUserService.findCustomUserByUsername(username);
+
+        CustomUserImageURL customUserImageURL = createNewCustomUserImageURL(customUser);
+        try {
+            Map<String, Object> params = createMapForUploadProfile(customUser.getCustomUserId(), customUserImageURL);
+            return cloudinary.uploader().upload(url, params);
+        } catch (IOException e) {
+            throw new ImageUploadFailedException(username, customUser.getCustomUserId());
+        }
+    }
+
+
     public Map<String, Object> deleteImage(String username, Long propertyId, Long propertyImageURLId) throws AuthenticationExceptionImpl {
-
         Property property = propertyService.findPropertyById(propertyId);
-
         String deleteFilePublicId = "myProperty" + propertyId + "/my_property" + propertyImageURLId;
 
         if (username.equals(property.getCustomUser().getUsername())) {
@@ -103,10 +159,24 @@ public class CloudinaryImageService {
                         "notification_url", "http://localhost:8080/api/cloudinary");
                 return cloudinary.uploader().destroy(deleteFilePublicId, params);
             } catch (IOException e) {
-                throw new ImageUploadFailedException(username, propertyId);
+                throw new ImageDeleteFailedException(username, propertyImageURLId);
             }
         } else {
             throw new AuthenticationExceptionImpl(username);
+        }
+    }
+
+    public Map<String, Object> deleteProfileImage(String username, Long customUserImageURLId) throws AuthenticationExceptionImpl {
+        CustomUser customUser = customUserService.findCustomUserByUsername(username);
+        String deleteFilePublicId = "myProfile" + customUser.getCustomUserId() + "/my_profile" + customUserImageURLId;
+
+        try {
+            customUserImageURLService.deleteById(customUserImageURLId);
+            Map<String, Object> params = ObjectUtils.asMap(
+                    "notification_url", "http://localhost:8080/api/cloudinary");
+            return cloudinary.uploader().destroy(deleteFilePublicId, params);
+        } catch (IOException e) {
+            throw new ImageDeleteFailedException(username, customUserImageURLId);
         }
     }
 }

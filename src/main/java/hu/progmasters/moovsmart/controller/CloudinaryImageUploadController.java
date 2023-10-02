@@ -83,6 +83,59 @@ public class CloudinaryImageUploadController {
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
 
+    @PostMapping("/profile")
+    @Operation(summary = "Saving customer's image")
+    @ApiResponse(responseCode = "201", description = "Customer's image is saved by customer.")
+    @SecurityRequirement(name = "basicAuth")
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
+    public ResponseEntity<Map<String, Object>> uploadProfileImage(@RequestParam("file") MultipartFile file) throws AuthenticationExceptionImpl {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Http request, POST image /api/cloudinary/profile, with: " + userDetails.getUsername());
+        Map<String, Object> data = this.cloudinaryImageService.uploadProfile(file, userDetails.getUsername());
+        log.info("POST data image of repository from /api/cloudinary/profile, with: " + userDetails.getUsername());
+        cloudinaryImageService.getURLProfile(data);
+        return new ResponseEntity<>(data, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/profile/{username}")
+    @Operation(summary = "Saving customers's image by admin.")
+    @ApiResponse(responseCode = "201", description = "Customer's image is saved by admin.")
+    @SecurityRequirement(name = "basicAuth")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<Map<String, Object>> uploadImageProfile(@PathVariable("username") String username, @RequestParam("file") MultipartFile file, @RequestParam("propertyId") Long propertyId) throws AuthenticationExceptionImpl {
+        log.info("Http request, POST image /api/cloudinary/profile/{username}, with: " + username);
+        Map<String, Object> data = this.cloudinaryImageService.uploadProfile(file, username);
+        log.info("POST data image from repository/api/cloudinary/profile/{username}, with: " + username);
+        cloudinaryImageService.getURLProfile(data);
+        return new ResponseEntity<>(data, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/profile/uploadurl")
+    @Operation(summary = "Saving customer's image uploaded as URL by customer")
+    @ApiResponse(responseCode = "201", description = "Customer's image uploaded as URL is saved by customer.")
+    @SecurityRequirement(name = "basicAuth")
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
+    public ResponseEntity<Map<String, Object>> uploadImageProfileFromURL(@RequestParam("url") String url) throws AuthenticationExceptionImpl {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Http request, POST imageURL /api/cloudinary/profile/uploadurl, with: " + userDetails.getUsername());
+        Map<String, Object> data = this.cloudinaryImageService.uploadProfileFromURL(url, userDetails.getUsername());
+        log.info("POST data imageURL of repository from /api/cloudinary/profile/uploadurl, with: " + userDetails.getUsername());
+        cloudinaryImageService.getURL(data);
+        return new ResponseEntity<>(data, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/profile/uploadurl/{username}")
+    @Operation(summary = "Saving property's image uploaded as URL by admin")
+    @ApiResponse(responseCode = "201", description = "Property's image uploaded as URL is saved by admin.")
+    @SecurityRequirement(name = "basicAuth")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<Map<String, Object>> uploadImageProfileFromURL(@PathVariable("username") String username, @RequestParam("url") String url) throws AuthenticationExceptionImpl {
+        log.info("Http request, POST imageURL /api/cloudinary/profile/uploadurl/{username}, with: " + username);
+        Map<String, Object> data = this.cloudinaryImageService.uploadProfileFromURL(url, username);
+        log.info("POST data imageURL from repository/api/cloudinary/profile/uploadurl/{username}, with: " + username);
+        cloudinaryImageService.getURL(data);
+        return new ResponseEntity<>(data, HttpStatus.CREATED);
+    }
 
     @GetMapping
     @Operation(summary = "Notification URL about saved property's image")
@@ -110,10 +163,36 @@ public class CloudinaryImageUploadController {
     @ApiResponse(responseCode = "200", description = "Property's image is deleted from cloudinary by admin.")
     @SecurityRequirement(name = "basicAuth")
     @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<Map<String, Object>> deleteImage(@PathVariable("username") String username, @RequestParam("url") String url, @RequestParam("propertyId") Long propertyId, @RequestParam("propertyImageURLId") Long propretyImageURLId) throws AuthenticationExceptionImpl {
+    public ResponseEntity<Map<String, Object>> deleteImage(@PathVariable("username") String username, @RequestParam("propertyId") Long propertyId, @RequestParam("propertyImageURLId") Long propretyImageURLId) throws AuthenticationExceptionImpl {
         log.info("Http request, DELETE image /api/cloudinary/uploadurl/{username}, with: " + username + " propertyId " + propertyId + "propertyImageURLId: " + propretyImageURLId);
         Map<String, Object> data = this.cloudinaryImageService.deleteImage(username, propertyId, propretyImageURLId);
         log.info("DELETE data image from repository from /api/cloudinary/uploadurl/{username}, with: " + username + " propertyId: " + propertyId + "propertyImageURLId: " + propretyImageURLId);
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/profile")
+    @Operation(summary = "Deleting customer's image form cloudinary by customer")
+    @ApiResponse(responseCode = "200", description = "Customer's image is deleted from cloudinary by customer.")
+    @SecurityRequirement(name = "basicAuth")
+    @Secured({"ROLE_ADMIN", "ROLE_USER", "ROLE_AGENT"})
+    public ResponseEntity<Map<String, Object>> deleteProfileImage(@RequestParam("customUserImageURLId") Long customUserImageURLId) throws AuthenticationExceptionImpl {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Http request, DELETE image /api/cloudinary/profile, with: " + userDetails.getUsername() + "customUserImageURLId: " + customUserImageURLId);
+        Map<String, Object> data = this.cloudinaryImageService.deleteProfileImage(userDetails.getUsername(), customUserImageURLId);
+        log.info("DELETE data image of repository from /api/cloudinary/profile, with: " + userDetails.getUsername() + "customUserImageURLId: " + customUserImageURLId);
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/profile/{username}")
+    @Operation(summary = "Deleting customer's image form cloudinary by admin")
+    @ApiResponse(responseCode = "200", description = "Customer's image is deleted from cloudinary by admin.")
+    @SecurityRequirement(name = "basicAuth")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<Map<String, Object>> deleteImage(@PathVariable("username") String username, @RequestParam("customUserImageURLId") Long customUserImageURLId) throws AuthenticationExceptionImpl {
+        log.info("Http request, DELETE image /api/cloudinary/profile/{username}, with: " + username + "customUserImageURLId: " + customUserImageURLId);
+        Map<String, Object> data = this.cloudinaryImageService.deleteProfileImage(username, customUserImageURLId);
+        log.info("DELETE data image of repository from /api/cloudinary/profile/{username}, with: " + username + "customUserImageURLId: " + customUserImageURLId);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 }

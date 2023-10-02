@@ -156,6 +156,32 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(PropertyImageURLNotFoundException.class)
+    public ResponseEntity<ApiError> handlePropertyImageURLNotFoundException(PropertyImageURLNotFoundException ex) {
+        log.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "PropertyImageURL not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CustomUserImageURLNotFoundException.class)
+    public ResponseEntity<ApiError> handleCustomUserImageURLNotFoundException(CustomUserImageURLNotFoundException ex) {
+        log.error("Not found error: ", ex);
+
+        ApiError body = new ApiError("NOT_FOUND_ERROR", "CustomUserImageURL not found error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ImageDeleteFailedException.class)
+    public ResponseEntity<ApiError> handleImageDeleteFailedException(ImageDeleteFailedException ex) {
+        log.error("Delete failed error: ", ex);
+
+        ApiError body = new ApiError("DELETE_FAILED_ERROR", "Deleting ImageURL failed error.", ex.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiError> handleNoResourcesFoundException(NoResourceFoundException ex) {
         log.error("Not found error: ", ex);
