@@ -38,7 +38,7 @@ public class CloudinaryImageUploadController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, POST image /api/cloudinary, with: " + userDetails.getUsername() + " propertyId " + propertyId);
         Map<String, Object> data = this.cloudinaryImageService.upload(file, userDetails.getUsername(), propertyId);
-        log.info("POST data image of repository from /api/cloudinary, with: " + userDetails.getUsername() +  "propertyId" + propertyId);
+        log.info("POST data image from repository from /api/cloudinary, with: " + userDetails.getUsername() +  "propertyId" + propertyId);
         cloudinaryImageService.getURL(data);
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
@@ -65,7 +65,7 @@ public class CloudinaryImageUploadController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, POST imageURL /api/cloudinary/uploadurl, with: " + userDetails.getUsername() + " propertyId " + propertyId);
         Map<String, Object> data = this.cloudinaryImageService.uploadFromURL(url, userDetails.getUsername(), propertyId);
-        log.info("POST data imageURL of repository from /api/cloudinary/uploadurl, with: " + userDetails.getUsername() + " propertyId: " + propertyId);
+        log.info("POST data imageURL from repository from /api/cloudinary/uploadurl, with: " + userDetails.getUsername() + " propertyId: " + propertyId);
         cloudinaryImageService.getURL(data);
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
@@ -154,7 +154,7 @@ public class CloudinaryImageUploadController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Http request, DELETE image /api/cloudinary, with: " + userDetails.getUsername() + " propertyId " + propertyId + "propertyImageURLId: " + propretyImageURLId);
         Map<String, Object> data = this.cloudinaryImageService.deleteImage(userDetails.getUsername(), propertyId, propretyImageURLId);
-        log.info("DELETE data image of repository from /api/cloudinary, with: " + userDetails.getUsername() + " propertyId: " + propertyId + "propertyImageURLId: " + propretyImageURLId);
+        log.info("DELETE data image from repository from /api/cloudinary, with: " + userDetails.getUsername() + " propertyId: " + propertyId + "propertyImageURLId: " + propretyImageURLId);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
@@ -166,7 +166,7 @@ public class CloudinaryImageUploadController {
     public ResponseEntity<Map<String, Object>> deleteImage(@PathVariable("username") String username, @RequestParam("propertyId") Long propertyId, @RequestParam("propertyImageURLId") Long propretyImageURLId) throws AuthenticationExceptionImpl {
         log.info("Http request, DELETE image /api/cloudinary/uploadurl/{username}, with: " + username + " propertyId " + propertyId + "propertyImageURLId: " + propretyImageURLId);
         Map<String, Object> data = this.cloudinaryImageService.deleteImage(username, propertyId, propretyImageURLId);
-        log.info("DELETE data image of repository from /api/cloudinary/uploadurl/{username}, with: " + username + " propertyId: " + propertyId + "propertyImageURLId: " + propretyImageURLId);
+        log.info("DELETE data image from repository from /api/cloudinary/uploadurl/{username}, with: " + username + " propertyId: " + propertyId + "propertyImageURLId: " + propretyImageURLId);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 

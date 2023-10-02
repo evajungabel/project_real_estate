@@ -259,10 +259,8 @@ public class PropertyDataServiceTest {
 
 
     @Test
-    void test_updatePropertyDataWithWrongPropertyDataId() {
+    void test_updatePropertyDataWithWrongUser() throws AuthenticationExceptionImpl {
         when(propertyService.findPropertyById(1L)).thenReturn(propertyUpdate1);
-        when(modelMapper.map(propertyDataForm1Update, PropertyData.class)).thenReturn(propertyData1Update);
-
 
         try {
             propertyDataService.update("moriczka", propertyDataForm1Update, 1L);
@@ -274,6 +272,9 @@ public class PropertyDataServiceTest {
         verify(propertyService, times(1)).findPropertyById(1L);
         verifyNoMoreInteractions(propertyService);
     }
+
+
+
     @Test
     void test_savePropertyDataWithWrongPropertyDataId() {
         when(propertyDataRepository.findAll()).thenReturn((List.of(propertyData1)));
