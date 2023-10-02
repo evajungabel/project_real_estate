@@ -32,8 +32,10 @@ spring:
   exchangerates:
     api:
       key: e4840fe407a170ac955cb39e55c54ae7
+paypal:
+  mode: sandbox
+  client:
+    id: AQ_ZQybzRCfkWn2NdBMwfeYpJynHws9bkDv4BjhHqrcVygI-klHCPrOigQRg5LfSs5eNYZ9yJG2z4Vht
+    secret: EN07Ibkeb8_uvPR6jHi-tLgdNQg19oEsICZm8Dsw0KLGl6NsjMpbFhIeYwyqXoq2EpuXlirTDHTqu6GG
 
 
-#  spring.mail.scheduler.persistence.enabled: false
-#  spring.mail.scheduler.persistence.redis.embedded: false
-#  spring.mail.scheduler.persistence.redis.enabled: false

@@ -1,6 +1,9 @@
 package hu.progmasters.moovsmart.config;
 
 import com.cloudinary.Cloudinary;
+import com.paypal.base.rest.APIContext;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.modelmapper.ModelMapper;
@@ -10,10 +13,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 
 @Configuration
+@SecurityScheme(
+        type = SecuritySchemeType.HTTP,
+        name = "basicAuth",
+        scheme = "basic")
 public class ProjectConfig {
 
     @Bean
@@ -23,6 +30,7 @@ public class ProjectConfig {
                 .setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;
     }
+
 
     @Bean
     public OpenAPI customOpenAPI() {
@@ -43,6 +51,20 @@ public class ProjectConfig {
         config.put("secure", true);
         return new Cloudinary(config);
     }
+
+
+    @Value("${paypal.client.id}")
+    private String clientId;
+    @Value("${paypal.client.secret}")
+    private String clientSecret;
+    @Value("${paypal.mode}")
+    private String mode;
+
+    @Bean
+    public APIContext apiContext() {
+        return new APIContext(clientId, clientSecret, mode);
+    }
+
 
     @Bean
     public RestTemplate restTemplate() {

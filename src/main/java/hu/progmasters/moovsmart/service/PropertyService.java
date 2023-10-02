@@ -339,17 +339,17 @@ public class PropertyService {
             contentStream.newLine();
             contentStream.showText("energyCertificate: " + (propertyDetails.getPropertyDataInfo().getEnergyCertificate() == null ? "N/A" : propertyDetails.getPropertyDataInfo().getEnergyCertificate()));
             contentStream.newLine();
-            contentStream.showText("hasBalcony: " + (propertyDetails.getPropertyDataInfo().getHasBalcony() ? "YES" : "NO"));
+            contentStream.showText("hasBalcony: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasBalcony()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasBalcony()) ? "NO" : "N/A"));
             contentStream.newLine();
-            contentStream.showText("hasLift: " + (propertyDetails.getPropertyDataInfo().getHasLift() ? "YES" : "NO"));
+            contentStream.showText("hasLift: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasLift()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasLift()) ? "NO" : "N/A"));
             contentStream.newLine();
-            contentStream.showText("isAccessible: " + (propertyDetails.getPropertyDataInfo().getIsAccessible() ? "YES" : "NO"));
+            contentStream.showText("isAccessible: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getIsAccessible()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getIsAccessible()) ? "NO" : "N/A"));
             contentStream.newLine();
-            contentStream.showText("isInsulated: " + (propertyDetails.getPropertyDataInfo().getIsInsulated() ? "YES" : "NO"));
+            contentStream.showText("isInsulated: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getIsInsulated()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getIsInsulated()) ? "NO" : "N/A"));
             contentStream.newLine();
-            contentStream.showText("AirCondition: " + (propertyDetails.getPropertyDataInfo().getHasAirCondition() ? "YES" : "NO"));
+            contentStream.showText("AirCondition: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasAirCondition()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasAirCondition()) ? "NO" : "N/A"));
             contentStream.newLine();
-            contentStream.showText("Garden: " + (propertyDetails.getPropertyDataInfo().getHasGarden() ? "YES" : "NO"));
+            contentStream.showText("Garden: " + (Boolean.TRUE.equals(propertyDetails.getPropertyDataInfo().getHasGarden()) ? "YES" : Boolean.FALSE.equals(propertyDetails.getPropertyDataInfo().getHasGarden()) ? "NO" : "N/A"));
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateStr = "Készült: " + dateFormat.format(new Date());
