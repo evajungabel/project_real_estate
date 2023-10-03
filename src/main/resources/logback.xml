@@ -7,7 +7,7 @@
 
         <!-- A RollingPolicy konfigurációja -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/info/moovSmart-log-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/info/info-log-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>50</maxHistory>
         </rollingPolicy>
 
