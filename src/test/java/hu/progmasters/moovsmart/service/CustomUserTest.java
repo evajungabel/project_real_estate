@@ -605,7 +605,6 @@ public class CustomUserTest {
 
     }
 
-
     @Test
     void test_unsubscribeNewsletterCustomUser() {
         when(customUserRepository.findByActivation("123456")).thenReturn(customUser1);
@@ -617,4 +616,10 @@ public class CustomUserTest {
         verify(customUserEmailService, times(1)).delete(customUser1.getCustomUserEmail());
         verify(customUserRepository, times(1)).findByActivation("123456");
     }
+
+    @Test
+    void test_commentForAgents(){
+
+    }
+
 }
