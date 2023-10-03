@@ -24,19 +24,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.customUserService = customUserService;
     }
 
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth, PasswordEncoder passwordEncoder) throws Exception {
-//        auth.inMemoryAuthentication()
-//                .withUser("user")
-//                .password(passwordEncoder.encode("password"))
-//                .roles("USER");
-//    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserService)
                 .passwordEncoder(passwordEncoder);
     }
+
 
 
     @Override
@@ -51,7 +45,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/**").permitAll()
                 .antMatchers("/v3/api-docs/**",
                         "/swagger-ui/**",
-                        "/swagger-ui.html").permitAll()
+                        "/swagger-ui.html",
+                        "/v2/api-docs").permitAll()
                 .anyRequest().authenticated()
                 .and().logout()
                 .deleteCookies("JSESSIONID")

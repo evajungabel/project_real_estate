@@ -36,7 +36,7 @@ public class CustomUserGameService {
             CustomUserGame customUserGame = new CustomUserGame().builder()
                     .customUser(customUserService.findCustomUserByUsername(username))
                     .dateOfPlay(LocalDateTime.now())
-                    .rouletteNumber(generator.nextInt(2))
+                    .rouletteNumber(generator.nextInt(37))
                     .build();
             customUserGameRepository.save(customUserGame);
 
@@ -130,11 +130,11 @@ public class CustomUserGameService {
     }
 
 
-    public CustomUserGame guessingDividedByThree(CustomUserGame customUserGame, Integer guessedDvidedByThree) {
-        customUserGame.setGuessedDividedByThree(guessedDvidedByThree);
-        if ((customUserGame.getGuessedThirdPart() == 0 && customUserGame.getRouletteNumber() % 3 == 0)
-                || (customUserGame.getGuessedThirdPart() == 1 && customUserGame.getRouletteNumber() % 3 == 1)
-                || (customUserGame.getGuessedThirdPart() == 2 && customUserGame.getRouletteNumber() % 3 == 2)) {
+    public CustomUserGame guessingDividedByThree(CustomUserGame customUserGame, Integer guessedDividedByThree) {
+        customUserGame.setGuessedDividedByThree(guessedDividedByThree);
+        if ((customUserGame.getGuessedDividedByThree() == 0 && customUserGame.getRouletteNumber() % 3 == 0)
+                || (customUserGame.getGuessedDividedByThree() == 1 && customUserGame.getRouletteNumber() % 3 == 1)
+                || (customUserGame.getGuessedDividedByThree() == 2 && customUserGame.getRouletteNumber() % 3 == 2)) {
             customUserGame.setResultMessage("Congratulate! You win!");
         } else {
             customUserGame.setResultMessage("You didn't win for now, but try for the next time!");

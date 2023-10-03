@@ -22,11 +22,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-//@RequestMapping("/api/customusers")
+@RequestMapping("/api/customusers")
 @Slf4j
-@OpenAPIDefinition(info = @Info(title = "Foos API", version = "v1"))
-@SecurityRequirement(name = "basicAuth")
-@RequestMapping(value = "/api/customusers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CustomUserController {
 
     private CustomUserService customUserService;
