@@ -24,11 +24,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.customUserService = customUserService;
     }
 
+//    @Autowired
+//    public void configureGlobal(AuthenticationManagerBuilder auth, PasswordEncoder passwordEncoder) throws Exception {
+//        auth.inMemoryAuthentication()
+//                .withUser("user")
+//                .password(passwordEncoder.encode("password"))
+//                .roles("USER");
+//    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserService)
                 .passwordEncoder(passwordEncoder);
     }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

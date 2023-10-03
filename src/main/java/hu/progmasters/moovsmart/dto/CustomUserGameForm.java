@@ -13,6 +13,9 @@ public class CustomUserGameForm {
 
     private Integer guessedNumber;
     private Integer guessedParity;
+    private Integer guessedHalf;
     private Integer guessedColour;
+    private Integer guessedThirdPart;
+    private Integer guessedDividedByThree;
 
 }

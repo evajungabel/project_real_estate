@@ -3,6 +3,7 @@ package hu.progmasters.moovsmart.controller;
 import hu.progmasters.moovsmart.dto.CustomUserGameForm;
 import hu.progmasters.moovsmart.dto.CustomUserGameInfo;
 import hu.progmasters.moovsmart.exception.CustomUserPlayedTheGameException;
+import hu.progmasters.moovsmart.exception.ThisIsNotAGameDayException;
 import hu.progmasters.moovsmart.service.CustomUserGameService;
 import hu.progmasters.moovsmart.service.CustomUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,13 +45,13 @@ public class CustomUserGameController {
     public ResponseEntity<CustomUserGameInfo> startGame(@RequestBody CustomUserGameForm customUserGameForm) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LocalDateTime currentTime = LocalDateTime.now();
-         if (currentTime.getDayOfWeek() == DayOfWeek.MONDAY) {
+         if (currentTime.getDayOfWeek() == DayOfWeek.TUESDAY) {
                 log.info("Http request, POST /api/game, username: " + userDetails.getUsername());
                 CustomUserGameInfo customUserGameInfo = customUserGameService.startGame(userDetails.getUsername(), customUserGameForm, currentTime);
                 log.info("POST data from repository/api/game, username: " + userDetails.getUsername());
                 return new ResponseEntity<>(customUserGameInfo, HttpStatus.CREATED);
             } else {
-             throw new CustomUserPlayedTheGameException(userDetails.getUsername());
+             throw new ThisIsNotAGameDayException(currentTime);
          }
     }
 

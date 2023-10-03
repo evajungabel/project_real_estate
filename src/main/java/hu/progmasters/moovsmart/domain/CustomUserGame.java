@@ -34,9 +34,16 @@ public class CustomUserGame {
 
     @Column(name = "guessed_parity")
     private Integer guessedParity;
+
+    @Column(name = "guessed_half")
+    private Integer guessedHalf;
     @Column(name = "guessed_colour")
     private Integer guessedColour;
 
+    @Column(name = "guessed_third_part")
+    private Integer guessedThirdPart;
+    @Column(name = "guessed_divided_by_three")
+    private Integer guessedDividedByThree;
     @Column(name = "result_message")
     private String resultMessage;
 

@@ -3,12 +3,15 @@ package hu.progmasters.moovsmart.controller;
 import hu.progmasters.moovsmart.dto.*;
 import hu.progmasters.moovsmart.service.CustomUserService;
 import hu.progmasters.moovsmart.service.SendingEmailService;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,8 +22,11 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/customusers")
+//@RequestMapping("/api/customusers")
 @Slf4j
+@OpenAPIDefinition(info = @Info(title = "Foos API", version = "v1"))
+@SecurityRequirement(name = "basicAuth")
+@RequestMapping(value = "/api/customusers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CustomUserController {
 
     private CustomUserService customUserService;
