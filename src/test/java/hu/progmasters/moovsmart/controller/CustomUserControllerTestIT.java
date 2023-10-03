@@ -1,6 +1,5 @@
 package hu.progmasters.moovsmart.controller;
 
-
 import hu.progmasters.moovsmart.domain.CustomUser;
 import hu.progmasters.moovsmart.domain.Property;
 import hu.progmasters.moovsmart.service.CustomUserService;
@@ -1169,6 +1168,4 @@ public class CustomUserControllerTestIT {
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
-
-
 }

@@ -1,5 +1,23 @@
 package hu.progmasters.moovsmart.domain;
 
 public enum PropertyType {
-    FLAT, HOUSE, PLOT, VILLA, OFFICE_BUILDING, DEPOT, PREDIAL, MARKET, GARAGE
+    FLAT("lakás"),
+    HOUSE("ház"),
+    PLOT("telek"),
+    VILLA("villa"),
+    OFFICE_BUILDING("iroda"),
+    DEPOT("raktár"),
+    PREDIAL("mezőgazdasági ingatlan"),
+    MARKET("üzlethelység"),
+    GARAGE("garázs");
+
+    private final String value;
+
+    PropertyType(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }
