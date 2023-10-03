@@ -45,7 +45,7 @@ public class CustomUserGameController {
     public ResponseEntity<CustomUserGameInfo> startGame(@RequestBody CustomUserGameForm customUserGameForm) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LocalDateTime currentTime = LocalDateTime.now();
-         if (currentTime.getDayOfWeek() == DayOfWeek.TUESDAY) {
+         if (currentTime.getDayOfWeek() == DayOfWeek.WEDNESDAY) {
                 log.info("Http request, POST /api/game, username: " + userDetails.getUsername());
                 CustomUserGameInfo customUserGameInfo = customUserGameService.startGame(userDetails.getUsername(), customUserGameForm, currentTime);
                 log.info("POST data from repository/api/game, username: " + userDetails.getUsername());

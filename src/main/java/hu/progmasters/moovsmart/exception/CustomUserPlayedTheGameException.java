@@ -9,7 +9,7 @@ public class CustomUserPlayedTheGameException extends RuntimeException {
         this.username = username;
     }
 
-    public String getEmail() {
+    public String getUsername() {
         return username;
     }
 }
