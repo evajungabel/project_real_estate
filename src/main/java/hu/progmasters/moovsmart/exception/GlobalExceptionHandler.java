@@ -263,8 +263,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(CustomUserHasMoreInputsForTheGameException.class)
-    public ResponseEntity<ApiError> handleCustomUserHasMoreInputsForTheGameException(CustomUserHasMoreInputsForTheGameException ex) {
+    @ExceptionHandler(CustomUserHasNotRightNumberOfInputsForTheGameException.class)
+    public ResponseEntity<ApiError> handleCustomUserHasNotRightNumberOfInputsForTheGameException(CustomUserHasNotRightNumberOfInputsForTheGameException ex) {
         log.error("Customer has more inputs for the game error: ", ex);
 
         ApiError body = new ApiError("CUSTOMER_HAS_MORE_INPUTS_FOR_THE_GAME_ERROR", "Customer has more inputs for the game error.", ex.getLocalizedMessage());
