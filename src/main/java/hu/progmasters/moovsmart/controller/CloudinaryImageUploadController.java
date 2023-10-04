@@ -93,7 +93,7 @@ public class CloudinaryImageUploadController {
         log.info("Http request, POST image /api/cloudinary/profile, with: " + userDetails.getUsername());
         Map<String, Object> data = this.cloudinaryImageService.uploadProfile(file, userDetails.getUsername());
         log.info("POST data image of repository from /api/cloudinary/profile, with: " + userDetails.getUsername());
-        cloudinaryImageService.getURLProfile(data);
+        cloudinaryImageService.getProfileURL(data);
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
 
@@ -106,7 +106,7 @@ public class CloudinaryImageUploadController {
         log.info("Http request, POST image /api/cloudinary/profile/{username}, with: " + username);
         Map<String, Object> data = this.cloudinaryImageService.uploadProfile(file, username);
         log.info("POST data image from repository/api/cloudinary/profile/{username}, with: " + username);
-        cloudinaryImageService.getURLProfile(data);
+        cloudinaryImageService.getProfileURL(data);
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
 
@@ -120,7 +120,7 @@ public class CloudinaryImageUploadController {
         log.info("Http request, POST imageURL /api/cloudinary/profile/uploadurl, with: " + userDetails.getUsername());
         Map<String, Object> data = this.cloudinaryImageService.uploadProfileFromURL(url, userDetails.getUsername());
         log.info("POST data imageURL of repository from /api/cloudinary/profile/uploadurl, with: " + userDetails.getUsername());
-        cloudinaryImageService.getURL(data);
+        cloudinaryImageService.getProfileURL(data);
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
 
@@ -133,7 +133,7 @@ public class CloudinaryImageUploadController {
         log.info("Http request, POST imageURL /api/cloudinary/profile/uploadurl/{username}, with: " + username);
         Map<String, Object> data = this.cloudinaryImageService.uploadProfileFromURL(url, username);
         log.info("POST data imageURL from repository/api/cloudinary/profile/uploadurl/{username}, with: " + username);
-        cloudinaryImageService.getURL(data);
+        cloudinaryImageService.getProfileURL(data);
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
 
@@ -158,15 +158,15 @@ public class CloudinaryImageUploadController {
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
-    @DeleteMapping("/uploadurl/{username}")
+    @DeleteMapping("/{username}")
     @Operation(summary = "Deleting property's image form cloudinary by admin")
     @ApiResponse(responseCode = "200", description = "Property's image is deleted from cloudinary by admin.")
     @SecurityRequirement(name = "basicAuth")
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Map<String, Object>> deleteImage(@PathVariable("username") String username, @RequestParam("propertyId") Long propertyId, @RequestParam("propertyImageURLId") Long propretyImageURLId) throws AuthenticationExceptionImpl {
-        log.info("Http request, DELETE image /api/cloudinary/uploadurl/{username}, with: " + username + " propertyId " + propertyId + "propertyImageURLId: " + propretyImageURLId);
+        log.info("Http request, DELETE image /api/cloudinary/{username}, with: " + username + " propertyId " + propertyId + "propertyImageURLId: " + propretyImageURLId);
         Map<String, Object> data = this.cloudinaryImageService.deleteImage(username, propertyId, propretyImageURLId);
-        log.info("DELETE data image from repository from /api/cloudinary/uploadurl/{username}, with: " + username + " propertyId: " + propertyId + "propertyImageURLId: " + propretyImageURLId);
+        log.info("DELETE data image from repository from /api/cloudinary/{username}, with: " + username + " propertyId: " + propertyId + "propertyImageURLId: " + propretyImageURLId);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 

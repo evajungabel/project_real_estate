@@ -107,7 +107,7 @@ public class CloudinaryImageService {
         propertyImageURLService.save(propertyImageURL);
     }
 
-    public void getURLProfile(Map<String, Object> data) {
+    public void getProfileURL(Map<String, Object> data) {
         String url = (String) data.get("url");
 
         Long customUserImageURLId = Long.parseLong(url.split("my_profile")[1].split("\\.")[0]);
