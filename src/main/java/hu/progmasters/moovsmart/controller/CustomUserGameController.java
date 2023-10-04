@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 
@@ -42,7 +43,7 @@ public class CustomUserGameController {
     @ApiResponse(responseCode = "201", description = "Customer is played and saved")
     @SecurityRequirement(name = "basicAuth")
     @Secured({"ROLE_USER", "ROLE_AGENT"})
-    public ResponseEntity<CustomUserGameInfo> startGame(@RequestBody CustomUserGameForm customUserGameForm) {
+    public ResponseEntity<CustomUserGameInfo> startGame(@Valid @RequestBody CustomUserGameForm customUserGameForm) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LocalDateTime currentTime = LocalDateTime.now();
          if (currentTime.getDayOfWeek() == DayOfWeek.WEDNESDAY) {

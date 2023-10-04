@@ -3,7 +3,7 @@ package hu.progmasters.moovsmart.service;
 import hu.progmasters.moovsmart.domain.CustomUserGame;
 import hu.progmasters.moovsmart.dto.CustomUserGameForm;
 import hu.progmasters.moovsmart.dto.CustomUserGameInfo;
-import hu.progmasters.moovsmart.exception.CustomUserHasMoreInputsForTheGameException;
+import hu.progmasters.moovsmart.exception.CustomUserHasNotRightNumberOfInputsForTheGameException;
 import hu.progmasters.moovsmart.exception.CustomUserPlayedTheGameException;
 import hu.progmasters.moovsmart.repository.CustomUserGameRepository;
 import org.modelmapper.ModelMapper;
@@ -68,7 +68,7 @@ public class CustomUserGameService {
                 customUserGameInfo.setCustomUserUsername(username);
                 return customUserGameInfo;
             } else {
-                throw new CustomUserHasMoreInputsForTheGameException(username);
+                throw new CustomUserHasNotRightNumberOfInputsForTheGameException(username);
             }
         } else {
             throw new CustomUserPlayedTheGameException(username);
