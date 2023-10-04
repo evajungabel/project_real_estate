@@ -15,6 +15,9 @@ public class CustomUserGameInfo {
     private Integer rouletteNumber;
     private Integer guessedNumber;
     private Integer guessedParity;
+    private Integer guessedHalf;
     private Integer guessedColour;
+    private Integer guessedThirdPart;
+    private Integer guessedDividedByThree;
     private String customUserUsername;
 }
