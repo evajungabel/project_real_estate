@@ -97,8 +97,8 @@ public class CustomUserGameService {
 
     public CustomUserGame guessingHalf(CustomUserGame customUserGame, Integer guessedHalf) {
         customUserGame.setGuessedHalf(guessedHalf);
-        if ((customUserGame.getRouletteNumber() <= 18 && customUserGame.getGuessedHalf() == 0)
-                || (19 <= customUserGame.getRouletteNumber() && customUserGame.getGuessedHalf() == 1)) {
+        if ((customUserGame.getRouletteNumber() <= 18 && customUserGame.getGuessedHalf() == 1)
+                || (19 <= customUserGame.getRouletteNumber() && customUserGame.getGuessedHalf() == 2)) {
             customUserGame.setResultMessage(congratulate);
         } else {
             customUserGame.setResultMessage(loss);

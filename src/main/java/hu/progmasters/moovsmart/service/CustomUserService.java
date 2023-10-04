@@ -266,8 +266,12 @@ public class CustomUserService implements UserDetailsService {
 
     public String deleteSale(String username, Long pId) {
         CustomUser customUser = findCustomUserByUsername(username);
+        List<Long> propertyIds = new ArrayList<>();
         for (Property property : customUser.getPropertyList()) {
-            if (property.getId().equals(pId)) {
+            propertyIds.add(property.getId());
+        }
+            if (propertyIds.contains(pId)) {
+                Property property = propertyService.findPropertyById(pId);
                 property.setStatus(PropertyStatus.INACTIVE);
                 property.setDateOfSale(LocalDateTime.now());
                 if (customUser.getRoles().equals(List.of(CustomUserRole.ROLE_AGENT))) {
@@ -283,7 +287,6 @@ public class CustomUserService implements UserDetailsService {
                 }
                 return "Congratulate! You sold your property!";
             }
-        }
         return "There is no property with that id.";
     }
 

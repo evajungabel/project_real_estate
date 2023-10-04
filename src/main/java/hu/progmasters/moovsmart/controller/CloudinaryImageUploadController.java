@@ -46,8 +46,8 @@ public class CloudinaryImageUploadController {
     @PostMapping(value = "/{username}", consumes = {"multipart/form-data"})
     @Operation(summary = "Saving property's image by admin.")
     @ApiResponse(responseCode = "201", description = "Property's image is saved by admin.")
-//    @SecurityRequirement(name = "basicAuth")
-//    @Secured({"ROLE_ADMIN"})
+    @SecurityRequirement(name = "basicAuth")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Map<String, Object>> uploadImage(@PathVariable("username") String username, @RequestParam("file") MultipartFile file, @RequestParam("propertyId") Long propertyId) throws AuthenticationExceptionImpl {
         log.info("Http request, POST image /api/cloudinary/{username}, with: " + username + " propertyId " + propertyId);
         Map<String, Object> data = this.cloudinaryImageService.upload(file, username, propertyId);
@@ -102,7 +102,7 @@ public class CloudinaryImageUploadController {
     @ApiResponse(responseCode = "201", description = "Customer's image is saved by admin.")
     @SecurityRequirement(name = "basicAuth")
     @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<Map<String, Object>> uploadImageProfile(@PathVariable("username") String username, @RequestParam("file") MultipartFile file, @RequestParam("propertyId") Long propertyId) throws AuthenticationExceptionImpl {
+    public ResponseEntity<Map<String, Object>> uploadImageProfile(@PathVariable("username") String username, @RequestParam("file") MultipartFile file) throws AuthenticationExceptionImpl {
         log.info("Http request, POST image /api/cloudinary/profile/{username}, with: " + username);
         Map<String, Object> data = this.cloudinaryImageService.uploadProfile(file, username);
         log.info("POST data image from repository/api/cloudinary/profile/{username}, with: " + username);
