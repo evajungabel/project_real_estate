@@ -32,11 +32,22 @@ spring:
   exchangerates:
     api:
       key: e4840fe407a170ac955cb39e55c54ae7
+openai:
+  api:
+    seacret:
+      key: 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
+    chat:
+      default:
+        role: user
+        model: gpt-3.5-turbo-16k
+    default:
+      timeout: 60
+    max-completions: 1
+    temperature: 0
+    max_tokens: 10
+
 paypal:
   mode: sandbox
   client:
     id: AQ_ZQybzRCfkWn2NdBMwfeYpJynHws9bkDv4BjhHqrcVygI-klHCPrOigQRg5LfSs5eNYZ9yJG2z4Vht
     secret: EN07Ibkeb8_uvPR6jHi-tLgdNQg19oEsICZm8Dsw0KLGl6NsjMpbFhIeYwyqXoq2EpuXlirTDHTqu6GG
-
-
-
