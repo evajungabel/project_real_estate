@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3377/moovsmart?createDatabaseIfNotExist=true&serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3377/realestate?createDatabaseIfNotExist=true&serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
     username: root
     password: test1234
   jpa:
@@ -14,7 +14,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: application.demo7@gmail.com
-    password: lrnvustumoozhmpr
+    password: *
     properties:
       mail:
         smtp:
@@ -24,18 +24,18 @@ spring:
             required: true
   openweathermap:
     api:
-      key: 3c00e57613b45fba6cbe0a0c859ab7f3
+      key: *
   servlet:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
   exchangerates:
     api:
-      key: e4840fe407a170ac955cb39e55c54ae7
+      key: *
 openai:
   api:
-    seacret:
-      key: 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
+    secret:
+      key: *
     chat:
       default:
         role: user
@@ -44,10 +44,10 @@ openai:
       timeout: 60
     max-completions: 1
     temperature: 0
-    max_tokens: 10
+    max_tokens: 100
 
 paypal:
   mode: sandbox
   client:
-    id: AQ_ZQybzRCfkWn2NdBMwfeYpJynHws9bkDv4BjhHqrcVygI-klHCPrOigQRg5LfSs5eNYZ9yJG2z4Vht
-    secret: EN07Ibkeb8_uvPR6jHi-tLgdNQg19oEsICZm8Dsw0KLGl6NsjMpbFhIeYwyqXoq2EpuXlirTDHTqu6GG
+    id: *
+    secret: *
