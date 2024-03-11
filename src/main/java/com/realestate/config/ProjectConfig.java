@@ -49,9 +49,9 @@ public class ProjectConfig {
     @Bean
     public Cloudinary getCloudinary() {
         Map<String, Object> config = new HashMap<>();
-        config.put("cloud_name", "*");
-        config.put("api_key", "*");
-        config.put("api_secret", "*");
+        config.put("cloud_name", "dvuarfxuu");
+        config.put("api_key", "978623321346782");
+        config.put("api_secret", "qSu7IhNadONu8C27hVObBJKKuOk");
         config.put("secure", true);
         return new Cloudinary(config);
     }
